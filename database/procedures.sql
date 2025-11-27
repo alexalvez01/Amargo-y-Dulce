@@ -1,3 +1,4 @@
+
 -- PROCEDURE: public.sp_crear_promocion(integer, character varying, text, integer, date, date)
 
 -- DROP PROCEDURE IF EXISTS public.sp_crear_promocion(integer, character varying, text, integer, date, date);
