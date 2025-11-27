@@ -1,3 +1,4 @@
+
 -- Constraint: carrito_idusuariofk_fkey
 
 -- ALTER TABLE IF EXISTS public.carrito DROP CONSTRAINT IF EXISTS carrito_idusuariofk_fkey;

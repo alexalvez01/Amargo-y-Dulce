@@ -1,3 +1,4 @@
+
 -- Table: public.carrito
 
 -- DROP TABLE IF EXISTS public.carrito;

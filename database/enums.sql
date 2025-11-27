@@ -1,3 +1,4 @@
+
 -- Type: calificacion_reseña
 
 -- DROP TYPE IF EXISTS public."calificacion_reseña";

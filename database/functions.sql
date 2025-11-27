@@ -1,3 +1,4 @@
+
 -- FUNCTION: public.fn_calcular_total_factura(integer)
 
 -- DROP FUNCTION IF EXISTS public.fn_calcular_total_factura(integer);

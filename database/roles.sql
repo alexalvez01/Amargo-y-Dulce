@@ -1,3 +1,4 @@
+
 -- Role: admin_db
 -- DROP ROLE IF EXISTS admin_db;
 

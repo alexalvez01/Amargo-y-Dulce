@@ -1,3 +1,4 @@
+
 -- Trigger: trg_confirmar_carrito_factura
 
 -- DROP TRIGGER IF EXISTS trg_confirmar_carrito_factura ON public.carrito;

@@ -1,3 +1,4 @@
+
 -- FUNCTION: public.trg_fn_actualizar_stock()
 
 -- DROP FUNCTION IF EXISTS public.trg_fn_actualizar_stock();
