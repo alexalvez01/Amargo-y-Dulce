@@ -22,6 +22,6 @@ cartRoutes.put("/update", updateProductQuantity);
 cartRoutes.delete("/remove", removeProductFromCart);
 
 // Cambiar estado a "confirmado"
-cartRoutes.put("/confirmar/:idCarrito", confirmCart);
+cartRoutes.put("/confirm/:idCarrito", confirmCart);
 
 export default cartRoutes;
