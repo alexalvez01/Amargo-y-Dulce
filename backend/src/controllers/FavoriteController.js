@@ -66,7 +66,7 @@ export const removeFavorite = async (req, res) => {
 // Alternar favorito (si está lo quita, si no lo agrega)
 export const toggleFavorite = async (req, res) => {
     try {
-    const { userId, productId } = req.params;
+    const { userId, productId } = req.body;
 
     const exists = await sql`
         SELECT 1 FROM favorito
