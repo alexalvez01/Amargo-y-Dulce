@@ -1,8 +1,8 @@
 import { sql } from "../config/db.js";
 
-// ------------------------------------------------------------
-// GET /api/products → listar todos los productos visibles
-// ------------------------------------------------------------
+
+// Obtener todos los productos
+
 export const getAllProducts = async (req, res) => {
   try {
     const products = await sql`
@@ -19,9 +19,9 @@ export const getAllProducts = async (req, res) => {
   }
 };
 
-// ------------------------------------------------------------
-// GET /api/products/:id → detalle de un producto
-// ------------------------------------------------------------
+
+// Obtener producto por ID
+
 export const getProductById = async (req, res) => {
   const { id } = req.params;
 
@@ -43,9 +43,9 @@ export const getProductById = async (req, res) => {
   }
 };
 
-// ------------------------------------------------------------
-// GET /api/products/search?nombre=chocolate
-// ------------------------------------------------------------
+
+// Buscar productos por nombre
+
 export const searchProducts = async (req, res) => {
   const { nombre } = req.query;
 
@@ -64,18 +64,17 @@ export const searchProducts = async (req, res) => {
   }
 };
 
-// ------------------------------------------------------------
-// GET /api/products/filter?estado=activo&stockMin=1
-// ------------------------------------------------------------
+
+// Filtrar productos por tamaño y sabor
+
 export const filterProducts = async (req, res) => {
-  const { estado, stockMin, stockMax } = req.query;
+  const { tamaño, sabor } = req.query;
 
   try {
     let query = sql`SELECT * FROM producto WHERE 1=1`;
 
-    if (estado) query = sql`${query} AND estado = ${estado}`;
-    if (stockMin) query = sql`${query} AND stock >= ${stockMin}`;
-    if (stockMax) query = sql`${query} AND stock <= ${stockMax}`;
+    if (tamaño) query = sql`${query} AND "tamaño" = ${tamaño}`;
+    if (sabor) query = sql`${query} AND sabor = ${sabor}`;
 
     const filtered = await sql`${query} ORDER BY idproducto ASC`;
 
@@ -86,9 +85,8 @@ export const filterProducts = async (req, res) => {
   }
 };
 
-// ------------------------------------------------------------
-// POST /api/products → crear producto (ADMIN)
-// ------------------------------------------------------------
+// Crear nuevo producto (ADMIN)
+
 export const createProduct = async (req, res) => {
   const { nombre, descripcion, estado, stock, tamaño, sabor } = req.body;
 
@@ -110,9 +108,9 @@ export const createProduct = async (req, res) => {
   }
 };
 
-// ------------------------------------------------------------
-// PUT /api/products/:id → editar producto (ADMIN)
-// ------------------------------------------------------------
+
+// Actualizar producto (ADMIN)
+
 export const updateProduct = async (req, res) => {
   const { id } = req.params;
   const { nombre, descripcion, estado, stock, tamaño, sabor } = req.body;
@@ -142,9 +140,9 @@ export const updateProduct = async (req, res) => {
   }
 };
 
-// ------------------------------------------------------------
-// PATCH /api/products/:id/hide → ocultar producto (ADMIN)
-// ------------------------------------------------------------
+
+// Ocultar producto (ADMIN)
+
 export const hideProduct = async (req, res) => {
   const { id } = req.params;
 
@@ -167,9 +165,9 @@ export const hideProduct = async (req, res) => {
   }
 };
 
-// ------------------------------------------------------------
-// PATCH /api/products/:id/show → publicar producto (ADMIN)
-// ------------------------------------------------------------
+
+// Publicar producto (ADMIN)
+
 export const showProduct = async (req, res) => {
   const { id } = req.params;
 
