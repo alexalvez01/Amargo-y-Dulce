@@ -1,6 +1,5 @@
 import { sql } from "../config/db.js";
 
-
 // Obtener carrito activo
 
 export const getActiveCart = async (req, res) => {
@@ -30,15 +29,13 @@ export const getActiveCart = async (req, res) => {
 
     res.json({
       carrito: carrito[0],
-      productos
+      productos,
     });
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error obteniendo carrito" });
   }
 };
-
 
 // Agregar producto al carrito
 
@@ -57,9 +54,8 @@ export const addProductToCart = async (req, res) => {
     // Si no hay carrito, crea uno
     if (carrito.length === 0) {
       const nuevo = await sql`
-        INSERT INTO carrito (idCarrito, idUsuarioFK, estado, fechaCreacion, total)
+        INSERT INTO carrito (idUsuarioFK, estado, fechaCreacion, total)
         VALUES (
-          (SELECT COALESCE(MAX(idCarrito),0)+1 FROM carrito),
           ${idUsuario},
           'activo',
           NOW(),
@@ -90,13 +86,11 @@ export const addProductToCart = async (req, res) => {
     `;
 
     res.json({ message: "Producto agregado al carrito", idCarrito });
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error agregando producto" });
   }
 };
-
 
 //  Modificar cantidad de un producto
 
@@ -111,13 +105,11 @@ export const updateProductQuantity = async (req, res) => {
     `;
 
     res.json({ message: "Cantidad actualizada" });
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error actualizando cantidad" });
   }
 };
-
 
 // Eliminar un producto
 
@@ -131,13 +123,11 @@ export const removeProductFromCart = async (req, res) => {
     `;
 
     res.json({ message: "Producto eliminado del carrito" });
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error eliminando producto" });
   }
 };
-
 
 // Confirmar carrito
 
@@ -153,7 +143,6 @@ export const confirmCart = async (req, res) => {
     `;
 
     res.json({ message: "Carrito confirmado correctamente" });
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error confirmando carrito" });
