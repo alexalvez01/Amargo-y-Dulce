@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { authMiddleware } from "../middlewares/auth-middleware.js";
 import {
     getFavorites,
     addFavorite,
@@ -8,12 +9,12 @@ import {
 
 const favoriteRoutes = Router();
 // para coseguir favoritos de un usuario
-favoriteRoutes.get("/:userId", getFavorites);
+favoriteRoutes.get("/", authMiddleware, getFavorites);
 // para agregar un favorito
-favoriteRoutes.post("/add", addFavorite);
+favoriteRoutes.post("/add", authMiddleware, addFavorite);
 // para eliminar un favorito
-favoriteRoutes.delete("/remove/:userId/:productId", removeFavorite);
+favoriteRoutes.delete("/remove/:productId", authMiddleware, removeFavorite);
 // para alternar un favorito
-favoriteRoutes.post("/toggle", toggleFavorite);
+favoriteRoutes.post("/toggle", authMiddleware, toggleFavorite);
 
 export default favoriteRoutes;

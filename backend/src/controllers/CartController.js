@@ -3,13 +3,13 @@ import { sql } from "../config/db.js";
 // Obtener carrito activo
 
 export const getActiveCart = async (req, res) => {
-  const { idUsuario } = req.params;
+  const userId = req.user.userId;
 
   try {
     const carrito = await sql`
       SELECT *
       FROM carrito
-      WHERE idUsuarioFK = ${idUsuario} AND estado = 'activo'
+      WHERE idUsuarioFK = ${userId} AND estado = 'activo'
       LIMIT 1
     `;
 
@@ -40,12 +40,13 @@ export const getActiveCart = async (req, res) => {
 // Agregar producto al carrito
 
 export const addProductToCart = async (req, res) => {
-  const { idUsuario, idProducto, cantidad } = req.body;
+  const userId = req.user.userId;
+  const { idProducto, cantidad } = req.body;
 
   try {
     let carrito = await sql`
       SELECT * FROM carrito
-      WHERE idusuariofk = ${idUsuario} AND estado = 'activo'
+      WHERE idusuariofk = ${userId} AND estado = 'activo'
       LIMIT 1
     `;
 
@@ -56,7 +57,7 @@ export const addProductToCart = async (req, res) => {
       const nuevo = await sql`
         INSERT INTO carrito (idUsuarioFK, estado, fechaCreacion, total)
         VALUES (
-          ${idUsuario},
+          ${userId},
           'activo',
           NOW(),
           0

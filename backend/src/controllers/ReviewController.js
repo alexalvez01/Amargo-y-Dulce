@@ -27,8 +27,10 @@ export const getReviewsByProduct = async (req, res) => {
 
 // Crear reseña
 export const createReview = async (req, res) => {
+    const userId = req.user.userId;
+
     try {
-        const { userId, productId, calificacion, comentario } = req.body;
+        const { productId, calificacion, comentario } = req.body;
 
         // Evitar reseñas duplicadas
         const exists = await sql`
@@ -67,15 +69,16 @@ export const createReview = async (req, res) => {
 };
 
 
-// Eliminar reseña
+// Eliminar reseña (USUARIO LOGUEADO)
 export const deleteReview = async (req, res) => {
-    try {
-        const { userId, productId } = req.params;
+    const userId = req.user.userId;
+    const { productId } = req.params;
 
+    try {
         await sql`
             DELETE FROM reseña
             WHERE idUsuarioFK = ${userId}
-                AND idProductoFK = ${productId};
+            AND idProductoFK = ${productId};
         `;
 
         res.json({ message: "Reseña eliminada correctamente" });
