@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { authMiddleware } from "../middlewares/auth-middleware.js";
 import {
   getActiveCart,
   addProductToCart,
@@ -10,18 +11,18 @@ import {
 const cartRoutes = Router();
 
 //Obtener el carrito activo del usuario
-cartRoutes.get("/:idUsuario", getActiveCart);
+cartRoutes.get("/", authMiddleware, getActiveCart);
 
 // Agregar producto al carrito
-cartRoutes.post("/add", addProductToCart);
+cartRoutes.post("/add", authMiddleware, addProductToCart);
 
 // Modificar cantidad de producto en el carrito
-cartRoutes.put("/update", updateProductQuantity);
+cartRoutes.put("/update", authMiddleware, updateProductQuantity);
 
 // Eliminar producto del carrito    
-cartRoutes.delete("/remove", removeProductFromCart);
+cartRoutes.delete("/remove", authMiddleware, removeProductFromCart);
 
 // Cambiar estado a "confirmado"
-cartRoutes.put("/confirm/:idCarrito", confirmCart);
+cartRoutes.put("/confirm/:idCarrito", authMiddleware, confirmCart);
 
 export default cartRoutes;
