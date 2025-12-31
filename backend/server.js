@@ -9,6 +9,8 @@ import reviewRoutes from "./src/routes/reviews.routes.js";
 import promotionRoutes from "./src/routes/promotions.routes.js";
 import paymentRoutes from "./src/routes/payments.routes.js";
 import authRoutes from "./src/routes/auth.routes.js";
+import orderRoutes from "./src/routes/order.routes.js";
+import shippingRoutes from "./src/routes/shipping.routes.js";
 
 const app = express();
 
@@ -24,6 +26,9 @@ app.use("/api/reviews", reviewRoutes);
 app.use("/api/promotions", promotionRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/shipping", shippingRoutes);
+
 
 app.listen(3000, () => {
   console.log("Servidor corriendo en http://localhost:3000");

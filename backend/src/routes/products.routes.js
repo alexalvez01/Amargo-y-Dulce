@@ -13,6 +13,9 @@ import {
 import {
     adminMiddleware
 } from "../middlewares/admin-middleware.js";
+import {
+    authMiddleware
+} from "../middlewares/auth-middleware.js";
 
 const productRoutes = Router();
 
@@ -23,10 +26,10 @@ productRoutes.get("/filter", filterProducts);
 productRoutes.get("/:id", getProductById);
 
 // ---- RUTAS SOLO ADMIN ----
-productRoutes.post("/", adminMiddleware, createProduct);
-productRoutes.put("/:id", adminMiddleware, updateProduct);
-productRoutes.patch("/:id/hide", adminMiddleware, hideProduct);
-productRoutes.patch("/:id/show", adminMiddleware, showProduct);
+productRoutes.post("/", authMiddleware, adminMiddleware, createProduct);
+productRoutes.put("/:id", authMiddleware, adminMiddleware, updateProduct);
+productRoutes.patch("/:id/hide", authMiddleware, adminMiddleware, hideProduct);
+productRoutes.patch("/:id/show", authMiddleware, adminMiddleware, showProduct);
 
 
 export default productRoutes;

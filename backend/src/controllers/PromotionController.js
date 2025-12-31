@@ -88,7 +88,7 @@ export const createPromotion = async (req, res) => {
   }
 
   try {
-    // 1️⃣ Crear promoción (ID automático)
+    // Crear promoción (ID automático)
     const result = await sql`
       INSERT INTO promocion
       (nombre, descripcion, valor, fechainicio, fechafin, estado)
@@ -99,7 +99,7 @@ export const createPromotion = async (req, res) => {
 
     const idPromocion = result[0].idpromocion;
 
-    // 2️⃣ Asociar producto a la promoción
+    // Asociar producto a la promoción
     await sql`
       INSERT INTO promocionproducto
       (idpromocionfk, idproductofk)

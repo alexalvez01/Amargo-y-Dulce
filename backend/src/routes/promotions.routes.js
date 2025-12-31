@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {adminMiddleware} from "../middlewares/admin-middleware.js";
+import { authMiddleware } from "../middlewares/auth-middleware.js";
 
 import {
   getAllPromotions,
@@ -20,8 +21,8 @@ promotionRoutes.get("/:id", getPromotionById);
 // ---- RUTAS SOLO ADMIN ----
 
 
-promotionRoutes.post("/", adminMiddleware, createPromotion);
-promotionRoutes.patch("/:id/hide", adminMiddleware, hidePromotion);
-promotionRoutes.patch("/:id/show", adminMiddleware, showPromotion);
+promotionRoutes.post("/", authMiddleware, adminMiddleware, createPromotion);
+promotionRoutes.patch("/:id/hide", authMiddleware, adminMiddleware, hidePromotion);
+promotionRoutes.patch("/:id/show", authMiddleware, adminMiddleware, showPromotion);
 
 export default promotionRoutes;
