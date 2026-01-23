@@ -1,14 +1,7 @@
-
--- FUNCTION: public.trg_fn_actualizar_stock()
-
--- DROP FUNCTION IF EXISTS public.trg_fn_actualizar_stock();
-
-CREATE OR REPLACE FUNCTION public.trg_fn_actualizar_stock()
-    RETURNS trigger
-    LANGUAGE 'plpgsql'
-    COST 100
-    VOLATILE NOT LEAKPROOF
-AS $BODY$
+CREATE OR REPLACE FUNCTION trg_fn_actualizar_stock()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
 BEGIN
     UPDATE producto
     SET stock = stock - NEW.cantidad
@@ -16,22 +9,25 @@ BEGIN
 
     RETURN NEW;
 END;
-$BODY$;
+$$;
 
-ALTER FUNCTION public.trg_fn_actualizar_stock()
-    OWNER TO neondb_owner;
+CREATE OR REPLACE FUNCTION trg_fn_reponer_stock()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE producto
+    SET stock = stock + OLD.cantidad
+    WHERE idProducto = OLD.idProductoFK;
 
+    RETURN OLD;
+END;
+$$;
 
--- FUNCTION: public.trg_fn_actualizar_total_carrito()
-
--- DROP FUNCTION IF EXISTS public.trg_fn_actualizar_total_carrito();
-
-CREATE OR REPLACE FUNCTION public.trg_fn_actualizar_total_carrito()
-    RETURNS trigger
-    LANGUAGE 'plpgsql'
-    COST 100
-    VOLATILE NOT LEAKPROOF
-AS $BODY$
+CREATE OR REPLACE FUNCTION trg_fn_actualizar_total_carrito()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
 DECLARE
     nuevo_total NUMERIC(10,2);
 BEGIN
@@ -46,35 +42,19 @@ BEGIN
 
     RETURN NEW;
 END;
-$BODY$;
+$$;
 
-ALTER FUNCTION public.trg_fn_actualizar_total_carrito()
-    OWNER TO neondb_owner;
-
-
--- FUNCTION: public.trg_fn_confirmar_carrito_factura()
-
--- DROP FUNCTION IF EXISTS public.trg_fn_confirmar_carrito_factura();
-
-CREATE OR REPLACE FUNCTION public.trg_fn_confirmar_carrito_factura()
-    RETURNS trigger
-    LANGUAGE 'plpgsql'
-    COST 100
-    VOLATILE NOT LEAKPROOF
-AS $BODY$
+CREATE OR REPLACE FUNCTION trg_fn_confirmar_carrito_factura()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
 DECLARE
     nueva_factura INT;
 BEGIN
     IF NEW.estado = 'confirmado' AND OLD.estado <> 'confirmado' THEN
 
-        INSERT INTO factura (idFactura, idUsuarioFK, numeroFactura, fechaCreacion, total)
-        VALUES (
-            nextval('factura_idfactura_seq'),
-            NEW.idUsuarioFK,
-            nextval('factura_numeroFactura_seq'),
-            NOW(),
-            NEW.total
-        )
+        INSERT INTO factura (idUsuarioFK, fechaCreacion, total)
+        VALUES (NEW.idUsuarioFK, NOW(), NEW.total)
         RETURNING idFactura INTO nueva_factura;
 
         INSERT INTO lineafactura(
@@ -99,80 +79,45 @@ BEGIN
 
     RETURN NEW;
 END;
-$BODY$;
+$$;
 
-ALTER FUNCTION public.trg_fn_confirmar_carrito_factura()
-    OWNER TO neondb_owner;
-
-
--- FUNCTION: public.trg_fn_registrar_pago_envio()
-
--- DROP FUNCTION IF EXISTS public.trg_fn_registrar_pago_envio();
-
-CREATE OR REPLACE FUNCTION public.trg_fn_registrar_pago_envio()
-    RETURNS trigger
-    LANGUAGE 'plpgsql'
-    COST 100
-    VOLATILE NOT LEAKPROOF
-AS $BODY$
+CREATE OR REPLACE FUNCTION trg_fn_registrar_pago_envio()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
 DECLARE
     nueva_id INT;
 BEGIN
     INSERT INTO envio (
-        idEnvio,
-        idDireccionFK,
-        idFacturaFK,
-        codigoSeguimiento,
+        iddireccionfk,
+        idfacturafk,
         estado,
-        fechaSalida,
-        fechaEntregaEstimada,
-        costoEnvio
+        fechasalida,
+        fechaentregaestimada,
+        costoenvio,
+        codigoseguimiento
     )
     VALUES (
-        nextval('envio_idenvio_seq'),
-        (SELECT idDireccionFK FROM factura f
-         JOIN usuario u ON f.idUsuarioFK = u.idUsuario
-         JOIN direccion d ON d.idUsuarioFK = u.idUsuario
-         WHERE f.idFactura = NEW.idFacturaFK LIMIT 1),
-        NEW.idFacturaFK,
-        NULL,
+        (SELECT d.iddireccion 
+         FROM factura f
+         JOIN usuario u ON f.idusuariofk = u.idusuario
+         JOIN direccion d ON d.idusuariofk = u.idusuario
+         WHERE f.idfactura = NEW.idfacturafk
+         LIMIT 1),
+        NEW.idfacturafk,
         'preparado',
         NOW(),
         NOW() + INTERVAL '5 days',
-        1000
+        1000,
+        NULL
     )
-    RETURNING idEnvio INTO nueva_id;
+    RETURNING idenvio INTO nueva_id;
 
     UPDATE envio
-    SET codigoSeguimiento = fn_generar_codigo_seguimiento(nueva_id)
-    WHERE idEnvio = nueva_id;
+    SET codigoseguimiento = fn_generar_codigo_seguimiento(nueva_id)
+    WHERE idenvio = nueva_id;
 
     RETURN NEW;
 END;
-$BODY$;
+$$;
 
-ALTER FUNCTION public.trg_fn_registrar_pago_envio()
-    OWNER TO neondb_owner;
-
-
--- FUNCTION: public.trg_fn_reponer_stock()
-
--- DROP FUNCTION IF EXISTS public.trg_fn_reponer_stock();
-
-CREATE OR REPLACE FUNCTION public.trg_fn_reponer_stock()
-    RETURNS trigger
-    LANGUAGE 'plpgsql'
-    COST 100
-    VOLATILE NOT LEAKPROOF
-AS $BODY$
-BEGIN
-    UPDATE producto
-    SET stock = stock + OLD.cantidad
-    WHERE idProducto = OLD.idProductoFK;
-
-    RETURN OLD;
-END;
-$BODY$;
-
-ALTER FUNCTION public.trg_fn_reponer_stock()
-    OWNER TO neondb_owner;

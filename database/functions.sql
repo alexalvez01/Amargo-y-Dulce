@@ -1,15 +1,7 @@
-
--- FUNCTION: public.fn_calcular_total_factura(integer)
-
--- DROP FUNCTION IF EXISTS public.fn_calcular_total_factura(integer);
-
-CREATE OR REPLACE FUNCTION public.fn_calcular_total_factura(
-	p_idfactura integer)
-    RETURNS numeric
-    LANGUAGE 'plpgsql'
-    COST 100
-    VOLATILE PARALLEL UNSAFE
-AS $BODY$
+CREATE OR REPLACE FUNCTION fn_calcular_total_factura(p_idFactura INT)
+RETURNS NUMERIC(10,2)
+LANGUAGE plpgsql
+AS $$
 DECLARE
     total_final NUMERIC(10,2);
 BEGIN
@@ -20,42 +12,39 @@ BEGIN
 
     RETURN COALESCE(total_final, 0);
 END;
-$BODY$;
+$$;
 
-ALTER FUNCTION public.fn_calcular_total_factura(integer)
-    OWNER TO neondb_owner;
 
--- FUNCTION: public.fn_generar_codigo_seguimiento(integer)
-
--- DROP FUNCTION IF EXISTS public.fn_generar_codigo_seguimiento(integer);
-
-CREATE OR REPLACE FUNCTION public.fn_generar_codigo_seguimiento(
-	p_idenvio integer)
-    RETURNS text
-    LANGUAGE 'plpgsql'
-    COST 100
-    VOLATILE PARALLEL UNSAFE
-AS $BODY$
+CREATE OR REPLACE FUNCTION fn_generar_codigo_seguimiento(p_idEnvio INT)
+RETURNS TEXT
+LANGUAGE plpgsql
+AS $$
 BEGIN
     RETURN 'ENV-' || p_idEnvio || '-' || TO_CHAR(NOW(), 'YYYYMMDDHH24MISS');
 END;
-$BODY$;
+$$;
 
-ALTER FUNCTION public.fn_generar_codigo_seguimiento(integer)
-    OWNER TO neondb_owner;
 
--- FUNCTION: public.fn_validar_stock(integer, integer)
+CREATE OR REPLACE FUNCTION fn_generar_comprobante(p_idPago INT)
+RETURNS TEXT
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_comprobante TEXT;
+BEGIN
+    v_comprobante := 'CP-' || p_idPago || '-' || TO_CHAR(NOW(), 'YYYYMMDDHH24MISS');
 
--- DROP FUNCTION IF EXISTS public.fn_validar_stock(integer, integer);
+    UPDATE pago
+    SET comprobante = v_comprobante
+    WHERE idPago = p_idPago;
 
-CREATE OR REPLACE FUNCTION public.fn_validar_stock(
-	idprod integer,
-	cant integer)
-    RETURNS boolean
-    LANGUAGE 'plpgsql'
-    COST 100
-    VOLATILE PARALLEL UNSAFE
-AS $BODY$
+    RETURN v_comprobante;
+END;
+$$;
+
+
+CREATE OR REPLACE FUNCTION fn_validar_stock(idProd INT, cant INT)
+RETURNS BOOLEAN AS $$
 DECLARE
     stock_actual INT;
 BEGIN
@@ -69,8 +58,4 @@ BEGIN
 
     RETURN stock_actual >= cant;
 END;
-$BODY$;
-
-ALTER FUNCTION public.fn_validar_stock(integer, integer)
-    OWNER TO neondb_owner;
-
+$$ LANGUAGE plpgsql;
