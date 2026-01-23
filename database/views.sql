@@ -1,96 +1,70 @@
+CREATE OR REPLACE VIEW vw_productos_activos AS
+SELECT 
+    p.idProducto,
+    p.nombre,
+    p.descripcion,
+    p.sabor,
+    p.tamaño,
+    p.stock
+FROM producto p
+WHERE p.estado = 'activo';
 
--- View: public.vw_envios_en_proceso
 
--- DROP VIEW public.vw_envios_en_proceso;
+CREATE OR REPLACE VIEW vw_promociones_vigentes AS
+SELECT
+    pr.idPromocion,
+    pr.nombre AS nombrePromocion,
+    pr.descripcion AS descripcionPromocion,
+    pr.valor AS descuento,
+    pr.fechaInicio,
+    pr.fechaFin,
+    p.idProducto,
+    p.nombre AS nombreProducto,
+    p.sabor,
+    p.tamaño
+FROM promocion pr
+JOIN promocionproducto pp ON pr.idPromocion = pp.idPromocionFK
+JOIN producto p ON pp.idProductoFK = p.idProducto
+WHERE pr.estado = 'activo';
 
-CREATE OR REPLACE VIEW public.vw_envios_en_proceso
- AS
- SELECT e.idenvio,
-    e.codigoseguimiento,
-    e.estado,
-    e.fechasalida,
-    e.fechaentregaestimada,
-    u.idusuario,
-    u.nombre AS nombreusuario,
-    u.apellido AS apellidousuario,
-    d.calle,
-    d.numero,
-    c.nombreciudad,
-    c.provincia
-   FROM envio e
-     JOIN direccion d ON e.iddireccionfk = d.iddireccion
-     JOIN usuario u ON d.idusuariofk = u.idusuario
-     JOIN ciudad c ON d.idciudadfk = c.idciudad
-  WHERE e.estado = 'en proceso'::estado_envio;
 
-ALTER TABLE public.vw_envios_en_proceso
-    OWNER TO neondb_owner;
-
--- View: public.vw_historial_compras
-
--- DROP VIEW public.vw_historial_compras;
-
-CREATE OR REPLACE VIEW public.vw_historial_compras
- AS
- SELECT u.idusuario,
+CREATE OR REPLACE VIEW vw_historial_compras AS
+SELECT
+    u.idUsuario,
     u.nombre,
     u.apellido,
-    f.idfactura,
-    f.fechacreacion AS fecha_factura,
-    lf.idproductofk AS idproducto,
+    f.idFactura,
+    f.fechaCreacion AS fecha_factura,
+    lf.idProductoFK AS idProducto,
     p.nombre AS nombre_producto,
     lf.cantidad,
-    lf.preciounitario,
-    lf.subtotalproducto,
+    lf.precioUnitario,
+    lf.subtotalProducto,
     f.total AS total_factura
-   FROM usuario u
-     JOIN factura f ON u.idusuario = f.idusuariofk
-     JOIN lineafactura lf ON f.idfactura = lf.idfacturafk
-     JOIN producto p ON lf.idproductofk = p.idproducto
-  ORDER BY u.idusuario, f.fechacreacion DESC;
+FROM usuario u
+JOIN factura f ON u.idUsuario = f.idUsuarioFK
+JOIN lineafactura lf ON f.idFactura = lf.idFacturaFK
+JOIN producto p ON lf.idProductoFK = p.idProducto
+ORDER BY u.idUsuario, f.fechaCreacion DESC;
 
-ALTER TABLE public.vw_historial_compras
-    OWNER TO neondb_owner;
 
--- View: public.vw_productos_activos
 
--- DROP VIEW public.vw_productos_activos;
-
-CREATE OR REPLACE VIEW public.vw_productos_activos
- AS
- SELECT idproducto,
-    nombre,
-    descripcion,
-    sabor,
-    "tamaño",
-    stock
-   FROM producto p
-  WHERE estado = 'activo'::estado_producto;
-
-ALTER TABLE public.vw_productos_activos
-    OWNER TO neondb_owner;
-
--- View: public.vw_promociones_vigentes
-
--- DROP VIEW public.vw_promociones_vigentes;
-
-CREATE OR REPLACE VIEW public.vw_promociones_vigentes
- AS
- SELECT pr.idpromocion,
-    pr.nombre AS nombrepromocion,
-    pr.descripcion AS descripcionpromocion,
-    pr.valor AS descuento,
-    pr.fechainicio,
-    pr.fechafin,
-    p.idproducto,
-    p.nombre AS nombreproducto,
-    p.sabor,
-    p."tamaño"
-   FROM promocion pr
-     JOIN promocionproducto pp ON pr.idpromocion = pp.idpromocionfk
-     JOIN producto p ON pp.idproductofk = p.idproducto
-  WHERE pr.estado = 'activo'::estado_promocion;
-
-ALTER TABLE public.vw_promociones_vigentes
-    OWNER TO neondb_owner;
-
+CREATE OR REPLACE VIEW vw_envios_activos AS
+SELECT
+    e.idEnvio,
+    e.codigoSeguimiento,
+    e.estado,
+    e.fechaSalida,
+    e.fechaEntregaEstimada,
+    u.idUsuario,
+    u.nombre AS nombreUsuario,
+    u.apellido AS apellidoUsuario,
+    d.calle,
+    d.numero,
+    c.nombreCiudad,
+    c.provincia
+FROM envio e
+JOIN direccion d ON e.idDireccionFK = d.idDireccion
+JOIN usuario u ON d.idUsuarioFK = u.idUsuario
+JOIN ciudad c ON d.idCiudadFK = c.idCiudad
+WHERE e.estado IN ('preparado', 'en proceso');
