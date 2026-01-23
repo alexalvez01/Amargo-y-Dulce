@@ -1,5 +1,4 @@
 CREATE OR REPLACE PROCEDURE sp_crear_promocion(
-    idPromocion INT,
     nombre VARCHAR,
     descripcion TEXT,
     valor INT,
@@ -19,7 +18,7 @@ BEGIN
     END IF;
 
     
-    INSERT INTO promocion (idPromocion, nombre, descripcion, valor, fechaInicio, fechaFin, estado)
-    VALUES (idPromocion, nombre, descripcion, valor, fechaInicio, fechaFin, 'activo');
+    INSERT INTO promocion (nombre, descripcion, valor, fechaInicio, fechaFin, estado)
+    VALUES (nombre, descripcion, valor, fechaInicio, fechaFin, 'activo');
 END;
 $$;
