@@ -149,3 +149,25 @@ export const confirmCart = async (req, res) => {
     res.status(500).json({ error: "Error confirmando carrito" });
   }
 };
+
+// Cancelar carrito
+
+export const cancelCart = async (req, res) => {
+  const { idCarrito } = req.params;
+
+  try {
+    // Cambiar estado
+    await sql`
+      UPDATE carrito
+      SET estado = 'cancelado'
+      WHERE idCarrito = ${idCarrito}
+    `;
+
+    res.json({ message: "Carrito cancelado correctamente" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error cancelando carrito" });
+  }
+};
+
+
