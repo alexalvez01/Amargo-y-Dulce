@@ -31,7 +31,7 @@ productRoutes.post("/", authMiddleware, adminMiddleware, createProduct);
 productRoutes.put("/:id", authMiddleware, adminMiddleware, updateProduct);
 productRoutes.patch("/:id/hide", authMiddleware, adminMiddleware, hideProduct);
 productRoutes.patch("/:id/show", authMiddleware, adminMiddleware, showProduct);
-productRoutes.put("/:id", authMiddleware, adminMiddleware, updateStock);
+productRoutes.put("/stock/:id", authMiddleware, adminMiddleware, updateStock);
 
 
 export default productRoutes;
