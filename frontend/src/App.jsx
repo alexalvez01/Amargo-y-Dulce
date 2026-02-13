@@ -1,22 +1,18 @@
-
-import './App.css'
-import MercadoPagoButton from "./MercadoPagoButton.jsx";
-import GoogleLoginButton from "./GoogleLoginButton";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home.jsx"; 
+import Login from "./pages/Login.jsx";
 
 function App() {
 
 
   return (
-    <>
-      <div style={{ padding: "2rem" }}>
-        <h2>Login</h2>
-        <GoogleLoginButton />
-      </div>
-      <hr />
-
-       <h1>Finalizar compra</h1>
-      <MercadoPagoButton idFactura={3} />
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </BrowserRouter>
+     
   )
 }
 
