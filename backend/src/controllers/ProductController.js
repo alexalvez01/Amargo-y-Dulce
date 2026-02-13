@@ -96,8 +96,8 @@ export const createProduct = async (req, res) => {
 
   try {
     const created = await sql`
-      INSERT INTO producto (nombre, descripcion, estado, stock, "tamaño", sabor)
-      VALUES (${nombre}, ${descripcion}, ${estado}, ${stock}, ${tamaño}, ${sabor})
+      INSERT INTO producto (idProducto, nombre, descripcion, estado, stock, "tamaño", sabor)
+      VALUES ((SELECT COALESCE(MAX(idProducto),0) + 1 FROM producto), ${nombre}, ${descripcion}, ${estado}, ${stock}, ${tamaño}, ${sabor})
       RETURNING *;
     `;
 
@@ -113,7 +113,7 @@ export const createProduct = async (req, res) => {
 
 export const updateProduct = async (req, res) => {
   const { id } = req.params;
-  const { nombre, descripcion, estado, stock, tamaño, sabor } = req.body;
+  const { nombre, descripcion, estado, tamaño, sabor } = req.body;
 
   try {
     const updated = await sql`
@@ -122,7 +122,6 @@ export const updateProduct = async (req, res) => {
         nombre = COALESCE(${nombre}, nombre),
         descripcion = COALESCE(${descripcion}, descripcion),
         estado = COALESCE(${estado}, estado),
-        stock = COALESCE(${stock}, stock),
         "tamaño" = COALESCE(${tamaño}, "tamaño"),
         sabor = COALESCE(${sabor}, sabor)
       WHERE idproducto = ${id}
@@ -190,3 +189,34 @@ export const showProduct = async (req, res) => {
   }
 };
 
+export const updateStock = async (req, res) => {
+  const { id } = req.params;
+  const { stock } = req.body; }
+
+  try {
+    const income = await sql`
+      INSERT INTO ingreso (idIngreso, idProductoFK, cantidad, fechaActualizacion)
+      VALUES ((SELECT COALESCE(MAX(idIngreso),0) + 1 FROM ingreso), ${id}, ${stock}, NOW());
+    `;
+
+    if (income.length === 0) {
+      return res.status(400).json({ error: "Error al registrar el ingreso" });
+    }
+
+    const updated = await sql`
+      UPDATE producto
+      SET stock = ${stock}
+      WHERE idproducto = ${id}
+      RETURNING *;
+    `;
+
+    
+    if (updated.length === 0) {
+      return res.status(404).json({ error: "Producto no encontrado" });
+    }
+
+    return res.status(200).json(updated[0]);
+  } catch (error) {
+    console.error("Error updateStock:", error);
+    return res.status(500).json({ error: "Error al actualizar stock del producto" });
+  }
