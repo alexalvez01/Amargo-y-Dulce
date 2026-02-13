@@ -7,7 +7,8 @@ import {
     createProduct,
     updateProduct,
     hideProduct,
-    showProduct
+    showProduct,
+    updateStock
 } from "../controllers/ProductController.js";
 
 import {
@@ -30,6 +31,7 @@ productRoutes.post("/", authMiddleware, adminMiddleware, createProduct);
 productRoutes.put("/:id", authMiddleware, adminMiddleware, updateProduct);
 productRoutes.patch("/:id/hide", authMiddleware, adminMiddleware, hideProduct);
 productRoutes.patch("/:id/show", authMiddleware, adminMiddleware, showProduct);
+productRoutes.put("/:id", authMiddleware, adminMiddleware, updateStock);
 
 
 export default productRoutes;
