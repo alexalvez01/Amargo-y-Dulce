@@ -3,7 +3,7 @@ import { User, ShoppingCart, Heart, Settings2 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 export default function Navbar() {
-  const [user, setUser] = useState({name: "Usuario", rol:"admin"}); 
+  const [user, setUser] = useState(null); 
   const [isOpen, setIsOpen] = useState(false);
 
   const navLinkStyles = ({ isActive }) =>
@@ -68,7 +68,7 @@ export default function Navbar() {
             <Heart size={20} />
           </NavLink>
 
-          {user.rol === "admin"? (
+          {user && user.rol === "admin" ? (
             <NavLink
                 to="/administrator"
                 className="flex items-center gap-2 border border-brand-brown px-3 py-1.5 rounded-lg text-sm font-brand hover:bg-brand-brown hover:text-white transition-colors"
