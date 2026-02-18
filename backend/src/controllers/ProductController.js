@@ -191,7 +191,7 @@ export const showProduct = async (req, res) => {
 
 export const updateStock = async (req, res) => {
   const { id } = req.params;
-  const { stock } = req.body; }
+  const { stock } = req.body; 
 
   try {
     const income = await sql`
@@ -220,3 +220,4 @@ export const updateStock = async (req, res) => {
     console.error("Error updateStock:", error);
     return res.status(500).json({ error: "Error al actualizar stock del producto" });
   }
+};

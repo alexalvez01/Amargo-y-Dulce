@@ -1,28 +1,16 @@
-<<<<<<< HEAD
-import {useState} from 'react';
-import LoginForm from '../components/LoginForm';
-
-export default function Login() { 
-    return (
-        <div>
-            <LoginForm />
-        </div>
-    )
-}
-=======
 import React from 'react';
-import LoginForm from '../components/LoginForm';
+import RegisterForm from '../components/RegisterForm';
 
-const LoginPage = () => {
+const RegisterPage = () => {
   return (
     <div className="h-screen w-full flex bg-zinc-100 overflow-hidden">
         
-        {/* --- COLUMNA IZQUIERDA (Formulario) --- */}
+        
         <div className="w-full lg:w-1/2 flex items-center justify-center bg-transparent relative z-20">
-            <LoginForm />
+            <RegisterForm />
         </div>
 
-        {/* --- COLUMNA DERECHA (Imagen) --- */}
+       
         <div className="hidden lg:flex w-1/2 relative h-full justify-end">
 
             <img 
@@ -36,5 +24,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
->>>>>>> fd5628ea44c3f2890f216d769de91b71dad3c550
+export default RegisterPage;
