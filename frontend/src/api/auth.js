@@ -9,5 +9,3 @@ export const registerRequest = (user) => axios.post(`/register`, user);
 
 export const loginRequest = (user) => axios.post(`/login`, user);
 
-// Esta servirá para verificar si el token sigue vivo al recargar página
-export const verifyTokenRequest = () => axios.get(`/verify`);

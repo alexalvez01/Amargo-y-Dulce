@@ -1,13 +1,15 @@
-import { ShoppingCart } from "lucide-react";
 
 export default function ProductCard({ product }) {
+    if (product === undefined) {
+        return <p>Cargando producto...</p>;
+    }
   return (
     <div className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
 
       <div className="relative overflow-hidden">
         <img
-          src={product.image}
-          alt={product.name}
+          src={product?.imagen}
+          alt={product.nombre}
           className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500"
         />
       </div>
@@ -17,7 +19,7 @@ export default function ProductCard({ product }) {
         
         <div className="flex justify-between items-center">
           <h3 className="text-sm font-semibold">
-            {product.name}
+            {product.nombre}
           </h3>
           <span className="text-xs text-green-600">
             En stock
@@ -26,15 +28,14 @@ export default function ProductCard({ product }) {
 
        
         <p className="text-sm font-medium">
-          ${product.price}
+          ${product.precio}
         </p>
 
         
         <p className="text-xs text-gray-500">
-          Tamaño: {product.size}
+          Tamaño: {product.tamaño}
         </p>
 
-    
 
       </div>
     </div>

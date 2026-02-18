@@ -5,7 +5,7 @@ import { GoogleLogin } from "@react-oauth/google";
 
 const LoginForm = () => {
   const navigate = useNavigate();
-  // Nota: Agregué signinGoogle asumiendo que la crearás en el context
+ 
   const { signin, signinGoogle, isAuthenticated, errors: loginErrors } = useAuth();
 
   // STATE

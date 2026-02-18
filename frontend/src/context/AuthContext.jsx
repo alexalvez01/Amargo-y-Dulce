@@ -18,6 +18,8 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [errors, setErrors] = useState([]); // Para manejar errores globales
 
+  
+
   // --- FUNCIÓN DE REGISTRO ---
   const signup = async (user) => {
     try {
