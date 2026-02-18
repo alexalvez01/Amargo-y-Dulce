@@ -2,7 +2,7 @@ import ProductCard from "../components/ProductCard";
 import Navbar from "../components/Navbar";
 import { useProducts } from "../context/ProductContext";
 import { useState, useMemo } from "react";
-import { Search } from "lucide-react";
+import { Search} from "lucide-react";
 
 export default function Shop() {
   const { products, loading } = useProducts();
@@ -61,9 +61,9 @@ export default function Shop() {
     <div className="max-w-6xl mx-auto px-6 py-10 pt-20 font-brand text-sm">
 
       {/* Buscador y ordenar */}
-      <div className="flex flex-col md:flex-row justify-end items-center mb-10 border-b border-gray-300 pb-6 gap-40">
+      <div className="flex flex-col md:flex-row justify-end items-start lg:items-center  mb-10 border-b border-gray-300 pb-6 gap-10 lg:gap-40">
 
-        <div className="flex min-w-md md:w-1/3">
+        <div className="flex min-w-xs md:min-w-md">
           <input
             type="text"
             placeholder="Buscar"
@@ -82,17 +82,20 @@ export default function Shop() {
 
         <div className="flex items-center gap-2">
           <span className="text-brand-brown font-bold">Ordenar por</span>
-
+          
               <select
               value={sort}
               onChange={(e) => setSort(e.target.value)}
-              className="bg-gray-200 focus:outline-none focus:border-none appearance-none focus:ring-0 cursor-pointer px-2 py-1 rounded"
+              onClick={() => setIsOpen(prev => !prev)}
+              className="bg-gray-200 focus:outline-none focus:border-none  focus:ring-0 cursor-pointer px-2 py-1 rounded"
               >
               <option value="price-asc">Menor precio</option>
               <option value="price-desc">Mayor precio</option>
               <option value="name-asc">Nombre A-Z</option>
               <option value="name-desc">Nombre Z-A</option>
               </select>
+         
+      
         </div>
       </div>
 
@@ -100,7 +103,7 @@ export default function Shop() {
       <div className="flex flex-col lg:flex-row gap-8">
 
         {/* SIDEBAR */}
-        <div className="lg:w-64 bg-white p-6 rounded-xl shadow-sm h-fit text-left">
+        <div className="hidden lg:block lg:w-64 bg-white p-6 rounded-xl shadow-sm h-fit text-left">
 
           <div className="mb-6">
             <h3 className="font-semibold mb-3 text-brand-brown">
@@ -178,7 +181,7 @@ export default function Shop() {
                 </p>
               )}
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 justify-items-center md:justify-items-normal">
                 {filteredProducts.slice(0, visible).map((product) => (
                   <ProductCard key={product.idproducto} product={product} />
                 ))}
