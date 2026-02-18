@@ -1,6 +1,6 @@
 // src/context/AuthContext.jsx
 import { createContext, useState, useContext, useEffect } from "react";
-import { registerRequest, loginRequest } from "../api/auth";
+import { registerRequest, loginRequest, googleLoginRequest, logoutRequest, getCurrentUserRequest } from "../api/auth";
 
 export const AuthContext = createContext();
 
@@ -51,7 +51,30 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Limpiar errores después de 5 segundos
+  const logout = async () => {
+    try {
+      await logoutRequest();
+      setUser(null);
+      setIsAuthenticated(false);
+      localStorage.removeItem('token');
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const siginWithGoogle = async (token) => {
+    try {
+      const res = await googleLoginRequest(token);  
+      setUser(res.data.user);
+      setIsAuthenticated(true);
+      localStorage.setItem('token', res.data.token);
+    } catch (error) {
+      console.log(error);
+      setErrors([error.response.data.error || "Error al iniciar sesión con Google"]);
+    }
+ };
+  
+  
   useEffect(() => {
     if (errors.length > 0) {
       const timer = setTimeout(() => {
@@ -65,6 +88,8 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider value={{
       signup,
       signin,
+      siginWithGoogle,
+      logout,
       user,
       isAuthenticated,
       errors

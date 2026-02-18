@@ -6,7 +6,7 @@ import { GoogleLogin } from "@react-oauth/google";
 const LoginForm = () => {
   const navigate = useNavigate();
  
-  const { signin, signinGoogle, isAuthenticated, errors: loginErrors } = useAuth();
+  const { signin, siginWithGoogle, isAuthenticated, errors: loginErrors } = useAuth();
 
   // STATE
 
@@ -57,19 +57,11 @@ const LoginForm = () => {
     });
   };
 
-  const handleGoogleSuccess = async (credentialResponse) => {
-    setError(null);
-    setLoading(true); // Opcional: mostrar loading mientras procesa google
-
-    if (signinGoogle) {
-        await signinGoogle({
-            credential: credentialResponse.credential,
-        });
-    } else {
-        console.error("Falta implementar signinGoogle en el AuthContext");
-        setError("Error de configuración interna");
-    }
-  };
+    const handleGoogleSuccess = async (credentialResponse) => {
+      setError(null);
+      setLoading(true); 
+      await siginWithGoogle(credentialResponse.credential);
+    };
 
 
   return (

@@ -10,9 +10,10 @@ import {
   X,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
-  const [user, setUser] = useState({nombre: "Juan Pérez", rol: "admin"}); 
+  const { user, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -42,7 +43,7 @@ export default function Navbar() {
   const userMenuLinkStyles = "flex items-center gap-3 px-4 py-2 text-sm hover:bg-brand-brown hover:text-white transition-colors";
 
   return (
-    <nav className="fixed flex flex-row w-full  items-center justify-between bg-brand-beige px-3 text-brand-brown lg:px-28">
+    <nav className="fixed flex flex-row w-full z-70 items-center justify-between bg-brand-beige px-3 text-brand-brown lg:px-28">
       <div className="flex items-center">
         <button
           className="lg:hidden"
