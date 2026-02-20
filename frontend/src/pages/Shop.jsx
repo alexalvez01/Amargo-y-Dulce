@@ -57,7 +57,7 @@ export default function Shop() {
 
       <div className="max-w-svw mx-auto  py-10 pt-20 font-brand text-sm">
         {/* Buscador y ordenar */}
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mb-10 border-b border-gray-300 pb-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-10 border-b border-gray-300 pb-6">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
             {/* Buscador */}
             <div className="flex w-full max-w-md">
@@ -94,8 +94,11 @@ export default function Shop() {
             </div>
           </div>
         </div>
-        {/* SIDEBAR */}
-        <div className="hidden absolute left-44 2xl:block lg:w-64 bg-white p-6 w-fit rounded-xl shadow-sm h-fit text-left">
+        
+        {/* Layout principal */}
+        <div className="flex flex-col 2xl:flex-row max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 gap-8">
+          {/* SIDEBAR */}
+        <div className="w-full max-w-2xl 2xl:w-64 mx-auto bg-white p-6 rounded-xl shadow-sm h-fit text-center 2xl:text-start flex flex-row justify-center 2xl:flex-col flex-wrap gap-4 mb-8 2xl:mb-0 ">
           <div className="mb-6">
             <h3 className="font-semibold mb-3 text-brand-brown">
               Filtrar por Colección
@@ -111,7 +114,7 @@ export default function Shop() {
             ].map((col) => (
               <label
                 key={col}
-                className="flex items-center gap-2 mb-2 cursor-pointer"
+                className="flex justify-center 2xl:items-center 2xl:justify-normal gap-2 mb-2 cursor-pointer"
               >
                 <input
                   type="radio"
@@ -152,7 +155,7 @@ export default function Shop() {
             {["6", "12", "24"].map((size) => (
               <label
                 key={size}
-                className="flex items-center gap-2 mb-2 cursor-pointer"
+                className="flex justify-center 2xl:items-center 2xl:justify-normal gap-2 mb-2 cursor-pointer"
               >
                 <input
                   type="radio"
@@ -186,8 +189,6 @@ export default function Shop() {
           </div>
         </div>
 
-        {/* Layout principal */}
-        <div className="flex flex-col lg:flex-row max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* PRODUCTOS */}
           <div className="flex-1">
             {loading ? (

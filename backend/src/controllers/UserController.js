@@ -3,8 +3,6 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { OAuth2Client } from "google-auth-library";
 
-
-
 // Registrar nuevo usuario
 
 export const register = async (req, res) => {
@@ -14,7 +12,7 @@ export const register = async (req, res) => {
     mail,
     contraseña,
     telefono,
-    rol = "cliente"
+    rol = "cliente",
   } = req.body;
 
   if (!nombre || !apellido || !mail || !contraseña || !telefono) {
@@ -58,14 +56,29 @@ export const register = async (req, res) => {
       RETURNING idUsuario, nombre, apellido, mail, rol;
     `;
 
-    res.status(201).json(nuevoUsuario[0]);
+    const token = jwt.sign(
+      {
+        userId: nuevoUsuario[0].idusuario,
+        rol: nuevoUsuario[0].rol,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "2h" },
+    );
 
+    res.status(201).json({
+      token,
+      user: {
+        idUsuario: nuevoUsuario[0].idusuario,
+        nombre: nuevoUsuario[0].nombre,
+        apellido: nuevoUsuario[0].apellido,
+        rol: nuevoUsuario[0].rol,
+      },
+    });
   } catch (error) {
     console.error("Error register:", error);
     res.status(500).json({ error: "Error registrando usuario" });
   }
 };
-
 
 // Iniciar sesión con usuario existente
 
@@ -86,10 +99,7 @@ export const login = async (req, res) => {
       return res.status(401).json({ error: "Credenciales inválidas" });
     }
 
-    const passwordOk = await bcrypt.compare(
-      contraseña,
-      user[0].contraseña
-    );
+    const passwordOk = await bcrypt.compare(contraseña, user[0].contraseña);
 
     if (!passwordOk) {
       return res.status(401).json({ error: "Credenciales inválidas" });
@@ -98,10 +108,10 @@ export const login = async (req, res) => {
     const token = jwt.sign(
       {
         userId: user[0].idusuario,
-        rol: user[0].rol
+        rol: user[0].rol,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "2h" }
+      { expiresIn: "2h" },
     );
 
     res.json({
@@ -110,23 +120,20 @@ export const login = async (req, res) => {
         idUsuario: user[0].idusuario,
         nombre: user[0].nombre,
         apellido: user[0].apellido,
-        rol: user[0].rol
-      }
+        rol: user[0].rol,
+      },
     });
-
   } catch (error) {
     console.error("Error login:", error);
     res.status(500).json({ error: "Error en login" });
   }
 };
 
-
 // Cerrar sesión de usuario
 
 export const logout = async (req, res) => {
   res.json({ message: "Logout exitoso" });
 };
-
 
 // Verificar token para rearmar sesión
 
@@ -141,14 +148,15 @@ export const verifyToken = async (req, res) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
+
     const user = await sql`
       SELECT idusuario, nombre, apellido, mail, rol 
       FROM usuario 
       WHERE idusuario = ${decoded.userId}
     `;
 
-    if (user.length === 0) return res.status(401).json({ error: "Usuario no encontrado" });
+    if (user.length === 0)
+      return res.status(401).json({ error: "Usuario no encontrado" });
 
     // Devolvemos la data para rearmar la sesión
     return res.json({
@@ -156,19 +164,16 @@ export const verifyToken = async (req, res) => {
       nombre: user[0].nombre,
       apellido: user[0].apellido,
       mail: user[0].mail,
-      rol: user[0].rol
+      rol: user[0].rol,
     });
   } catch (error) {
     return res.status(401).json({ error: "Token inválido o expirado" });
   }
 };
 
-
 // Login / Register con Google
 
-
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-
 
 export const googleLogin = async (req, res) => {
   const { credential: token } = req.body;
@@ -181,7 +186,7 @@ export const googleLogin = async (req, res) => {
     // Verificar token con Google
     const ticket = await client.verifyIdToken({
       idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID
+      audience: process.env.GOOGLE_CLIENT_ID,
     });
 
     const payload = ticket.getPayload();
@@ -230,10 +235,10 @@ export const googleLogin = async (req, res) => {
     const jwtToken = jwt.sign(
       {
         userId: user[0].idusuario,
-        rol: user[0].rol
+        rol: user[0].rol,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "2h" }
+      { expiresIn: "2h" },
     );
 
     res.json({
@@ -242,10 +247,9 @@ export const googleLogin = async (req, res) => {
         idUsuario: user[0].idusuario,
         nombre: user[0].nombre,
         apellido: user[0].apellido,
-        rol: user[0].rol
-      }
+        rol: user[0].rol,
+      },
     });
-
   } catch (error) {
     console.error("Google login error:", error);
     res.status(401).json({ error: "Token de Google inválido" });

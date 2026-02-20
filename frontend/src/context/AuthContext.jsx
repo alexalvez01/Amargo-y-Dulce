@@ -40,7 +40,6 @@ export const AuthProvider = ({ children }) => {
   const signup = async (user) => {
     try {
       const res = await registerRequest(user);
-      console.log(res.data);
       setUser(res.data.user);
       setIsAuthenticated(true);
       localStorage.setItem('token', res.data.token); // Guardamos token
@@ -54,7 +53,6 @@ export const AuthProvider = ({ children }) => {
   const signin = async (user) => {
     try {
       const res = await loginRequest(user);
-      console.log(res);
       setUser(res.data.user);
       setIsAuthenticated(true);
       localStorage.setItem('token', res.data.token);
