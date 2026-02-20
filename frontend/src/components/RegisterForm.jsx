@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../context/AuthContext';
@@ -69,7 +69,7 @@ const RegisterForm = () => {
             credential: credentialResponse.credential,
         });
     } else {
-        console.error("Falta signinGoogle en AuthContext");
+        setError("Función de inicio de sesión con Google no disponible.");
     }
   };
 

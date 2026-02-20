@@ -101,10 +101,8 @@ export const AuthProvider = ({ children }) => {
   // --- FUNCIÓN DE LOGOUT --
   const logout = () => {
     Cookies.remove("token");
-    console.log("Token eliminado del navegador");
     setUser(null);
     setIsAuthenticated(false);
-    console.log("Estado de autenticación actualizado: user=null, isAuthenticated=false");
   };
 
   // Limpiar errores después de 5 segundos
@@ -125,7 +123,6 @@ export const AuthProvider = ({ children }) => {
       user,
       isAuthenticated,
       errors,
-      logout,
       signinGoogle,
     }}>
       {children}

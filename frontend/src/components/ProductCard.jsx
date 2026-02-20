@@ -4,12 +4,12 @@ export default function ProductCard({ product }) {
         return <p>Cargando producto...</p>;
     }
   return (
-    <div className="group bg-white rounded-xl min-w-full overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
+    <div className="group bg-white rounded-xl w-full  overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
       <div className="relative overflow-hidden">
         <img
           src={product?.imagen}
           alt={product.nombre}
-          className="w-full h-72     object-cover group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-72 object-cover group-hover:scale-105 transition-transform duration-500"
         />
       </div>
 
