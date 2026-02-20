@@ -1,8 +1,19 @@
 import { Router } from "express";
-import { googleLogin } from "../controllers/UserController.js";
+import { 
+    googleLogin, 
+    register, 
+    login, 
+    logout,
+    verifyToken 
+} from "../controllers/UserController.js";
 
 const authRoutes = Router();
 
-authRoutes.post("/google", googleLogin);
+// Definimos las rutas bajo el prefijo /api/auth
+authRoutes.post("/register", register); // Queda en: /api/auth/register
+authRoutes.post("/login", login);       // Queda en: /api/auth/login
+authRoutes.post("/logout", logout);     // Queda en: /api/auth/logout
+authRoutes.post("/google", googleLogin);// Queda en: /api/auth/google
+authRoutes.get("/verify", verifyToken); // Queda en: /api/auth/verify
 
 export default authRoutes;

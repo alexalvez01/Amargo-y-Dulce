@@ -6,7 +6,7 @@ import { GoogleLogin } from "@react-oauth/google";
 const LoginForm = () => {
   const navigate = useNavigate();
  
-  const { signin, siginWithGoogle, isAuthenticated, errors: loginErrors } = useAuth();
+  const { signin, signinGoogle, isAuthenticated, errors: loginErrors } = useAuth();
 
   // STATE
 
@@ -60,7 +60,7 @@ const LoginForm = () => {
     const handleGoogleSuccess = async (credentialResponse) => {
       setError(null);
       setLoading(true); 
-      await siginWithGoogle(credentialResponse.credential);
+      await signinGoogle(credentialResponse);
     };
 
 

@@ -1,4 +1,6 @@
 import { useState, useRef, useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
+import { NavLink } from "react-router-dom";
 import {
   User,
   ShoppingCart,
@@ -9,16 +11,22 @@ import {
   Menu,
   X,
 } from "lucide-react";
-import { NavLink } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
-  const { user, logout } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
+
   const [isOpen, setIsOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const userMenuRef = useRef(null);
   const menuRef = useRef(null);
+
+  // Función para cerrar sesión correctamente 
+  const handleLogout = () => {
+    logout();
+    setIsOpen(false);
+    setIsMenuOpen(false);
+  }
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -195,6 +203,7 @@ export default function Navbar() {
               <button
                 onClick={() => {
                   setIsOpen(false);
+                  handleLogout();
                 }}
                 className={`${userMenuLinkStyles} w-full `}
               >

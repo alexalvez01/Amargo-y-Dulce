@@ -128,6 +128,41 @@ export const logout = async (req, res) => {
 };
 
 
+// Verificar token para rearmar sesión
+
+export const verifyToken = async (req, res) => {
+  // Agarramos el token que nos manda el frontend
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "No autorizado" });
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    const user = await sql`
+      SELECT idusuario, nombre, apellido, mail, rol 
+      FROM usuario 
+      WHERE idusuario = ${decoded.userId}
+    `;
+
+    if (user.length === 0) return res.status(401).json({ error: "Usuario no encontrado" });
+
+    // Devolvemos la data para rearmar la sesión
+    return res.json({
+      idUsuario: user[0].idusuario,
+      nombre: user[0].nombre,
+      apellido: user[0].apellido,
+      mail: user[0].mail,
+      rol: user[0].rol
+    });
+  } catch (error) {
+    return res.status(401).json({ error: "Token inválido o expirado" });
+  }
+};
+
 
 // Login / Register con Google
 
