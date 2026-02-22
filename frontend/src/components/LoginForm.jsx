@@ -18,7 +18,7 @@ const LoginForm = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // EFFECTS (Para conectar el Context con la UI)
+  // EFFECTS 
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -95,6 +95,7 @@ const LoginForm = () => {
           <input
             type="email"
             id="email"
+            autoComplete="username"
             required
             value={formData.email}
             onChange={handleChange}
@@ -113,6 +114,7 @@ const LoginForm = () => {
           <input
             type="password"
             id="password"
+            autoComplete="current-password"
             required
             value={formData.password}
             onChange={handleChange}
@@ -123,7 +125,7 @@ const LoginForm = () => {
 
           <div className="text-right mt-1">
             <a
-              href="#"
+              href="/forgot-password"
               className="text-xs text-gray-400 font-brand hover:text-brand-brown transition-colors"
             >
               Olvidaste tu contraseña?

@@ -10,6 +10,7 @@ import paymentRoutes from "./src/routes/payments.routes.js";
 import authRoutes from "./src/routes/auth.routes.js";
 import orderRoutes from "./src/routes/order.routes.js";
 import shippingRoutes from "./src/routes/shipping.routes.js";
+import "./src/utils/mailer.js";
 
 const app = express();
 

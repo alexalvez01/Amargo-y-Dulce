@@ -2,6 +2,7 @@ import { sql } from "../config/db.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { OAuth2Client } from "google-auth-library";
+import { transporter } from "../utils/mailer.js"; 
 
 // Registrar nuevo usuario
 
@@ -23,8 +24,8 @@ export const register = async (req, res) => {
     const exists = await sql`
       SELECT idusuario
       FROM usuario
-      WHERE mail = ${mail}
-    `;
+      WHERE mail = ${mail}`
+    ;
 
     if (exists.length > 0) {
       return res.status(400).json({ error: "El mail ya está registrado" });
@@ -53,8 +54,8 @@ export const register = async (req, res) => {
         CURRENT_DATE,
         ${rol}
       )
-      RETURNING idUsuario, nombre, apellido, mail, rol;
-    `;
+      RETURNING idUsuario, nombre, apellido, mail, rol;`
+    ;
 
     const token = jwt.sign(
       {
@@ -138,7 +139,6 @@ export const logout = async (req, res) => {
 // Verificar token para rearmar sesión
 
 export const verifyToken = async (req, res) => {
-  // Agarramos el token que nos manda el frontend
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({ error: "No autorizado" });
@@ -158,7 +158,6 @@ export const verifyToken = async (req, res) => {
     if (user.length === 0)
       return res.status(401).json({ error: "Usuario no encontrado" });
 
-    // Devolvemos la data para rearmar la sesión
     return res.json({
       idUsuario: user[0].idusuario,
       nombre: user[0].nombre,
@@ -170,6 +169,79 @@ export const verifyToken = async (req, res) => {
     return res.status(401).json({ error: "Token inválido o expirado" });
   }
 };
+
+// Función para pedir la recuperación
+export const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await sql`SELECT idusuario, nombre, mail FROM usuario WHERE mail = ${email}`;
+    
+    if (user.length === 0) {
+      return res.status(404).json({ error: "No existe una cuenta con ese correo electrónico" });
+    }
+
+    // Generamos un token temporal (válido por 15 minutos)
+    // Usamos el idusuario para saber a quién le estamos cambiando la clave después
+    const token = jwt.sign(
+      { id: user[0].idusuario }, 
+      process.env.JWT_SECRET, 
+      { expiresIn: "15m" }
+    );
+
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+    const recoveryLink = `${frontendUrl}/reset-password/${token}`;
+
+    await transporter.sendMail({
+      from: '"Amargo y Dulce" <facubpais@gmail.com>',
+      to: user[0].mail,
+      subject: "Recupera tu contraseña de Amargo y Dulce",
+      html: `
+        <div style="font-family: Arial, sans-serif; text-align: center; color: #333;">
+          <h2 style="color: #6B4C3A;">¡Hola ${user[0].nombre}!</h2>
+          <p>Recibimos una solicitud para restablecer tu contraseña.</p>
+          <p>Haz clic en el botón de abajo para crear una nueva (este enlace caduca en 15 minutos):</p>
+          <a href="${recoveryLink}" style="padding: 12px 24px; background-color: #6B4C3A; color: white; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold; margin-top: 15px;">
+            Restablecer Contraseña
+          </a>
+          <p style="margin-top: 30px; font-size: 12px; color: #999;">
+            Si no pediste cambiar tu contraseña, podés ignorar este correo tranquilamente.
+          </p>
+        </div>
+      `,
+    });
+
+    return res.json({ message: "Te enviamos un correo con las instrucciones" });
+
+  } catch (error) {
+    console.error("Error al enviar el correo:", error);
+    return res.status(500).json({ error: "Hubo un error al intentar enviar el correo" });
+  }
+};
+
+// Función para resetear la contraseña
+export const resetPassword = async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  try {
+    //Verificamos que el token sea válido y no haya expirado
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    await sql`
+      UPDATE usuario 
+      SET contraseña = ${passwordHash} 
+      WHERE idusuario = ${decoded.id}
+    `;
+    return res.json({ message: "¡Contraseña actualizada con éxito!" });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(400).json({ error: "El enlace es inválido o ha expirado. Volvé a solicitar uno nuevo." });
+  }
+};
+
 
 // Login / Register con Google
 
