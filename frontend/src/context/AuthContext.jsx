@@ -1,4 +1,4 @@
-// src/context/AuthContext.jsx
+
 import { createContext, useState, useContext, useEffect } from "react";
 import { registerRequest, loginRequest, googleLoginRequest, verifyTokenRequest } from "../api/auth";
 import Cookies from "js-cookie";
