@@ -114,21 +114,21 @@ const RegisterForm = () => {
         {/* TELÉFONO */}
         <div>
           <label className={labelStyles}>Teléfono *</label>
-          <input type="tel" name="telefono" placeholder="3442 123456" required 
+          <input type="tel" name="telefono" placeholder="3442 123456" required autoComplete="username"
             value={formData.telefono} onChange={handleChange} className={inputStyles} />
         </div>
 
         {/* CONTRASEÑA */}
         <div>
           <label className={labelStyles}>Contraseña *</label>
-          <input type="password" name="password" placeholder="••••••••" required 
+          <input type="password" name="password" placeholder="••••••••" required autoComplete="new-password"
             value={formData.password} onChange={handleChange} className={inputStyles} />
         </div>
 
         {/* CONFIRMAR */}
         <div>
           <label className={labelStyles}>Confirmar contraseña *</label>
-          <input type="password" name="confirmPassword" placeholder="••••••••" required 
+          <input type="password" name="confirmPassword" placeholder="••••••••" required autoComplete="new-password"
             value={formData.confirmPassword} onChange={handleChange} className={inputStyles} />
         </div>
 

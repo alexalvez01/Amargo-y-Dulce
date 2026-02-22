@@ -5,7 +5,6 @@ import Cookies from "js-cookie";
 
 const AuthContext = createContext();
 
-// Hook para usar el contexto más fácil
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -24,10 +23,10 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await googleLoginRequest(credentialResponse.credential);
 
-      setUser(res.data.user); // Guardamos el usuario
+      setUser(res.data.user); 
       setIsAuthenticated(true);
       if (res.data.token) {
-        Cookies.set("token", res.data.token);
+      Cookies.set("token", res.data.token);
       }
     } catch (error) {
       console.error(error);
@@ -42,7 +41,7 @@ export const AuthProvider = ({ children }) => {
       const res = await registerRequest(user);
       setUser(res.data.user);
       setIsAuthenticated(true);
-      localStorage.setItem('token', res.data.token); // Guardamos token
+      Cookies.set("token", res.data.token);
     } catch (error) {
       console.log(error.response);
       setErrors([error.response.data.error || "Error al registrarse"]);
@@ -55,7 +54,7 @@ export const AuthProvider = ({ children }) => {
       const res = await loginRequest(user);
       setUser(res.data.user);
       setIsAuthenticated(true);
-      localStorage.setItem('token', res.data.token);
+      Cookies.set("token", res.data.token);
     } catch (error) {
         console.log(error);
         if (Array.isArray(error.response.data)) {
@@ -66,20 +65,21 @@ export const AuthProvider = ({ children }) => {
   };
 
   // --- VERIFICAR SI HAY UNA SESIÓN ACTIVA AL RECARGAR LA APP ---
-  const [loading, setLoading] = useState(true); // Ayuda a que no parpadee la pantalla
+  const [loading, setLoading] = useState(true); 
   useEffect(() => {
     async function checkLogin() {
-      const cookies = Cookies.get();
+      const token = Cookies.get("token");
 
-      if (!cookies.token) {
+      if (!token || token === "undefined") {
         setIsAuthenticated(false);
         setLoading(false);
         setUser(null);
+        Cookies.remove("token");
         return;
       }
 
       try {
-        const res = await verifyTokenRequest(cookies.token);
+        const res = await verifyTokenRequest(token);
         
         setIsAuthenticated(true);
         setUser(res.data);
@@ -93,7 +93,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     checkLogin();
-  }, []);// El [] vacío asegura que esto solo corra una vez al cargar la app
+  }, []);
 
 
   // --- FUNCIÓN DE LOGOUT --
@@ -122,6 +122,7 @@ export const AuthProvider = ({ children }) => {
       isAuthenticated,
       errors,
       signinGoogle,
+      loading
     }}>
       {children}
     </AuthContext.Provider>
