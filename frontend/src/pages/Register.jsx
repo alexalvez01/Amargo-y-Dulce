@@ -1,15 +1,15 @@
+import RegisterForm from '../components/RegisterForm';
 
-import LoginForm from '../components/LoginForm';
-
-const LoginPage = () => {
+const RegisterPage = () => {
   return (
     <div className="h-screen w-full flex bg-zinc-100 overflow-hidden">
         
+        
         <div className="w-full lg:w-1/2 flex items-center justify-center bg-transparent relative z-20">
-            <LoginForm />
+            <RegisterForm />
         </div>
 
-
+       
         <div className="hidden lg:flex w-1/2 relative h-full justify-end">
 
             <img 
@@ -23,4 +23,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default RegisterPage;

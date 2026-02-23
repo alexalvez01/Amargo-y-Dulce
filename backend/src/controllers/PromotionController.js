@@ -6,7 +6,7 @@ import { sql } from "../config/db.js";
 -------------------------------------------------- */
 export const getAllPromotions = async (req, res) => {
   try {
-    const promotions = await sql`
+    const rows = await sql`
       SELECT 
         pr.idpromocion,
         pr.nombre,
@@ -28,7 +28,34 @@ export const getAllPromotions = async (req, res) => {
       ORDER BY pr.fechainicio ASC;
     `;
 
+    // 🔥 Agrupar promociones
+    const promotionsMap = {};
+
+    rows.forEach(row => {
+      if (!promotionsMap[row.idpromocion]) {
+        promotionsMap[row.idpromocion] = {
+          idpromocion: row.idpromocion,
+          nombre: row.nombre,
+          descripcion: row.descripcion,
+          valor: row.valor,
+          fechainicio: row.fechainicio,
+          fechafin: row.fechafin,
+          estado: row.estado,
+          productos: []
+        };
+      }
+
+      promotionsMap[row.idpromocion].productos.push({
+        idproducto: row.idproducto,
+        nombre: row.nombreproducto,
+        precio: row.precio
+      });
+    });
+
+    const promotions = Object.values(promotionsMap);
+
     return res.status(200).json(promotions);
+
   } catch (error) {
     console.error("Error getAllPromotions:", error);
     return res.status(500).json({ error: "Error al obtener promociones" });

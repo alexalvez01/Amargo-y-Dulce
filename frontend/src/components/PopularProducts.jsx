@@ -42,7 +42,7 @@ export default function PopularProducts() {
                 description={product.descripcion}
                 size={product.tamaño}
                 price={product.precio}
-                image={product.imagen || "/images/coleccion-clasica.png"} 
+                image={product.imagen || "/images/coleccion-clasica.webp"} 
               />
             ))}
           </div>

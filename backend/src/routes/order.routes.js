@@ -4,6 +4,6 @@ import { authMiddleware } from "../middlewares/auth-middleware.js";
 
 const orderRoutes = Router();
 
-orderRoutes.get("/orders/history", authMiddleware, getPurchaseHistory);
+orderRoutes.get("/history", authMiddleware, getPurchaseHistory);
 
 export default orderRoutes;
