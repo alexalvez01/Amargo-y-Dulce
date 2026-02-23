@@ -88,16 +88,16 @@ export const filterProducts = async (req, res) => {
 // Crear nuevo producto (ADMIN)
 
 export const createProduct = async (req, res) => {
-  const { nombre, descripcion, estado, stock, tamaño, sabor } = req.body;
+  const { nombre, descripcion, estado, stock, tamaño, sabor, precio, imagen } = req.body;
 
-  if (!nombre || !descripcion || !estado || !tamaño || !sabor) {
+  if (!nombre || !descripcion || !estado || !tamaño || !sabor || !precio || !imagen) {
     return res.status(400).json({ error: "Campos obligatorios faltantes" });
   }
 
   try {
     const created = await sql`
-      INSERT INTO producto (idProducto, nombre, descripcion, estado, stock, "tamaño", sabor)
-      VALUES ((SELECT COALESCE(MAX(idProducto),0) + 1 FROM producto), ${nombre}, ${descripcion}, ${estado}, ${stock}, ${tamaño}, ${sabor})
+      INSERT INTO producto (idProducto, nombre, descripcion, estado, precio, imagen, stock, "tamaño", sabor)
+      VALUES ((SELECT COALESCE(MAX(idProducto),0) + 1 FROM producto), ${nombre}, ${descripcion}, ${estado},${precio},${imagen}, ${stock}, ${tamaño}, ${sabor})
       RETURNING *;
     `;
 
@@ -113,7 +113,7 @@ export const createProduct = async (req, res) => {
 
 export const updateProduct = async (req, res) => {
   const { id } = req.params;
-  const { nombre, descripcion, estado, tamaño, sabor } = req.body;
+  const { nombre, descripcion, estado, precio, imagen, tamaño, sabor } = req.body;
 
   try {
     const updated = await sql`
@@ -121,6 +121,8 @@ export const updateProduct = async (req, res) => {
       SET 
         nombre = COALESCE(${nombre}, nombre),
         descripcion = COALESCE(${descripcion}, descripcion),
+        precio = COALESCE(${precio}, precio),
+        imagen = COALESCE(${imagen}, imagen),
         estado = COALESCE(${estado}, estado),
         "tamaño" = COALESCE(${tamaño}, "tamaño"),
         sabor = COALESCE(${sabor}, sabor)
@@ -191,7 +193,7 @@ export const showProduct = async (req, res) => {
 
 export const updateStock = async (req, res) => {
   const { id } = req.params;
-  const { stock } = req.body; }
+  const { stock } = req.body; 
 
   try {
     const income = await sql`
@@ -220,3 +222,48 @@ export const updateStock = async (req, res) => {
     console.error("Error updateStock:", error);
     return res.status(500).json({ error: "Error al actualizar stock del producto" });
   }
+}
+
+// Productos populares
+// Obtener los 3 productos más vendidos (Best Sellers)
+// Basado en las tablas: producto, factura, lineafactura
+export const getTopProducts = async (req, res) => {
+  try {
+    const topProducts = await sql`
+      SELECT 
+        p.idProducto, 
+        p.nombre, 
+        p.descripcion, 
+        p.precio, 
+        p.imagen, 
+        p."tamaño", -- Va entre comillas porque usaste la ñ
+        p.sabor,
+        COALESCE(SUM(lf.cantidad), 0) as total_vendido
+      FROM producto p
+      INNER JOIN lineafactura lf ON p.idProducto = lf.idProductoFK
+      INNER JOIN factura f ON lf.idFacturaFK = f.idFactura
+      WHERE f.fechaCreacion >= NOW() - INTERVAL '30 days' -- Últimos 30 días
+      AND p.estado = 'activo'                             -- Solo productos activos
+      GROUP BY p.idProducto
+      ORDER BY total_vendido DESC                         -- De mayor a menor venta
+      LIMIT 3;                                            -- Solo el podio (Top 3)
+    `;
+
+    // PLAN B: Si la tienda es nueva y no hay facturas aún
+    // Devolvemos 3 productos aleatorios para que el Home no quede vacío
+    if (topProducts.length === 0) {
+       const randomProducts = await sql`
+         SELECT * FROM producto 
+         WHERE estado = 'activo' 
+         ORDER BY RANDOM() -- En Postgres esto desordena al azar
+         LIMIT 3;
+       `;
+       return res.status(200).json(randomProducts);
+    }
+
+    return res.status(200).json(topProducts);
+  } catch (error) {
+    console.error("Error getTopProducts:", error);
+    return res.status(500).json({ error: "Error al obtener productos populares" });
+  }
+};

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { getPurchaseHistory } from "../controllers/OrderController.js";
-import { authMiddleware } from "../middlewares/authMiddleware.js";
+import { authMiddleware } from "../middlewares/auth-middleware.js";
 
 const orderRoutes = Router();
 

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { 
     getAllProducts,
+    getTopProducts,
     searchProducts,
     filterProducts,
     getProductById,
@@ -24,6 +25,7 @@ const productRoutes = Router();
 productRoutes.get("/", getAllProducts);
 productRoutes.get("/search", searchProducts);
 productRoutes.get("/filter", filterProducts);
+productRoutes.get("/top-sales", getTopProducts);
 productRoutes.get("/:id", getProductById);
 
 // ---- RUTAS SOLO ADMIN ----

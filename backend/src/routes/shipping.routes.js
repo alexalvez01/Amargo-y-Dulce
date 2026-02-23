@@ -4,7 +4,7 @@ import {
   advanceShipmentStatus
 } from "../controllers/ShippingController.js";
 
-import { adminMiddleware } from "../middlewares/adminMiddleware.js";
+import { adminMiddleware } from "../middlewares/admin-middleware.js";
 import { authMiddleware } from "../middlewares/auth-middleware.js";
 
 
