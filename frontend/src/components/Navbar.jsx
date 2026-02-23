@@ -233,7 +233,7 @@ export default function Navbar() {
 
         {user && user.rol === "admin" ? (
           <NavLink
-            to="/administrator"
+            to="/admin-panel"
             className="lg:flex hidden  items-center gap-2 border border-brand-brown px-3 py-1.5 rounded-lg text-sm font-brand hover:bg-brand-brown hover:text-white transition-colors"
           >
             <Settings2 size={18} />

@@ -4,8 +4,8 @@ import {
   advanceShipmentStatus
 } from "../controllers/ShippingController.js";
 
-import { adminMiddleware } from "../middlewares/admin-Middleware.js";
-import { authMiddleware } from "../middlewares/auth-Middleware.js";
+import { adminMiddleware } from "../middlewares/admin-middleware.js";
+import { authMiddleware } from "../middlewares/auth-middleware.js";
 
 
 const shippingRoutes = Router();

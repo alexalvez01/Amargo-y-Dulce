@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 import {
   getProductsRequest,
   createProductRequest,
-  deleteProductRequest
+  hideProductRequest
 } from "../api/products";
 
 const ProductContext = createContext();
@@ -40,10 +40,10 @@ export const ProductProvider = ({ children }) => {
   };
 
 
-  const deleteProduct = async (id) => {
+  const hideProduct = async (id) => {
     try {
-      await deleteProductRequest(id);
-      setProducts(products.filter((p) => p._id !== id));
+      await hideProductRequest(id);
+      setProducts(products.filter((p) => p.idproducto !== id));
     } catch (error) {
       console.log(error);
     }
@@ -60,7 +60,7 @@ export const ProductProvider = ({ children }) => {
         loading,
         getProducts,
         createProduct,
-        deleteProduct
+        hideProduct
       }}
     >
       {children}

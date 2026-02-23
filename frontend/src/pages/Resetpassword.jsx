@@ -1,7 +1,7 @@
-import ResetPasswordForm from '../components/ResetpasswordForm';
+import ResetPasswordForm from '../components/ResetPasswordForm';
 
 
-const ResetpasswordPage = () => {
+const ResetPasswordPage = () => {
   return (
     <div className="h-screen w-full flex bg-zinc-100 overflow-hidden">
       {/* Columna Izquierda: Componente del Formulario */}
@@ -12,7 +12,7 @@ const ResetpasswordPage = () => {
       {/* Columna Derecha: Ilustración importada */}
       <div className="hidden lg:flex w-1/2 relative h-full justify-end">
         <img 
-          src="/images/loginPhoto.webp" 
+          src="/images/LoginPhoto.webp" 
           alt="Nueva contraseña Amargo y Dulce" 
           className="max-w-[80%] object-contain"
         />
@@ -21,4 +21,4 @@ const ResetpasswordPage = () => {
   );
 };
 
-export default ResetpasswordPage;
+export default ResetPasswordPage;
