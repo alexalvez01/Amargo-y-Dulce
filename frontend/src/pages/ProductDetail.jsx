@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom"; 
 import { Star, Heart, ShoppingCart, Minus, Plus } from "lucide-react";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 import { useAuth } from "../context/AuthContext";
 import { getFavoritesRequest, toggleFavoriteRequest } from "../api/favorites";
 import { useProducts } from "../context/ProductContext";
+import { LogIn } from 'lucide-react';
+import toast from 'react-hot-toast'; 
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -46,8 +48,24 @@ export default function ProductDetail() {
 
   const handleToggleFavorite = async () => {
     if (!isAuthenticated) {
-      alert("Por favor, iniciá sesión para guardar tus favoritos ");
-      return navigate('/login');
+      toast.custom((t) => (
+        <div
+          className={`
+            flex items-center gap-3 bg-[#E8EFFF] border border-[#6B90FF] px-10 py-2 mt-9 rounded-full shadow-md pointer-events-auto
+            ${t.visible ? 'toast-enter' : 'toast-leave'}
+          `}
+        >
+          <LogIn size={20} className="text-[#6B90FF]" />
+          <span className="text-[#6B90FF] font-brand font-medium">
+            Necesitas iniciar sesión
+          </span>
+        </div>
+      ), { 
+        id: 'login-toast',
+        duration: 2500 
+      });
+
+      return;
     }
 
 

@@ -11,3 +11,24 @@
     --color-brand-brownLight: #8D6E63;
     --color-brand-gold: #C8A165;
 }
+
+/* Animación para cuando el cartel aparece */
+@keyframes slideDownFade {
+    0% { opacity: 0; transform: translateY(-20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Animación para cuando el cartel se va */
+@keyframes slideUpFade {
+    0% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-20px); }
+}
+
+/* Clases que vamos a usar en React */
+.toast-enter {
+    animation: slideDownFade 0.4s ease-out forwards;
+}
+
+.toast-leave {
+    animation: slideUpFade 0.3s ease-in forwards;
+}

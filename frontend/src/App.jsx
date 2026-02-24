@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from './context/AuthContext';
 import { ProductProvider } from './context/ProductContext';
 import { PromotionProvider } from './context/PromotionContext';
+import { Toaster } from "react-hot-toast";
 import Home from "./pages/Home.jsx"; 
 import Login from "./pages/Login.jsx";
 import ProductDetail from "./pages/ProductDetail.jsx"; // Tu página
@@ -14,13 +15,14 @@ import DeleteProductPromotionPanel from "./pages/DeleteProductPromotionPanel.jsx
 import FavoritesPage from "./pages/Favorites.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
+
 function App() {
   return (
-    // 1. Usamos los Providers que agregaron tus compañeros
     <ProductProvider>
       <PromotionProvider>
         <AuthProvider>
           <BrowserRouter>
+          <Toaster position="top-center" reverseOrder={false} />
             <Routes>
               {/* --- RUTAS PÚBLICAS (Entra cualquiera) --- */}
               <Route path="/" element={<Home />} />
