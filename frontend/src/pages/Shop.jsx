@@ -1,5 +1,6 @@
 import ProductCard from "../components/ProductCard";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import { useProducts } from "../context/ProductContext";
 import { useState, useMemo } from "react";
 import { Search } from "lucide-react";
@@ -222,6 +223,7 @@ export default function Shop() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

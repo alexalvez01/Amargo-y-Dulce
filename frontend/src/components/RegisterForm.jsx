@@ -17,14 +17,14 @@ const RegisterForm = () => {
 
   // --- EFECTS ---
 
-  // A. Si se registra/loguea exitosamente, vamos al Home
+  // Si se registra/loguea exitosamente, vamos al Home
   useEffect(() => {
     if (isAuthenticated) {
       navigate('/');
     }
   }, [isAuthenticated, navigate]);
 
-  // B. Si el contexto devuelve errores del backend, los mostramos
+  // Si el contexto devuelve errores del backend, los mostramos
   useEffect(() => {
     if (registerErrors.length > 0) {
       setError(registerErrors[0]);
@@ -51,8 +51,6 @@ const RegisterForm = () => {
       return;
     }
 
-    // Llamamos a la función del Contexto
-    // IMPORTANTE: Mapeamos los nombres para que coincidan con tu Backend
     await signup({
         nombre: formData.nombre,
         apellido: formData.apellido,

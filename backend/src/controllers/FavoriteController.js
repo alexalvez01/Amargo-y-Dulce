@@ -6,7 +6,7 @@ export const getFavorites = async (req, res) => {
 
     try {
         const favoritos = await sql`
-            SELECT f.idProductoFK, f.fechaAgregado, p.nombre, p.precio
+            SELECT f.idProductoFK AS id, f.fechaAgregado, p.nombre AS name, p.precio AS price, p.tamaño AS size, p.imagen
             FROM favorito f
             JOIN producto p ON p.idProducto = f.idProductoFK
             WHERE f.idUsuarioFK = ${userId};

@@ -11,6 +11,8 @@ import ForgotPasswordPage from "./pages/ForgotPassword.jsx";
 import ResetPasswordPage from "./pages/ResetPassword.jsx";
 import AdminPanel from "./pages/AdminPanel.jsx";
 import DeleteProductPromotionPanel from "./pages/DeleteProductPromotionPanel.jsx";
+import FavoritesPage from "./pages/Favorites.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 function App() {
   return (
@@ -20,16 +22,20 @@ function App() {
         <AuthProvider>
           <BrowserRouter>
             <Routes>
+              {/* --- RUTAS PÚBLICAS (Entra cualquiera) --- */}
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/shop" element={<Shop />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
-              <Route path="/admin-panel" element={<AdminPanel />} />
-              <Route path="/admin/delete-product-promotion" element={<DeleteProductPromotionPanel />} />
-              
               <Route path="/product/:id" element={<ProductDetail />} />
+              {/* --- RUTAS PROTEGIDAS (Solo para usuarios logueados) --- */}
+              <Route element={<ProtectedRoute />}>
+                <Route path="/favorites" element={<FavoritesPage />} />
+                <Route path="/admin-panel" element={<AdminPanel />} />
+                <Route path="/admin/delete-product-promotion" element={<DeleteProductPromotionPanel />} />
+              </Route>
             </Routes>
           </BrowserRouter>
         </AuthProvider>
