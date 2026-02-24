@@ -27,10 +27,7 @@ export default function ProductCard({ product }) {
 
         <div className="flex justify-between items-center">
             <span className="text-sm font-medium">
-                {new Intl.NumberFormat("es-AR", {
-                    style: "currency",
-                    currency: "ARS",
-                }).format(product.precio)}
+               $ {Number(product.precio).toLocaleString('es-AR')}
             </span>
 
           <span className="text-xs text-gray-500">

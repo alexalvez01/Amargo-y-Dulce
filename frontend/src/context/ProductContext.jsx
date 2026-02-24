@@ -4,9 +4,24 @@ import {
   createProductRequest,
   hideProductRequest,
   getProductRequest,
-  getTopSalesProductsRequest
+  getTopSalesProductsRequest,
+  showProductRequest
 } from "../api/products";
-  // Obtener un producto por id (petición individual)
+
+  const ProductContext = createContext();
+
+
+export const useProducts = () => {
+  const context = useContext(ProductContext);
+  if (!context) throw new Error("useProducts must be used inside ProductProvider");
+  return context;
+};
+
+export const ProductProvider = ({ children }) => {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+   // Obtener un producto por id (petición individual)
   const getProductById = async (id) => {
     try {
       const res = await getProductRequest(id);
@@ -28,19 +43,6 @@ import {
     }
   };
 
-const ProductContext = createContext();
-
-export const useProducts = () => {
-  const context = useContext(ProductContext);
-  if (!context) throw new Error("useProducts must be used inside ProductProvider");
-  return context;
-};
-
-export const ProductProvider = ({ children }) => {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  
   const getProducts = async () => {
     try {
       const res = await getProductsRequest();
@@ -66,12 +68,21 @@ export const ProductProvider = ({ children }) => {
   const hideProduct = async (id) => {
     try {
       await hideProductRequest(id);
-      setProducts(products.filter((p) => p.idproducto !== id));
+      getProducts();
     } catch (error) {
       console.log(error);
     }
   };
-
+  
+  const showProduct = async (id) => {
+  try {
+    await showProductRequest(id);
+    await getProducts();
+  } catch (error) {
+    console.log(error);
+  }
+};
+  
   useEffect(() => {
     getProducts();
   }, []);
@@ -85,7 +96,8 @@ export const ProductProvider = ({ children }) => {
         createProduct,
         hideProduct,
         getProductById,
-        getTopSalesProducts
+        getTopSalesProducts,
+        showProduct
       }}
     >
       {children}

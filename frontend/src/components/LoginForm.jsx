@@ -26,12 +26,7 @@ const LoginForm = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  useEffect(() => {
-    if (loginErrors.length > 0) {
-      setError(loginErrors[0]); 
-      setLoading(false); 
-    }
-  }, [loginErrors]);
+  const backendError = loginErrors[0] ?? null;
 
   // HANDLERS
 
@@ -55,6 +50,7 @@ const LoginForm = () => {
       mail: formData.email,
       contraseña: formData.password
     });
+    setLoading(false);
   };
 
     const handleGoogleSuccess = async (credentialResponse) => {
@@ -68,19 +64,19 @@ const LoginForm = () => {
     <div className="w-full max-w-md mx-auto bg-white p-8 rounded-3xl shadow-2xl border border-gray-100 font-brand">
 
       {/* HEADER */}
-      <div className="mb-6">
+      <div className="mb-6 text-left">
         <h2 className="text-brand-brownLight font-brand text-lg font-medium">
           Bienvenido de vuelta!
         </h2>
-        <h1 className="text-4xl font-bold font-brand text-black mt-1">
+        <h3 className="text-4xl font-bold font-brand text-black mt-1">
           Iniciar Sesión
-        </h1>
+        </h3>
       </div>
 
       {/* ERROR MESSAGE */}
-      {error && (
+      {(error || backendError) && (
         <div className="mb-4 bg-red-50 border-l-4 border-red-500 text-red-700 p-3 text-sm rounded">
-          {error}
+          {error || backendError}
         </div>
       )}
 

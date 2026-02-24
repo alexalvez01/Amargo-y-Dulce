@@ -82,11 +82,11 @@ export default function ProductDetail() {
   if (!product) return <div className="text-center py-20 font-brand">Producto no encontrado</div>;
 
   return (
-    <div className="bg-[#fcf8f5] flex flex-col min-h-screen font-brand">
+    <div className="bg-[#f7f2ec] flex flex-col min-h-screen font-brand">
       <Navbar />
 
       {/* Componente Superior: La info del producto */}
-      <div className="max-w-6xl mx-auto p-4 md:p-8 mt-8 grow">
+      <div className="max-w-6xl mx-auto p-4 md:p-8 mt-16 grow">
         <ProductInfo 
           product={product}
           averageRating={averageRating}

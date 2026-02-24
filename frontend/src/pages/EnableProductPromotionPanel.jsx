@@ -7,24 +7,22 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 
-export default function DeleteProductPromotionPanel() {
-  const { products, loading: loadingProducts, hideProduct} = useProducts();
-  const { promotions, loading: loadingPromotions, hidePromotion} = usePromotions();
+export default function EnableProductPromotionPanel() {
+  const { products, loading: loadingProducts, showProduct } = useProducts();
+  const { promotions, loading: loadingPromotions, showPromotion } = usePromotions();
   const [modal, setModal] = useState({ open: false, type: null, item: null });
   const navigate = useNavigate();
 
   const loading = loadingProducts || loadingPromotions;
 
-
-
   // Modal confirm handlers
   const openModal = (type, item) => setModal({ open: true, type, item });
   const closeModal = () => setModal({ open: false, type: null, item: null });
-  const confirmHide = async () => {
+  const confirmEnable = async () => {
     if (modal.type === "product") {
-      await hideProduct(modal.item.idproducto);
+      await showProduct(modal.item.idproducto);
     } else if (modal.type === "promotion") {
-      await hidePromotion(modal.item.idpromocion);
+      await showPromotion(modal.item.idpromocion);
     }
     closeModal();
   };
@@ -44,31 +42,31 @@ export default function DeleteProductPromotionPanel() {
       </button>
       <div className="max-w-svw mx-auto py-10 pt-20 font-brand text-sm">
         <h2 className="text-center text-4xl font-semibold text-brand-brownDark mb-8 border-b border-gray-300 pb-4">
-          Dar de baja un producto o promoción
+          Dar de alta un producto o promoción
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mx-auto max-w-4xl px-4">
-          {products.filter(p => p.estado === "activo").map((product) => (
+          {products.filter(p => p.estado === "inactivo").map((product) => (
             <div key={product.idproducto} className="relative">
               <ProductCard product={product} />
               <button
                 onClick={() => openModal("product", product)}
-                className="absolute top-2 right-2 bg-gray-200 hover:bg-red-500 hover:text-white text-gray-700 rounded-full w-8 h-8 flex items-center justify-center shadow transition-colors"
-                title="Eliminar producto"
+                className="absolute top-2 right-2 bg-gray-200 hover:bg-green-500 hover:text-white text-gray-700 rounded-full w-8 h-8 flex items-center justify-center shadow transition-colors"
+                title="Dar de alta producto"
               >
-                ×
+                +
               </button>
             </div>
           ))}
           {/* Promociones */}
-          {promotions.filter(p => p.estado === "activo").map((promo) => (
+          {promotions.filter(p => p.estado === "inactivo").map((promo) => (
             <div key={promo.idpromocion} className="relative">
               <PromotionCard promo={promo} />
               <button
                 onClick={() => openModal("promotion", promo)}
-                className="absolute top-2 right-2 bg-gray-200 hover:bg-red-500 hover:text-white text-gray-700 rounded-full w-8 h-8 flex items-center justify-center shadow transition-colors"
-                title="Eliminar promoción"
+                className="absolute top-2 right-2 bg-gray-200 hover:bg-green-500 hover:text-white text-gray-700 rounded-full w-8 h-8 flex items-center justify-center shadow transition-colors"
+                title="Dar de alta promoción"
               >
-                ×
+                +
               </button>
             </div>
           ))}
@@ -81,7 +79,7 @@ export default function DeleteProductPromotionPanel() {
           <div className="absolute inset-0 bg-[#00000044] transition-opacity" onClick={closeModal}></div>
           <div className="relative z-50 bg-white rounded-xl shadow-xl p-8 min-w-[340px] max-w-[95vw] w-[500px] border-t-4 border-brand-brownDark">
             <h3 className="text-2xl font-semibold text-brand-brownDark mb-6 text-center">
-              ¿Desea dar de baja el siguiente {modal.type === "product" ? "producto" : "promoción"}?
+              ¿Desea dar de alta el siguiente {modal.type === "product" ? "producto" : "promoción"}?
             </h3>
             <div className="flex items-center gap-4 mb-6">
               {modal.type === "product" ? (
@@ -111,7 +109,7 @@ export default function DeleteProductPromotionPanel() {
             <div className="flex justify-center gap-4 mt-4">
               <button
                 className="bg-brand-brownDark text-white px-6 py-2 rounded font-semibold hover:bg-brand-brown transition-colors"
-                onClick={confirmHide}
+                onClick={confirmEnable}
               >
                 Confirmar
               </button>
