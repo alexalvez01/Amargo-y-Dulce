@@ -9,3 +9,5 @@ export const hideProductRequest = (id) =>
   axios.patch(`/products/${id}/hide`);
 
 export const getProductRequest = (id) => axios.get(`/products/${id}`);
+
+export const getTopSalesProductsRequest = () => axios.get("/products/top-sales");

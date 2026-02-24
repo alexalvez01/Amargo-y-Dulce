@@ -5,11 +5,13 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useAuth } from "../context/AuthContext";
 import { getFavoritesRequest, toggleFavoriteRequest } from "../api/favorites";
+import { useProducts } from "../context/ProductContext";
 
 export default function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth(); 
+  const { getProductById } = useProducts();
   
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -23,12 +25,9 @@ export default function ProductDetail() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/products/${id}`);
-        if (response.ok) {
-          setProduct(await response.json());
-        }
-
-        // Si está logueado, buscamos sus favoritos para ver si este producto ya lo es
+        const prod = await getProductById(id);
+        setProduct(prod);
+        
         if (isAuthenticated) {
           const favRes = await getFavoritesRequest();
           const isFav = favRes.data.some(fav => String(fav.id) === String(id));
@@ -42,10 +41,8 @@ export default function ProductDetail() {
         setLoading(false);
       }
     };
-    
     fetchData();
-  }, [id, isAuthenticated]);
-
+  }, [id, isAuthenticated, getProductById]);
 
   const handleToggleFavorite = async () => {
     if (!isAuthenticated) {

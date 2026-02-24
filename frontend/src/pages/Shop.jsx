@@ -4,6 +4,7 @@ import Footer from "../components/Footer";
 import { useProducts } from "../context/ProductContext";
 import { useState, useMemo } from "react";
 import { Search } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function Shop() {
   const { products, loading } = useProducts();
@@ -204,7 +205,9 @@ export default function Shop() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 ">
                   {filteredProducts.slice(0, visible).map((product) => (
-                    <ProductCard key={product.idproducto} product={product} />
+                    <Link to={`/product/${product.idproducto}`} key={product.idproducto}>
+                    <ProductCard product={product} />
+                    </Link>
                   ))}
                 </div>
 

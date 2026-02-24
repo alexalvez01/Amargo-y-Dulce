@@ -2,8 +2,31 @@ import { createContext, useContext, useState, useEffect } from "react";
 import {
   getProductsRequest,
   createProductRequest,
-  hideProductRequest
+  hideProductRequest,
+  getProductRequest,
+  getTopSalesProductsRequest
 } from "../api/products";
+  // Obtener un producto por id (petición individual)
+  const getProductById = async (id) => {
+    try {
+      const res = await getProductRequest(id);
+      return res.data;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
+  // Obtener productos más vendidos
+  const getTopSalesProducts = async () => {
+    try {
+      const res = await getTopSalesProductsRequest();
+      return res.data;
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  };
 
 const ProductContext = createContext();
 
@@ -60,7 +83,9 @@ export const ProductProvider = ({ children }) => {
         loading,
         getProducts,
         createProduct,
-        hideProduct
+        hideProduct,
+        getProductById,
+        getTopSalesProducts
       }}
     >
       {children}

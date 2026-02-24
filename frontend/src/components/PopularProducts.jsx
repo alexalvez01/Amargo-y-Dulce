@@ -1,26 +1,18 @@
 import { useState, useEffect } from "react";
 import PopularCard from "./PopularCard";
+import { useProducts } from "../context/ProductContext";
 
 export default function PopularProducts() {
   const [products, setProducts] = useState([]);
+  const { getTopSalesProducts } = useProducts();
 
   useEffect(() => {
     const fetchTopProducts = async () => {
-      try {
-        // CAMBIO AQUÍ: Llamamos al nuevo endpoint específico
-        const response = await fetch("http://localhost:3000/api/products/top-sales");
-        
-        if (response.ok) {
-           const data = await response.json();
-           setProducts(data);
-        }
-      } catch (error) {
-        console.error("Error:", error);
-      }
+      const data = await getTopSalesProducts();
+      setProducts(data);
     };
-
     fetchTopProducts();
-  }, []);
+  }, [getTopSalesProducts]);
 
   return (
     <section className="h-screen py-20 bg-brand-brownDark">
