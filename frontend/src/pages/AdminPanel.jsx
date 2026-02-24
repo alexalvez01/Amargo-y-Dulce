@@ -25,7 +25,8 @@ function AdminPanel() {
                 key={item.id}
                 className="bg-brand-beige rounded-lg shadow h-[120px] flex flex-col items-center justify-center px-4 font-medium border-t-4 border-brand-brown cursor-pointer transition-transform transform hover:scale-105"
                 onClick={() => {
-                  if (item.id === 3) navigate("/admin/delete-product-promotion");
+                  if (item.id === 3) navigate("/admin/delete-product-promotion")
+                  else if (item.id === 5) navigate("/admin/enable-product-promotion");
                 }}
               >
                 <span className="flex items-center justify-center w-12 h-12 rounded-full bg-[#ded1be] text-brand-brownDark text-xl font-bold mb-1">{item.id.toString().padStart(2, '0')}</span>

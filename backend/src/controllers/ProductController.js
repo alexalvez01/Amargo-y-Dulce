@@ -8,7 +8,6 @@ export const getAllProducts = async (req, res) => {
     const products = await sql`
       SELECT * 
       FROM producto
-      WHERE estado != 'inactivo'
       ORDER BY idproducto ASC;
     `;
 

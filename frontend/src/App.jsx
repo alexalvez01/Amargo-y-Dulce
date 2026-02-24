@@ -12,8 +12,10 @@ import ForgotPasswordPage from "./pages/ForgotPassword.jsx";
 import ResetPasswordPage from "./pages/ResetPassword.jsx";
 import AdminPanel from "./pages/AdminPanel.jsx";
 import DeleteProductPromotionPanel from "./pages/DeleteProductPromotionPanel.jsx";
+import EnableProductPromotionPanel from "./pages/EnableProductPromotionPanel.jsx";
 import FavoritesPage from "./pages/Favorites.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import AdminRoute from "./components/AdminRoute.jsx";
 
 
 function App() {
@@ -32,10 +34,12 @@ function App() {
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
               <Route path="/product/:id" element={<ProductDetail />} />
-              {/* --- RUTAS PROTEGIDAS (Solo para usuarios logueados) --- */}
               <Route element={<ProtectedRoute />}>
                 <Route path="/favorites" element={<FavoritesPage />} />
+              </Route>
+              <Route element={<AdminRoute />}>
                 <Route path="/admin-panel" element={<AdminPanel />} />
+                <Route path="/admin/enable-product-promotion" element={<EnableProductPromotionPanel />} />
                 <Route path="/admin/delete-product-promotion" element={<DeleteProductPromotionPanel />} />
               </Route>
             </Routes>

@@ -8,10 +8,10 @@ const FavoritesPage = () => {
   return (
     <div>
         <Navbar />
-        <div className="min-h-screen bg-[#EBEBEB] pt-10 pb-20 px-4">
-            <h1 className="text-4xl md:text-5xl font-brand font-semibold text-[#6B4C3A] text-center mb-10 mt-10 tracking-wide">
+        <div className="min-h-screen bg-gray-200 pt-10 pb-20 px-4">
+            <h2 className="text-4xl md:text-5xl font-brand font-semibold text-brand-brownDark text-center mb-10 mt-10 tracking-wide">
             Favoritos
-            </h1>
+            </h2>
         <FavoritesList />
         </div>
         <Footer />

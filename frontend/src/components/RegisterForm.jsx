@@ -25,13 +25,7 @@ const RegisterForm = () => {
   }, [isAuthenticated, navigate]);
 
   // Si el contexto devuelve errores del backend, los mostramos
-  useEffect(() => {
-    if (registerErrors.length > 0) {
-      setError(registerErrors[0]);
-      setLoading(false);
-    }
-  }, [registerErrors]);
-
+  const backendError = registerErrors[0] ?? null;
 
   // --- HANDLERS ---
 
@@ -58,6 +52,7 @@ const RegisterForm = () => {
         contraseña: formData.password,
         telefono: formData.telefono
     });
+    setLoading(false);
   };
 
   const handleGoogleSuccess = async (credentialResponse) => {
@@ -76,16 +71,20 @@ const RegisterForm = () => {
   const labelStyles = "text-xs font-bold text-gray-600 ml-1 mb-0.5 block font-brand";
 
   return (
-    <div className="w-full max-w-md bg-white p-6 rounded-2xl shadow-xl lg:ml-24 lg:mr-12 mx-auto border border-gray-100 relative z-20 font-brand">
+    <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl lg:ml-24 lg:mr-12 mx-auto border border-gray-100 relative z-20 font-brand">
       
       {/* HEADER */}
-      <div className="mb-4 text-center l:text-left">
-        <h2 className="text-brand-brown text-lg font-bold font-brand">Bienvenido!</h2>
-        <h1 className="text-3xl font-extrabold text-black tracking-tight leading-none font-brand">Registrate</h1>
+      <div className="mb-6 text-left">
+        <h2 className="text-brand-brown text-lg font-medium font-brand">Bienvenido!</h2>
+        <h3 className="text-4xl font-bold font-brand text-black tracking-tight leading-none ">Registrate</h3>
       </div>
 
       {/* ERROR */}
-      {error && <div className="mb-2 bg-red-50 text-red-700 p-2 text-xs rounded border-l-4 border-red-500 font-brand">{error}</div>}
+      {(error || backendError) && (
+        <div className="mb-2 bg-red-50 text-red-700 p-2 text-xs rounded border-l-4 border-red-500 font-brand">
+          {error || backendError}
+        </div>
+      )}
 
       <form className="space-y-2" onSubmit={handleSubmit}>
         
@@ -131,7 +130,7 @@ const RegisterForm = () => {
         </div>
 
         {/* BOTONES */}
-        <div className="pt-4 flex flex-col items-center space-y-3">
+        <div className="pt-4 flex flex-col items-center space-y-4">
             
             <div className="w-full flex justify-center h-10 font-brand">
                  <GoogleLogin

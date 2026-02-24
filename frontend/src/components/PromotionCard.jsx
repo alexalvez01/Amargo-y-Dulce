@@ -4,9 +4,15 @@ export default function PromotionCard({ promo }) {
 
   const navigate = useNavigate();
   
+  // Función para formatear fecha a '24 Feb 2026'
+  function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    const options = { day: '2-digit', month: 'short', year: 'numeric' };
+    return date.toLocaleDateString('es-ES', options);
+  }
+
   return (
-    <div className="group bg-white rounded-xl w-full overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 p-4 relative">
-      
+    <div className="group bg-white rounded-xl w-full overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 p-8 relative">
       <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
         {promo.valor}%
       </span>
@@ -21,7 +27,7 @@ export default function PromotionCard({ promo }) {
         </p>
 
         <p className="text-xs text-gray-500">
-          Válido: {promo.fechainicio} - {promo.fechafin}
+          Válido: {formatDate(promo.fechainicio)} - {formatDate(promo.fechafin)}
         </p>
 
         {/* Productos asociados */}

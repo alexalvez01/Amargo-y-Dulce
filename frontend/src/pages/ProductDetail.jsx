@@ -91,7 +91,7 @@ export default function ProductDetail() {
   if (!product) return <div className="text-center py-20 font-brand">Producto no encontrado</div>;
 
   return (
-    <div className="bg-[#fcf8f5] flex flex-col min-h-screen font-brand">
+    <div className="bg-gray-200 flex flex-col min-h-screen font-brand">
       <Navbar />
 
       <div className="max-w-6xl mx-auto p-4 md:p-8 mt-8 grow">
@@ -127,9 +127,9 @@ export default function ProductDetail() {
           <div className="w-full md:w-1/2 flex flex-col justify-center">
             
             <div className="flex justify-between items-start mb-2">
-              <h1 className="text-3xl md:text-4xl font-bold text-brand-brown">
+              <h2 className="text-3xl md:text-4xl font-bold text-brand-brownDark">
                 {product.nombre}
-              </h1>
+              </h2>
             </div>
 
             <div className="flex gap-1 text-yellow-400 mb-4">

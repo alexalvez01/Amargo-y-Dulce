@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { getPromotionsRequest, hidePromotionRequest } from "../api/promotions";
+import { getPromotionsRequest, hidePromotionRequest, showPromotionRequest} from "../api/promotions";
 
 const PromotionContext = createContext();
 
@@ -27,18 +27,27 @@ export const PromotionProvider = ({ children }) => {
   const hidePromotion = async (id) => {
     try {
       await hidePromotionRequest(id);
-      setPromotions(promotions.filter((p) => p.idpromocion !== id));
+      getPromotions();
     } catch (error) {
       console.log(error);
     }
   };
+
+  const showPromotion = async (id) => {
+    try {
+      await showPromotionRequest(id);
+      getPromotions();
+    } catch (error) {
+      console.log(error);
+    }};
+
 
   useEffect(() => {
     getPromotions();
   }, []);
 
   return (
-    <PromotionContext.Provider value={{ promotions, loading, getPromotions, hidePromotion}}>
+    <PromotionContext.Provider value={{ promotions, loading, getPromotions, hidePromotion, showPromotion}}>
       {children}
     </PromotionContext.Provider>
   );
