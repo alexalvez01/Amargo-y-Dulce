@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export default function Hero() {
   return (
-    <section className="relative h-[600px] md:h-[700px] flex items-center justify-center text-center">
+    <section className="relative h-screen flex items-center justify-center text-center">
       
       {/* 1. Imagen de Fondo con superposición oscura */}
       <div 

@@ -3,7 +3,7 @@ import { Facebook, Instagram, Twitter, Phone } from "lucide-react";
 export default function Footer() {
   return (
 
-    <footer className="w-full bg-brand-beige text-brand-brown py-16 font-brand">
+    <footer id="footer" className="w-full bg-brand-beige text-brand-brown py-16 font-brand">
 
       <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
 

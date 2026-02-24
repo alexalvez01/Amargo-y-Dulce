@@ -77,9 +77,20 @@ export default function Navbar() {
           <NavLink to="/" className={navLinkStyles}>
             Nosotros
           </NavLink>
-          <NavLink to="/contact" className={navLinkStyles}>
+          <button
+            className={navLinkStyles({ isActive: false }) + " bg-transparent border-none outline-none"}
+            style={{ background: "none" }}
+            onClick={() => {
+              const footer = document.getElementById("footer");
+              if (footer) {
+                footer.scrollIntoView({ behavior: "smooth" });
+              } else {
+                window.location.href = "/#footer";
+              }
+            }}
+          >
             Contacto
-          </NavLink>
+          </button>
           <NavLink to="/shop" className={navLinkStyles}>
             Tienda
           </NavLink>
@@ -109,13 +120,21 @@ export default function Navbar() {
               Nosotros
             </NavLink>
 
-            <NavLink
-              to="/contact"
-              className={menuLinkStyles}
-              onClick={() => setIsMenuOpen(false)}
+            <button
+              className={menuLinkStyles + " bg-transparent border-none outline-none text-left w-full"}
+              style={{ background: "none" }}
+              onClick={() => {
+                setIsMenuOpen(false);
+                const footer = document.getElementById("footer");
+                if (footer) {
+                  footer.scrollIntoView({ behavior: "smooth" });
+                } else {
+                  window.location.href = "/#footer";
+                }
+              }}
             >
               Contacto
-            </NavLink>
+            </button>
 
             <NavLink
               to="/shop"
