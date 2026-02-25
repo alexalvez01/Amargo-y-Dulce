@@ -15,7 +15,6 @@ export default function Home() {
           <ServiceSection />
           <PopularProducts />
       </main>
-      
       <Footer />
     </div>
   )

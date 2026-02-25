@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Star, Heart, ShoppingCart, Minus, Plus } from "lucide-react";
+import { Star, Heart, ShoppingCart, Minus, Plus, LogIn } from "lucide-react";
 import toast from 'react-hot-toast'; 
 import { useAuth } from "../context/AuthContext";
 import { addToCartRequest } from "../api/cart";
@@ -30,7 +30,19 @@ export default function ProductInfo({
 
   // --- NUEVA FUNCIÓN PARA EL CARRITO ---
   const handleAddToCart = async () => {
-    // ... (tu código de agregar al carrito sigue igual de aquí para abajo)
+    // 1. VERIFICAMOS SI ESTÁ LOGUEADO PRIMERO
+    if (!isAuthenticated) {
+      toast.custom((t) => (
+        <div className={`flex items-center gap-3 bg-[#E8EFFF] border border-[#6B90FF] px-10 py-2 mt-9 rounded-full shadow-md pointer-events-auto ${t.visible ? 'toast-enter' : 'toast-leave'}`}>
+          <LogIn size={20} className="text-[#6B90FF]" />
+          <span className="text-[#6B90FF] font-brand font-medium">
+            Necesitas iniciar sesión
+          </span>
+        </div>
+      ), { id: 'login-toast', duration: 2500 });
+      
+      return;
+    }
     // 2. Intentamos enviar el producto al backend
     try {
       // Usamos el ID del producto (verificamos las mayúsculas por si acaso)
@@ -39,10 +51,15 @@ export default function ProductInfo({
       await addToCartRequest(productId, quantity);
       
       // Mensaje de éxito elegante con los colores de Amargo y Dulce
-      toast.success(`¡Agregaste ${quantity} cajas al carrito!`, {
-        icon: '🛒',
-        style: { fontFamily: 'inherit', background: '#eaddcc', color: '#4A3024' }
-      });
+      toast.custom((t) => (
+        <div className={`flex items-center gap-3 bg-[#E8F5E9] border border-[#4CAF50] px-10 py-2 mt-9 rounded-full shadow-md pointer-events-auto ${t.visible ? 'toast-enter' : 'toast-leave'}`}>
+          <ShoppingCart size={20} className="text-[#4CAF50]" />
+          <span className="text-[#4CAF50] font-brand font-medium">
+            Agregado al carrito 
+        </span>
+      </div>
+      ), { id: 'cart-toast', duration: 2500 }); // El id evita que se spamee si hacen muchos clics
+
       
       // Opcional: Volvemos el contador a 1 después de agregar
       setQuantity(1);

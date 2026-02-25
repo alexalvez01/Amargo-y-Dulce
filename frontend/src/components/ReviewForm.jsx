@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Star } from "lucide-react";
+import { Star, MessageCircleIcon, LogIn } from "lucide-react";
 import toast from 'react-hot-toast';
 import { useAuth } from "../context/AuthContext";
 import { createReviewRequest } from "../api/reviews";
@@ -16,7 +16,15 @@ export default function ReviewForm({ productId, productName, onReviewAdded }) {
 
     // 1. Barrera de seguridad: Usuario logueado
     if (!isAuthenticated) {
-      toast.error("Debes iniciar sesión para dejar tu reseña", { style: { fontFamily: 'inherit' } });
+      toast.custom((t) => (
+        <div className={`flex items-center gap-3 bg-[#E8EFFF] border border-[#6B90FF] px-10 py-2 mt-9 rounded-full shadow-md pointer-events-auto ${t.visible ? 'toast-enter' : 'toast-leave'}`}>
+          <LogIn size={20} className="text-[#6B90FF]" />
+          <span className="text-[#6B90FF] font-brand font-medium">
+            Necesitas iniciar sesión
+          </span>
+        </div>
+      ), { id: 'login-toast', duration: 2500 });
+      
       return;
     }
 
@@ -42,10 +50,14 @@ export default function ReviewForm({ productId, productName, onReviewAdded }) {
         comentario: comment
       });
 
-      toast.success("¡Gracias por compartir tu opinión!", {
-        icon: '⭐',
-        style: { fontFamily: 'inherit', background: '#eaddcc', color: '#4A3024' }
-      });
+      toast.custom((t) => (
+        <div className={`flex items-center gap-3 bg-[#E8F5E9] border border-[#4CAF50] px-10 py-2 mt-9 rounded-full shadow-md pointer-events-auto ${t.visible ? 'toast-enter' : 'toast-leave'}`}>
+          <MessageCircleIcon size={20} className="text-[#4CAF50]" />
+          <span className="text-[#4CAF50] font-brand font-medium">
+            ¡Gracias por tu reseña!
+          </span>
+        </div>
+      ), { id: 'review-toast', duration: 2500 }); // El id evita que se spamee si hacen muchos clics
 
       // Limpiamos el formulario
       setRating(0);
