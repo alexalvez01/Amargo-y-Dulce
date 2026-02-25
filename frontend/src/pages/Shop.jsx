@@ -89,7 +89,7 @@ export default function Shop() {
                 className="
                   appearance-none 
                   bg-[#fcf8f5] 
-                  text-[#4A3024] 
+                  text-brand-brownDark
                   font-brand 
                   border 
                   border-[#d4c3b3] 
@@ -100,16 +100,14 @@ export default function Shop() {
                   cursor-pointer 
                   outline-none 
                   shadow-sm 
-                  hover:border-[#6B4C3A] 
+                  hover:border-brand-brown 
                   focus:ring-2 
                   focus:ring-[#968373]/50 
                   transition-all
                   bg-no-repeat
                 "
                 style={{
-                  // Inyectamos la flecha con el color exacto de tu marca (#4A3024)
                   backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%234A3024' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                  // Aquí controlas el margen hacia la derecha de la flecha (1rem = 16px)
                   backgroundPosition: 'right 1rem center',
                   backgroundSize: '1.5em 1.5em',
                 }}

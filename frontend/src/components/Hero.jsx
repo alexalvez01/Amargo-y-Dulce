@@ -7,9 +7,9 @@ export default function Hero() {
       {/* 1. Imagen de Fondo con superposición oscura */}
       <div 
         className="absolute inset-0 bg-cover bg-center z-0"
-        style={{ backgroundImage: 'url("/images/hero-bg.webp")' }} // <--- ¡Pon aquí el nombre real de tu imagen!
+        style={{ backgroundImage: 'url("/images/hero-bg.webp")' }} 
       >
-        {/* Capa negra semitransparente para que el texto se lea bien */}
+        
         <div className="absolute inset-0 bg-black opacity-40"></div>
       </div>
 

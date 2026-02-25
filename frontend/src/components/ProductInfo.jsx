@@ -28,9 +28,8 @@ export default function ProductInfo({
     }
   };
 
-  // --- NUEVA FUNCIÓN PARA EL CARRITO ---
+  
   const handleAddToCart = async () => {
-    // 1. VERIFICAMOS SI ESTÁ LOGUEADO PRIMERO
     if (!isAuthenticated) {
       toast.custom((t) => (
         <div className={`flex items-center gap-3 bg-[#E8EFFF] border border-[#6B90FF] px-10 py-2 mt-9 rounded-full shadow-md pointer-events-auto ${t.visible ? 'toast-enter' : 'toast-leave'}`}>
@@ -43,7 +42,6 @@ export default function ProductInfo({
       
       return;
     }
-    // 2. Intentamos enviar el producto al backend
     try {
     
       const productId = product.idproducto || product.idProducto;
@@ -58,7 +56,7 @@ export default function ProductInfo({
             Agregado al carrito 
         </span>
       </div>
-      ), { id: 'cart-toast', duration: 2500 }); // El id evita que se spamee si hacen muchos clics
+      ), { id: 'cart-toast', duration: 2500 }); 
 
       
       setQuantity(1);

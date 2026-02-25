@@ -9,10 +9,13 @@ export const usePromotions = () => {
   return context;
 };
 
+
 export const PromotionProvider = ({ children }) => {
   const [promotions, setPromotions] = useState([]);
   const [loading, setLoading] = useState(true);
 
+
+// Obtener todas las promociones
   const getPromotions = async () => {
     try {
       const res = await getPromotionsRequest();
@@ -24,6 +27,8 @@ export const PromotionProvider = ({ children }) => {
     }
   };
 
+
+  // Ocultar una promoción (actualizar su estado a oculto)
   const hidePromotion = async (id) => {
     try {
       await hidePromotionRequest(id);
@@ -33,6 +38,8 @@ export const PromotionProvider = ({ children }) => {
     }
   };
 
+
+  // Mostrar una promoción (actualizar su estado a visible)
   const showPromotion = async (id) => {
     try {
       await showPromotionRequest(id);

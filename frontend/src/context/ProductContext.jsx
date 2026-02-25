@@ -43,6 +43,7 @@ export const ProductProvider = ({ children }) => {
     }
   };
 
+  // Obtener todos los productos
   const getProducts = async () => {
     try {
       const res = await getProductsRequest();
@@ -54,7 +55,7 @@ export const ProductProvider = ({ children }) => {
     }
   };
 
-
+// Crear un nuevo producto
   const createProduct = async (product) => {
     try {
       const res = await createProductRequest(product);
@@ -64,7 +65,7 @@ export const ProductProvider = ({ children }) => {
     }
   };
 
-
+// Ocultar un producto (actualizar su estado a oculto)
   const hideProduct = async (id) => {
     try {
       await hideProductRequest(id);
@@ -73,7 +74,7 @@ export const ProductProvider = ({ children }) => {
       console.log(error);
     }
   };
-  
+  // Mostrar un producto (actualizar su estado a visible)
   const showProduct = async (id) => {
   try {
     await showProductRequest(id);

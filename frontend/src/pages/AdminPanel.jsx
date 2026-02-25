@@ -16,9 +16,13 @@ function AdminPanel() {
   return (
     <div>
       <Navbar/>
-      <div className="min-h-screen bg-gray-200 flex items-center justify-center font-brand">
+      <div className="min-h-screen bg-[#f7f2ec] flex items-center justify-center font-brand">
+
         <div className="my-20 py-14 bg-white rounded-2xl max-w-5xl w-full p-8 shadow-md">
+
           <h2 className="text-center text-4xl font-semibold text-brand-brownDark mb-6">Panel de Administrador</h2>
+
+          {/* Menú de opciones para el administrador */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {adminMenu.slice(0, 6).map((item) => (
               <div

@@ -8,8 +8,8 @@ import toast from 'react-hot-toast';
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import ProductInfo from "../components/ProductInfo"; // Importamos el componente de arriba
-import ReviewSection from "../components/ReviewSection"; // Importamos el componente de las reseñas
+import ProductInfo from "../components/ProductInfo"; 
+import ReviewSection from "../components/ReviewSection"; 
 import ReviewForm from "../components/ReviewForm";
 
 export default function ProductDetail() {
@@ -20,10 +20,10 @@ export default function ProductDetail() {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   
-  // Estado para las reseñas que conectará la parte de abajo con la de arriba
+ 
   const [averageRating, setAverageRating] = useState(0);
   
-  // Estados para Favoritos
+  
   const [isFavorite, setIsFavorite] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -51,6 +51,8 @@ export default function ProductDetail() {
     fetchData();
   }, [id, isAuthenticated, getProductById]);
 
+  
+  // Handler para alternar favorito
   const handleToggleFavorite = async () => {
     if (!isAuthenticated) {
       toast.custom((t) => (
@@ -77,7 +79,7 @@ export default function ProductDetail() {
       setIsFavorite(isFavorite);
     }
   };
-
+  // Si aún está cargando, o si el producto no se encuentra, mostramos mensajes adecuados
   if (loading) return <div className="text-center py-20 font-brand">Cargando...</div>;
   if (!product) return <div className="text-center py-20 font-brand">Producto no encontrado</div>;
 
@@ -101,15 +103,15 @@ export default function ProductDetail() {
         <ReviewSection 
           productId={id} 
           onRatingCalculated={setAverageRating} 
-          refreshTrigger={refreshReviews} // <-- Le pasamos el gatillo
+          refreshTrigger={refreshReviews} 
         />
       </div>
 
-      {/* NUEVO: El Formulario de Reseñas de borde a borde */}
+      {/* Formulario de Reseñas de borde a borde */}
       <ReviewForm 
         productId={id} 
         productName={product.nombre} 
-        onReviewAdded={() => setRefreshReviews(!refreshReviews)} // <-- Dispara la actualización
+        onReviewAdded={() => setRefreshReviews(!refreshReviews)} 
       />
 
       <Footer />

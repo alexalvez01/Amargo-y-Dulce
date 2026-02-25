@@ -32,7 +32,7 @@ export default function DeleteProductPromotionPanel() {
   if (loading) return <div className="text-center py-10">Cargando...</div>;
 
   return (
-    <div className="min-h-screen bg-gray-200 font-brand relative">
+    <div className="min-h-screen bg-[#f7f2ec] font-brand relative">
       <Navbar />
       {/* Flecha para volver */}
       <button
@@ -46,6 +46,8 @@ export default function DeleteProductPromotionPanel() {
         <h2 className="text-center text-4xl font-semibold text-brand-brownDark mb-8 border-b border-gray-300 pb-4">
           Dar de baja un producto o promoción
         </h2>
+
+        {/* Productos */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mx-auto max-w-4xl px-4">
           {products.filter(p => p.estado === "activo").map((product) => (
             <div key={product.idproducto} className="relative">
@@ -77,7 +79,7 @@ export default function DeleteProductPromotionPanel() {
       {/* Modal de confirmación */}
       {modal.open && (
         <div className="fixed inset-0 z-40 flex items-center justify-center">
-          {/* Fondo oscuro */}
+          
           <div className="absolute inset-0 bg-[#00000044] transition-opacity" onClick={closeModal}></div>
           <div className="relative z-50 bg-white rounded-xl shadow-xl p-8 min-w-[340px] max-w-[95vw] w-[500px] border-t-4 border-brand-brownDark">
             <h3 className="text-2xl font-semibold text-brand-brownDark mb-6 text-center">

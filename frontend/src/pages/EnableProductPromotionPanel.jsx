@@ -30,7 +30,7 @@ export default function EnableProductPromotionPanel() {
   if (loading) return <div className="text-center py-10">Cargando...</div>;
 
   return (
-    <div className="min-h-screen bg-gray-200 font-brand relative">
+    <div className="min-h-screen bg-[#f7f2ec] font-brand relative">
       <Navbar />
       {/* Flecha para volver */}
       <button
@@ -44,6 +44,7 @@ export default function EnableProductPromotionPanel() {
         <h2 className="text-center text-4xl font-semibold text-brand-brownDark mb-8 border-b border-gray-300 pb-4">
           Dar de alta un producto o promoción
         </h2>
+          {/* Productos */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mx-auto max-w-4xl px-4">
           {products.filter(p => p.estado === "inactivo").map((product) => (
             <div key={product.idproducto} className="relative">

@@ -28,6 +28,7 @@ export default function Navbar() {
     setIsMenuOpen(false);
   }
 
+  // Efecto para cerrar los menús al hacer clic fuera de ellos
   useEffect(() => {
     function handleClickOutside(event) {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
@@ -52,6 +53,8 @@ export default function Navbar() {
 
   return (
     <nav className="fixed flex flex-row w-full z-70 items-center justify-between bg-brand-beige px-3 text-brand-brown lg:px-28">
+
+      {/* --- LOGO Y BOTÓN PARA MOBILE --- */}
       <div className="flex items-center">
         <button
           className="lg:hidden"
@@ -73,6 +76,7 @@ export default function Navbar() {
           className="max-w-24 lg:hidden"
         />
 
+        {/* --- MENÚ PRINCIPAL PARA DESKTOP --- */}
         <div className="hidden lg:flex gap-2.5 font-brand text-sm">
           <NavLink to="/" className={navLinkStyles}>
             Nosotros
@@ -99,6 +103,7 @@ export default function Navbar() {
           </NavLink>
         </div>
       </div>
+      {/* --- MENÚ PRINCIPAL PARA MOBILE (se muestra al hacer clic en el botón) --- */}
         <div
           className={`
           lg:hidden absolute top-full left-0 w-full bg-brand-beige 
@@ -153,8 +158,9 @@ export default function Navbar() {
             </NavLink>
           </div>
         </div>
-
-
+      
+      
+      {/* --- ICONO Y NOMBRE DE USUARIO O INICIAR SESIÓN--- */}
       <div className="flex items-center gap-6">
         <div
           className="relative flex items-end  gap-2 cursor-pointer font-brand text-sm "
@@ -176,7 +182,9 @@ export default function Navbar() {
               Iniciar Sesión
             </NavLink>
           )}
-       
+
+
+            {/* --- MENÚ DE USUARIO (se muestra al hacer clic en el nombre) --- */}
             <div className={`absolute top-8  right-0 w-44 z-10 bg-brand-beige shadow-lg  py-2 border border-brand-brown/20 lg:left-0 lg:w-56
             transform transition-all duration-300 ease-in-out
             ${isOpen
@@ -232,6 +240,7 @@ export default function Navbar() {
             </div>
           
         </div>
+        {/* --- ICONOS DE CARRITO Y FAVORITOS (solo para usuarios normales en desktop) --- */}
         {user ? (
           <>
             <NavLink
@@ -250,6 +259,8 @@ export default function Navbar() {
           </>
         ) : null}
 
+        
+        {/* --- BOTÓN DE PANEL DE ADMINISTRACIÓN (solo para admins) --- */}
         {user && user.rol === "admin" ? (
           <NavLink
             to="/admin-panel"

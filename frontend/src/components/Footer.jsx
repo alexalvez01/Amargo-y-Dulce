@@ -7,6 +7,7 @@ export default function Footer() {
 
       <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
 
+        {/* --- SECCIÓN DE REDES SOCIALES --- */}
         <div className="flex flex-col items-center">
           <h3 className="text-xl font-bold mb-4">Redes sociales:</h3>
           <div className="flex gap-4">
@@ -16,12 +17,13 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* --- SECCIÓN DE DIRECCIÓN --- */}
         <div className="flex flex-col items-center">
           <h3 className="text-xl font-bold mb-4">Encontranos en:</h3>
           <p className="text-sm font-medium">San Martín 689 -</p>
           <p className="text-sm font-medium">Tigre - Buenos Aires - Argentina</p>
         </div>
-
+        {/* --- SECCIÓN DE CONTACTO --- */}
         <div className="flex flex-col items-center">
           <h3 className="text-xl font-bold mb-4">Contactanos en:</h3>
           <div className="flex items-center gap-2">

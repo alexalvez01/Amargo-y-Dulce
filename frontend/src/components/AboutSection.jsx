@@ -2,12 +2,9 @@ import React from 'react';
 
 export default function AboutSection() {
   return (
-    // Sección principal de ancho completo que usa CSS Grid
-    // En móvil es 1 columna, en escritorio (md) son 2 columnas iguales.
     <section className="w-full grid grid-cols-1 md:grid-cols-2 font-brand">
       
       {/* --- COLUMNA DE TEXTO (Izquierda) --- */}
-      {/* Usamos el color marrón oscuro de fondo y texto beige claro */}
       <div className="bg-brand-brownDark text-brand-beige p-12 md:p-24 flex flex-col justify-center">
         
         {/* Título */}
@@ -27,12 +24,12 @@ export default function AboutSection() {
       </div>
 
       {/* --- COLUMNA DE IMAGEN (Derecha) --- */}
-      {/* Definimos una altura mínima para que siempre se vea bien */}
+
       <div className="h-full min-h-[400px] md:min-h-[500px]">
         <img 
-          src="/images/about-us-bombones.webp" // <--- ¡REEMPLAZA CON EL NOMBRE REAL DE TU IMAGEN!
+          src="/images/about-us-bombones.webp" 
           alt="Bombones artesanales de Amargo y Dulce" 
-          className="w-full h-full object-cover" // 'object-cover' hace que la imagen llene el espacio sin deformarse
+          className="w-full h-full object-cover" 
         />
       </div>
       
