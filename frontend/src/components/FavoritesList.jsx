@@ -11,7 +11,6 @@ const FavoritesList = () => {
     const fetchFavorites = async () => {
       try {
         const res = await getFavoritesRequest();
-        console.log("LO QUE MANDA EL BACKEND:", res.data);
         setFavorites(res.data);
       } catch (error) {
         console.error("Error al cargar favoritos:", error);
