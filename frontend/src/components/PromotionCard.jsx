@@ -4,7 +4,7 @@ export default function PromotionCard({ promo }) {
 
   const navigate = useNavigate();
   
-  // Función para formatear fecha a '24 Feb 2026'
+
   function formatDate(dateStr) {
     const date = new Date(dateStr);
     const options = { day: '2-digit', month: 'short', year: 'numeric' };

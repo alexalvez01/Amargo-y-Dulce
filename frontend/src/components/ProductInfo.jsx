@@ -30,21 +30,17 @@ export default function ProductInfo({
 
   // --- NUEVA FUNCIÓN PARA EL CARRITO ---
   const handleAddToCart = async () => {
-    // ... (tu código de agregar al carrito sigue igual de aquí para abajo)
-    // 2. Intentamos enviar el producto al backend
     try {
-      // Usamos el ID del producto (verificamos las mayúsculas por si acaso)
+    
       const productId = product.idproducto || product.idProducto;
       
       await addToCartRequest(productId, quantity);
       
-      // Mensaje de éxito elegante con los colores de Amargo y Dulce
       toast.success(`¡Agregaste ${quantity} cajas al carrito!`, {
         icon: '🛒',
         style: { fontFamily: 'inherit', background: '#eaddcc', color: '#4A3024' }
       });
       
-      // Opcional: Volvemos el contador a 1 después de agregar
       setQuantity(1);
 
     } catch (error) {
@@ -108,10 +104,25 @@ export default function ProductInfo({
           $ {Number(product.precio).toLocaleString('es-AR')}
         </p>
 
-        <p className="text-green-600 font-semibold mb-6 flex items-center gap-2 font-brand">
-          <span className="w-2 h-2 rounded-full bg-green-600"></span>
-          En Stock ({product.stock} disponibles)
-        </p>
+        {/* Indicador de stock */}
+        {product.stock > 10 && (
+          <p className="text-green-600 font-semibold mb-6 flex items-center gap-2 font-brand">
+            <span className="w-2 h-2 rounded-full bg-green-600"></span>
+            En stock
+          </p>
+        )}
+        {product.stock > 0 && product.stock <= 10 && (
+          <p className="text-blue-600 font-semibold mb-6 flex items-center gap-2 font-brand">
+            <span className="w-2 h-2 rounded-full bg-blue-600"></span>
+            Últimas unidades
+          </p>
+        )}
+        {product.stock === 0 && (
+          <p className="text-red-600 font-semibold mb-6 flex items-center gap-2 font-brand">
+            <span className="w-2 h-2 rounded-full bg-red-600"></span>
+            Sin stock
+          </p>
+        )}
 
         <div className="mb-6">
             <span className="text-sm font-bold text-brand-brown block mb-2 font-brand">Cantidad:</span>
@@ -134,7 +145,7 @@ export default function ProductInfo({
 
         <button 
             className="w-full md:w-auto bg-[#6B4C3A] text-white font-bold py-4 px-8 rounded-xl shadow-lg hover:bg-[#543b2d] transition-transform hover:scale-105 flex items-center justify-center gap-3 font-brand"
-            onClick={handleAddToCart} // ¡Aquí llamamos a nuestra función!
+            onClick={handleAddToCart} 
         >
             <ShoppingCart size={24} />
             Agregar al carrito
