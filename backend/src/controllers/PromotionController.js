@@ -23,8 +23,7 @@ export const getAllPromotions = async (req, res) => {
         ON pp.idpromocionfk = pr.idpromocion
       JOIN producto p 
         ON p.idproducto = pp.idproductofk
-      WHERE pr.estado = 'activo'
-        AND CURRENT_DATE BETWEEN pr.fechainicio AND pr.fechafin
+      WHERE CURRENT_DATE BETWEEN pr.fechainicio AND pr.fechafin
       ORDER BY pr.fechainicio ASC;
     `;
 

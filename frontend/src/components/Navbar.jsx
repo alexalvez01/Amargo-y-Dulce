@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
-import { NavLink } from "react-router-dom";
+import { NavLink,useNavigate } from "react-router-dom";
 import {
   User,
   ShoppingCart,
@@ -20,6 +20,8 @@ export default function Navbar() {
 
   const userMenuRef = useRef(null);
   const menuRef = useRef(null);
+
+  const navigate = useNavigate();
 
   const [isCartAnimating, setIsCartAnimating] = useState(false);
 
@@ -79,14 +81,16 @@ export default function Navbar() {
         <img
           src="/images/logo.webp"
           alt="Amargo y dulce"
-          className="hidden lg:block max-w-28"
+          className="hidden lg:block max-w-28 cursor-pointer"
+          onClick={() => {navigate("/")}}
         />
       </div>
       <div className="flex justify-center lg:justify-center">
         <img
           src="/images/logo.webp"
           alt="Amargo y dulce"
-          className="max-w-24 lg:hidden"
+          className="max-w-24 lg:hidden cursor-pointer"
+          onClick={() => {navigate("/")}}
         />
 
         {/* --- MENÚ PRINCIPAL PARA DESKTOP --- */}
@@ -95,8 +99,8 @@ export default function Navbar() {
             Nosotros
           </NavLink>
           <button
-            className={navLinkStyles({ isActive: false }) + " bg-transparent border-none outline-none"}
-            style={{ background: "none" }}
+            className={navLinkStyles({ isActive: false }) + " bg-transparent border-none outline-none cursor-pointer"}
+            id="contact"
             onClick={() => {
               const footer = document.getElementById("footer");
               if (footer) {

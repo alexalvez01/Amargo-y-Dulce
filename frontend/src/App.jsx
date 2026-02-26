@@ -8,11 +8,13 @@ import Login from "./pages/Login.jsx";
 import ProductDetail from "./pages/ProductDetail.jsx"; // Tu página
 import Register from "./pages/Register.jsx";
 import Shop from "./pages/Shop.jsx";
+import ScrollToTop from "./components/ScrollToTop.jsx";
 import ForgotPasswordPage from "./pages/ForgotPassword.jsx";
 import ResetPasswordPage from "./pages/ResetPassword.jsx";
 import AdminPanel from "./pages/AdminPanel.jsx";
 import DeleteProductPromotionPanel from "./pages/DeleteProductPromotionPanel.jsx";
 import EnableProductPromotionPanel from "./pages/EnableProductPromotionPanel.jsx";
+import UpdateProductPanel from "./pages/UpdateProductPanel.jsx";
 import FavoritesPage from "./pages/Favorites.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import AdminRoute from "./components/AdminRoute.jsx";
@@ -24,7 +26,8 @@ function App() {
       <PromotionProvider>
         <AuthProvider>
           <BrowserRouter>
-          <Toaster position="top-center" reverseOrder={false} />
+            <ScrollToTop />
+            <Toaster position="top-center" reverseOrder={false} />
             <Routes>
               {/* --- RUTAS PÚBLICAS (Entra cualquiera) --- */}
               <Route path="/" element={<Home />} />
@@ -41,6 +44,7 @@ function App() {
                 <Route path="/admin-panel" element={<AdminPanel />} />
                 <Route path="/admin/enable-product-promotion" element={<EnableProductPromotionPanel />} />
                 <Route path="/admin/delete-product-promotion" element={<DeleteProductPromotionPanel />} />
+                <Route path="/admin/update-product" element={<UpdateProductPanel />} />
               </Route>
             </Routes>
           </BrowserRouter>
