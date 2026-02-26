@@ -16,6 +16,7 @@ import EnableProductPromotionPanel from "./pages/EnableProductPromotionPanel.jsx
 import FavoritesPage from "./pages/Favorites.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import AdminRoute from "./components/AdminRoute.jsx";
+import CartPage from "./pages/CartPage.jsx";
 
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
               <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
               <Route path="/product/:id" element={<ProductDetail />} />
               <Route element={<ProtectedRoute />}>
+              <Route path="/cart" element={<CartPage />} />
                 <Route path="/favorites" element={<FavoritesPage />} />
               </Route>
               <Route element={<AdminRoute />}>

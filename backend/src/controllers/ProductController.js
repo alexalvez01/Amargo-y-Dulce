@@ -228,40 +228,60 @@ export const updateStock = async (req, res) => {
 // Basado en las tablas: producto, factura, lineafactura
 export const getTopProducts = async (req, res) => {
   try {
-    const topProducts = await sql`
+    // 1. Intentamos traer el Top 3 de los más vendidos
+    let topProducts = await sql`
       SELECT 
         p.idProducto, 
         p.nombre, 
         p.descripcion, 
         p.precio, 
         p.imagen, 
-        p."tamaño", -- Va entre comillas porque usaste la ñ
+        p."tamaño", 
         p.sabor,
         COALESCE(SUM(lf.cantidad), 0) as total_vendido
       FROM producto p
       INNER JOIN lineafactura lf ON p.idProducto = lf.idProductoFK
       INNER JOIN factura f ON lf.idFacturaFK = f.idFactura
-      WHERE f.fechaCreacion >= NOW() - INTERVAL '30 days' -- Últimos 30 días
-      AND p.estado = 'activo'                             -- Solo productos activos
+      WHERE f.fechaCreacion >= NOW() - INTERVAL '30 days'
+      AND p.estado = 'activo'
       GROUP BY p.idProducto
-      ORDER BY total_vendido DESC                         -- De mayor a menor venta
-      LIMIT 3;                                            -- Solo el podio (Top 3)
+      ORDER BY total_vendido DESC
+      LIMIT 3;
     `;
 
-    // PLAN B: Si la tienda es nueva y no hay facturas aún
-    // Devolvemos 3 productos aleatorios para que el Home no quede vacío
-    if (topProducts.length === 0) {
-       const randomProducts = await sql`
-         SELECT * FROM producto 
-         WHERE estado = 'activo' 
-         ORDER BY RANDOM() -- En Postgres esto desordena al azar
-         LIMIT 3;
-       `;
-       return res.status(200).json(randomProducts);
+    // 2. ¿Nos faltan productos para llegar a 3? ¡A rellenar!
+    if (topProducts.length < 3) {
+      const faltantes = 3 - topProducts.length;
+      
+      // Sacamos los IDs de los chocolates que YA están en el top
+      const idsExistentes = topProducts.map(p => p.idproducto || p.idProducto);
+
+      // Traemos varios productos aleatorios de la DB de forma simple
+      const randomProducts = await sql`
+        SELECT 
+          p.idProducto, p.nombre, p.descripcion, p.precio, p.imagen, p."tamaño", p.sabor, 
+          0 as total_vendido
+        FROM producto p 
+        WHERE p.estado = 'activo' 
+        ORDER BY RANDOM()
+        LIMIT 10;
+      `;
+
+      // MAGIA DE JAVASCRIPT: Filtramos los que ya tenemos en el podio
+      const filtrados = randomProducts.filter(
+        p => !idsExistentes.includes(p.idproducto || p.idProducto)
+      );
+
+      // Recortamos solo la cantidad exacta que nos falta (1, 2 o 3)
+      const paraRellenar = filtrados.slice(0, faltantes);
+
+      // 3. Juntamos la lista original con los "rellenos"
+      topProducts = [...topProducts, ...paraRellenar];
     }
 
     return res.status(200).json(topProducts);
   } catch (error) {
+    // Si vuelve a fallar, el error exacto saldrá en la terminal donde corre tu backend
     console.error("Error getTopProducts:", error);
     return res.status(500).json({ error: "Error al obtener productos populares" });
   }

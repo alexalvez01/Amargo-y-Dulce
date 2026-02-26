@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import {
   User,
   ShoppingCart,
@@ -76,19 +76,27 @@ export default function Navbar() {
           {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
 
-        <img
-          src="/images/logo.webp"
-          alt="Amargo y dulce"
-          className="hidden lg:block max-w-28"
-        />
+        {/* LOGO VERSIÓN ESCRITORIO (Clickable) */}
+        <Link to="/" className="hidden lg:block">
+          <img
+            src="/images/logo.webp"
+            alt="Amargo y dulce"
+            className="max-w-28"
+            onClick={() => window.scrollTo(0, 0)}
+          />
+        </Link>
       </div>
-      <div className="flex justify-center lg:justify-center">
-        <img
-          src="/images/logo.webp"
-          alt="Amargo y dulce"
-          className="max-w-24 lg:hidden"
-        />
 
+      <div className="flex justify-center lg:justify-center">
+        {/* LOGO VERSIÓN MÓVIL (Clickable) */}
+        <Link to="/" className="lg:hidden">
+          <img
+            src="/images/logo.webp"
+            alt="Amargo y dulce"
+            className="max-w-24"
+            onClick={() => window.scrollTo(0, 0)}
+          />
+        </Link>
         {/* --- MENÚ PRINCIPAL PARA DESKTOP --- */}
         <div className="hidden lg:flex gap-2.5 font-brand text-sm">
           <NavLink to="/" className={navLinkStyles}>

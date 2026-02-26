@@ -25,6 +25,7 @@ export const getActiveCart = async (req, res) => {
         p.nombre, 
         p.precio, 
         p.imagen,
+        p."tamaño" AS tamaño,
         pc.cantidad, 
         pc.precioUnitario,
         (pc.cantidad * pc.precioUnitario) as subtotal
