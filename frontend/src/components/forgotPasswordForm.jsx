@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { forgotPasswordRequest } from '../api/auth';
+import { useNavigate } from 'react-router-dom';
+import { ChevronLeft } from 'lucide-react';
 
 const ForgotPasswordForm = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -26,6 +29,14 @@ const ForgotPasswordForm = () => {
 
   return (
     <div className="w-full max-w-md mx-auto bg-white p-8 rounded-3xl shadow-2xl border lg:mr-12 border-gray-100 font-brand">
+      <button
+        type="button"
+        className="absolute left-2 top-4 flex items-center gap-2 text-brand-brownDark hover:text-brand-brown hover:underline transition-colors z-20 cursor-pointer "
+        onClick={() => navigate(-1)}
+      >
+        <ChevronLeft size={28} />
+        <span className="font-semibold text-lg">Volver</span>
+      </button>
       <h2 className="text-xl sm:text-2xl font-bold text-[#6B4C3A] mb-1">
         Olvidaste tu contraseña?
       </h2>

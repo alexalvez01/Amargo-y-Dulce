@@ -32,3 +32,57 @@
 .toast-leave {
     animation: slideUpFade 0.3s ease-in forwards;
 }
+
+/* Animación para la bolita del carrito */
+@keyframes flyBallToCart {
+  0% {
+    top: var(--start-top);
+    left: var(--start-left);
+    transform: scale(1);
+    opacity: 1;
+  }
+  20% {
+    transform: scale(1.3) translateY(-15px); 
+    opacity: 1;
+  }
+  100% {
+    top: 20px;       /* Ajustá esto a la altura de tu Navbar */
+    left: 85vw;      /* Ajustá esto a la posición de tu carrito */
+    transform: scale(0.3);
+    opacity: 0;
+  }
+}
+
+.flying-ball {
+  position: fixed;
+  z-index: 9999;
+  width: 20px;
+  height: 20px;
+  background-color: #6B4C3A; /* El marrón de tu marca */
+  border-radius: 50%; /* La hace redondita */
+  pointer-events: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  animation: flyBallToCart 0.8s cubic-bezier(0.5, 0, 0.2, 1) forwards; 
+}
+
+/* Animación para que el carrito se agrande */
+@keyframes cartBump {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.3) translateY(-3px); color: #4CAF50; } /* Crece y se pone verde un instante */
+  100% { transform: scale(1); }
+}
+
+.animate-cart-bump {
+  animation: cartBump 0.4s ease-out;
+}
+
+/* NUEVO: La animación del +1 flotante */
+@keyframes floatUpFade {
+  0% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-15px) scale(1.2); }
+}
+
+.animate-fade-up {
+  position: absolute;
+  animation: floatUpFade 0.5s ease-out forwards;
+}

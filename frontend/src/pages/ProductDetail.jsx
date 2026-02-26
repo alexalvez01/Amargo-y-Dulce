@@ -3,8 +3,10 @@ import { useParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getFavoritesRequest, toggleFavoriteRequest } from "../api/favorites";
 import { useProducts } from "../context/ProductContext";
-import { LogIn } from 'lucide-react';
+import { LogIn, ChevronLeft } from 'lucide-react';
 import toast from 'react-hot-toast'; 
+import { useNavigate } from "react-router-dom";
+
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -26,6 +28,7 @@ export default function ProductDetail() {
   
   const [isFavorite, setIsFavorite] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  const navigate = useNavigate();
 
   const [refreshReviews, setRefreshReviews] = useState(false);
 
@@ -97,6 +100,15 @@ export default function ProductDetail() {
           onToggleFavorite={handleToggleFavorite}
         />
       </div>
+
+      <button
+        type="button"
+        className="absolute left-2 top-12 lg:top-15 flex items-center gap-2 text-brand-brownDark hover:text-brand-brown hover:underline transition-colors z-100 cursor-pointer "
+        onClick={() => navigate(-1)}
+      >
+        <ChevronLeft size={28} />
+        <span className="font-semibold text-lg">Volver</span>
+      </button>
 
       {/* Componente Inferior: Las reseñas */}
       <div className="max-w-6xl mx-auto mt-12 mb-20">

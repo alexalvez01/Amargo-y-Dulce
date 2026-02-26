@@ -21,6 +21,8 @@ export default function Navbar() {
   const userMenuRef = useRef(null);
   const menuRef = useRef(null);
 
+  const [isCartAnimating, setIsCartAnimating] = useState(false);
+
   // Función para cerrar sesión correctamente 
   const handleLogout = () => {
     logout();
@@ -41,6 +43,17 @@ export default function Navbar() {
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const handleCartUpdate = () => {
+      setIsCartAnimating(true);
+      // Apagamos la animación a los 400ms para que pueda volver a saltar si agregan otro
+      setTimeout(() => setIsCartAnimating(false), 400); 
+    };
+
+    window.addEventListener('cart-updated', handleCartUpdate);
+    return () => window.removeEventListener('cart-updated', handleCartUpdate);
   }, []);
 
   const navLinkStyles = ({ isActive }) =>
@@ -206,7 +219,7 @@ export default function Navbar() {
                   to="/cart"
                   className={userMenuLinkStyles}
                 >
-                  <ShoppingCart size={18} />
+                  <ShoppingCart size={18} className={`transition-all duration-300 ${isCartAnimating ? 'animate-cart-bump text-[#4CAF50]' : ''}`} />
                   Carrito
                 </NavLink>
 
@@ -247,7 +260,14 @@ export default function Navbar() {
               to="/cart"
               className={user.rol === "admin" ? "hidden" : "hidden lg:block"}
             >
-              <ShoppingCart size={20} />
+            <div className="relative inline-flex items-center">
+              <ShoppingCart size={20} className= {`mt-2 transition-all duration-500 ${isCartAnimating ? 'animate-cart-bump text-[#4CAF50]' : "transition-colors text-brand-brown hover:text-brand-brownDark"}`} />
+              {isCartAnimating && (
+                <span className="animate-fade-up top-10 -right-3 text-sm font-black text-[#4CAF50] pointer-events-none">
+                  +1
+                </span>
+              )}
+            </div>
             </NavLink>
 
             <NavLink

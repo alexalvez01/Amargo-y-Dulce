@@ -2,10 +2,12 @@ import { useState, useEffect } from "react";
 import { useAuth } from '../context/AuthContext'; 
 import { Link, useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
+import { ChevronLeft } from 'lucide-react'
+import Home from "../pages/Home";
 
 const LoginForm = () => {
   const navigate = useNavigate();
- 
+
   const { signin, signinGoogle, isAuthenticated, errors: loginErrors } = useAuth();
 
   // STATE
@@ -62,6 +64,14 @@ const LoginForm = () => {
 
   return (
     <div className="w-full max-w-md mx-auto bg-white p-8 rounded-3xl shadow-2xl border border-gray-100 font-brand">
+      <button
+        type="button"
+        className="absolute left-2 top-4 flex items-center gap-2 text-brand-brownDark hover:text-brand-brown hover:underline transition-colors z-20 cursor-pointer "
+        onClick={() => navigate(-1)}
+      >
+        <ChevronLeft size={28} />
+        <span className="font-semibold text-lg">Volver</span>
+      </button>
 
       {/* HEADER */}
       <div className="mb-6 text-left">

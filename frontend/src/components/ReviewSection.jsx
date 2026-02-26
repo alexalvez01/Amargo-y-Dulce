@@ -40,7 +40,7 @@ export default function ReviewSection({ productId, onRatingCalculated, refreshTr
 
   return (
     <div className="w-full">
-      <h2 className="text-2xl font-bold text-brand-brownDark mb-8 font-brand">Reseñas y valoraciones</h2>
+      <h2 className="text-2xl font-bold text-center lg:text-left text-brand-brownDark mb-8 font-brand">Reseñas y valoraciones</h2>
       
       {reviews.length === 0 ? (
         <p className="text-gray-500 font-brand">Aún no hay reseñas para este producto. ¡Sé el primero en opinar!</p>
