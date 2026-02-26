@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import {
   User,
   ShoppingCart,
@@ -20,6 +20,8 @@ export default function Navbar() {
 
   const userMenuRef = useRef(null);
   const menuRef = useRef(null);
+
+  const navigate = useNavigate();
 
   const [isCartAnimating, setIsCartAnimating] = useState(false);
 
@@ -103,8 +105,8 @@ export default function Navbar() {
             Nosotros
           </NavLink>
           <button
-            className={navLinkStyles({ isActive: false }) + " bg-transparent border-none outline-none"}
-            style={{ background: "none" }}
+            className={navLinkStyles({ isActive: false }) + " bg-transparent border-none outline-none cursor-pointer"}
+            id="contact"
             onClick={() => {
               const footer = document.getElementById("footer");
               if (footer) {

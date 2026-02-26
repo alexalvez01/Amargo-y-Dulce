@@ -59,7 +59,7 @@ export default function Shop() {
 
       <div className="max-w-svw mx-auto  py-10 pt-20 font-brand text-sm">
         {/* Buscador y ordenar */}
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-10 border-b border-gray-300 pb-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-10 border-b border-[#664C3E44] pb-6">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
             {/* Buscador */}
             <div className="flex w-full max-w-md">

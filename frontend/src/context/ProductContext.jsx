@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 import {
   getProductsRequest,
   createProductRequest,
+  updateProductRequest,
   hideProductRequest,
   getProductRequest,
   getTopSalesProductsRequest,
@@ -65,6 +66,22 @@ export const ProductProvider = ({ children }) => {
     }
   };
 
+  // Actualizar un producto por id
+  const updateProduct = async (id, productData) => {
+    try {
+      const res = await updateProductRequest(id, productData);
+      setProducts((prevProducts) =>
+        prevProducts.map((product) =>
+          product.idproducto === id ? res.data : product
+        )
+      );
+      return { success: true, data: res.data };
+    } catch (error) {
+      console.log(error);
+      return { success: false, error };
+    }
+  };
+
 // Ocultar un producto (actualizar su estado a oculto)
   const hideProduct = async (id) => {
     try {
@@ -95,6 +112,7 @@ export const ProductProvider = ({ children }) => {
         loading,
         getProducts,
         createProduct,
+        updateProduct,
         hideProduct,
         getProductById,
         getTopSalesProducts,

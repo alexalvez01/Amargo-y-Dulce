@@ -29,7 +29,8 @@ function AdminPanel() {
                 key={item.id}
                 className="bg-brand-beige rounded-lg shadow h-[120px] flex flex-col items-center justify-center px-4 font-medium border-t-4 border-brand-brown cursor-pointer transition-transform transform hover:scale-105"
                 onClick={() => {
-                  if (item.id === 3) navigate("/admin/delete-product-promotion")
+                  if (item.id === 2) navigate("/admin/update-product");
+                  else if (item.id === 3) navigate("/admin/delete-product-promotion")
                   else if (item.id === 5) navigate("/admin/enable-product-promotion");
                 }}
               >

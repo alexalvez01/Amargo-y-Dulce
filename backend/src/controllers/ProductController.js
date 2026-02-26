@@ -112,7 +112,7 @@ export const createProduct = async (req, res) => {
 
 export const updateProduct = async (req, res) => {
   const { id } = req.params;
-  const { nombre, descripcion, estado, precio, imagen, tamaño, sabor } = req.body;
+  const { nombre, descripcion, precio, imagen, tamaño, sabor } = req.body;
 
   try {
     const updated = await sql`
@@ -122,7 +122,6 @@ export const updateProduct = async (req, res) => {
         descripcion = COALESCE(${descripcion}, descripcion),
         precio = COALESCE(${precio}, precio),
         imagen = COALESCE(${imagen}, imagen),
-        estado = COALESCE(${estado}, estado),
         "tamaño" = COALESCE(${tamaño}, "tamaño"),
         sabor = COALESCE(${sabor}, sabor)
       WHERE idproducto = ${id}

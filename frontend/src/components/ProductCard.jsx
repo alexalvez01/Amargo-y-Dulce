@@ -14,13 +14,15 @@ export default function ProductCard({ product }) {
       </div>
 
       <div className="p-4 space-y-2">
-        <div className="flex justify-between items-center">
-          <h3 className="text-sm text-brand-brownDark font-semibold">{product.nombre}</h3>
+        <div className="flex justify-between items-start gap-3">
+          <h3 className="text-sm text-brand-brownDark font-semibold wrap-break-words min-w-0 flex-1">
+            {product.nombre}
+          </h3>
 
           {product.stock > 0 ? (
-            <span className="text-xs text-green-600">En stock</span>
+            <span className="text-xs text-green-600 shrink-0 text-right">En stock</span>
           ) : (
-            <span className="text-xs text-red-600">Agotado</span>
+            <span className="text-xs text-red-600 shrink-0 text-right">Agotado</span>
           )}
 
         </div>
