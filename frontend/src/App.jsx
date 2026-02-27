@@ -20,6 +20,9 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import AdminRoute from "./components/AdminRoute.jsx";
 import CartPage from "./pages/CartPage.jsx";
 import Promotions from "./pages/Promotions.jsx";
+import OrderDetail from "./pages/OrderDetail.jsx";
+import PaymentStatusPage from "./pages/PaymentStatusPage.jsx";
+import PaymentSuccessPage from "./pages/PaymentSuccessPage.jsx";
 
 function App() {
   return (
@@ -39,10 +42,16 @@ function App() {
               <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
               <Route path="/product/:id" element={<ProductDetail />} />
               <Route path="/promotions" element={<Promotions />} />
+              <Route path="/payment/success" element={<PaymentSuccessPage />} />
+              <Route path="/payment/pending" element={<PaymentStatusPage />} />
+              <Route path="/payment/failure" element={<PaymentStatusPage />} />
+              {/* --- RUTAS PROTEGIDAS (Entra solo si estás logueado) --- */}
               <Route element={<ProtectedRoute />}>
               <Route path="/cart" element={<CartPage />} />
               <Route path="/favorites" element={<FavoritesPage />} />
+              <Route path="/order-detail" element={<OrderDetail />} />
               </Route>
+              {/* --- RUTAS ADMIN (Entra solo si sos admin) --- */}
               <Route element={<AdminRoute />}>
                 <Route path="/admin-panel" element={<AdminPanel />} />
                 <Route path="/admin/enable-product-promotion" element={<EnableProductPromotionPanel />} />

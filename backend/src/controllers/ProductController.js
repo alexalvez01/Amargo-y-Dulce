@@ -224,7 +224,6 @@ export const updateStock = async (req, res) => {
 
 // Productos populares
 // Obtener los 3 productos más vendidos (Best Sellers)
-// Basado en las tablas: producto, factura, lineafactura
 export const getTopProducts = async (req, res) => {
   try {
     // 1. Intentamos traer el Top 3 de los más vendidos
@@ -248,7 +247,6 @@ export const getTopProducts = async (req, res) => {
       LIMIT 3;
     `;
 
-    // 2. ¿Nos faltan productos para llegar a 3? ¡A rellenar!
     if (topProducts.length < 3) {
       const faltantes = 3 - topProducts.length;
       
@@ -265,16 +263,15 @@ export const getTopProducts = async (req, res) => {
         ORDER BY RANDOM()
         LIMIT 10;
       `;
-
-      // MAGIA DE JAVASCRIPT: Filtramos los que ya tenemos en el podio
+      // Filtramos esos aleatorios para quedarnos solo con los que NO ESTÁN en el top original
       const filtrados = randomProducts.filter(
         p => !idsExistentes.includes(p.idproducto || p.idProducto)
       );
 
-      // Recortamos solo la cantidad exacta que nos falta (1, 2 o 3)
+      // Recortamos solo la cantidad exacta que nos falta
       const paraRellenar = filtrados.slice(0, faltantes);
 
-      // 3. Juntamos la lista original con los "rellenos"
+      // Completamos la lista original con esos aleatorios
       topProducts = [...topProducts, ...paraRellenar];
     }
 

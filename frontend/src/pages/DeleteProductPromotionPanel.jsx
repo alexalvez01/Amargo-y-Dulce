@@ -52,7 +52,7 @@ export default function DeleteProductPromotionPanel() {
         <span className="font-semibold text-lg">Volver</span>
       </button>
       <div className="max-w-svw mx-auto py-10 pt-20 font-brand text-sm">
-        <h2 className="text-center text-4xl font-semibold text-brand-brownDark mb-8 border-b border-[#664C3E44] pb-4">
+        <h2 className="text-center text-4xl md:text-5xl font-semibold text-brand-brownDark mb-8 border-b border-[#664C3E44] pb-4">
           Dar de baja un producto o promoción
         </h2>
 

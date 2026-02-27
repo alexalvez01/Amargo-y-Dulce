@@ -26,7 +26,7 @@ export default function Promotions() {
       <Navbar />
 
       <main className="grow max-w-6xl mx-auto w-full px-4 pt-24 pb-24">
-        <h1 className="text-4xl md:text-5xl font-semibold text-[#6B4C3A] text-center mb-15">
+        <h1 className="text-4xl md:text-5xl font-semibold text-brand-brownDark text-center mb-15">
           Promociones
         </h1>
 

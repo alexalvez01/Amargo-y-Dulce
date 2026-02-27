@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../context/AuthContext';
-import { ChevronLeft } from 'lucide-react';
 
 const RegisterForm = () => {
   const navigate = useNavigate();
@@ -16,7 +15,7 @@ const RegisterForm = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // --- EFECTS ---
+ 
 
   // Si se registra/loguea exitosamente, vamos al Home
   useEffect(() => {
@@ -25,7 +24,7 @@ const RegisterForm = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  // Si el contexto devuelve errores del backend, los mostramos
+  
   const backendError = registerErrors[0] ?? null;
 
   // --- HANDLERS ---
@@ -72,18 +71,8 @@ const RegisterForm = () => {
   const labelStyles = "text-xs font-bold text-gray-600 ml-1 mb-0.5 block font-brand";
 
   return (
-    <div>
-      <button
-        type="button"
-        className="absolute left-2 top-3 flex items-center gap-2 text-brand-brownDark hover:text-brand-brown hover:underline transition-colors z-20 cursor-pointer "
-        onClick={() => navigate(-1)}
-      >
-        <ChevronLeft size={28} />
-        <span className="font-semibold text-lg">Volver</span>
-      </button>
-      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl lg:ml-24 lg:mr-12 mx-auto border border-gray-100 relative z-20 font-brand">
-
-
+    <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl lg:ml-24 lg:mr-12 mx-auto border border-gray-100 relative z-20 font-brand">
+      
       {/* HEADER */}
       <div className="mb-6 text-left">
         <h2 className="text-brand-brown text-lg font-medium font-brand">Bienvenido!</h2>
@@ -177,8 +166,6 @@ const RegisterForm = () => {
       </div>
       
     </div>
-    </div>
-    
   );
 };
 

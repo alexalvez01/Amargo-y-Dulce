@@ -68,8 +68,18 @@ export default function CartPage() {
   };
 
   // Función para confirmar compra
-    const handleConfirmOrder = () => {
-    navigate("/checkout"); 
+  const handleConfirmOrder = async () => {
+    if (!cartData?.idcarrito) return;
+
+    try {
+      setIsConfirming(true);
+      await confirmCartRequest(cartData.idcarrito);
+      navigate("/order-detail");
+    } catch (error) {
+      toast.error("No se pudo confirmar el pedido");
+    } finally {
+      setIsConfirming(false);
+    }
   };
   if (loading) {
     return (
@@ -110,9 +120,9 @@ return (
       </button>
       <div className="max-w-7xl mx-auto px-4 w-full mt-24 md:mt-32 mb-20 grow relative">
 
-        <h1 className="text-5xl md:text-6xl text-[#6B4C3A] text-center mb-16 font-bold pt-12">
+        <h2 className="text-4xl md:text-5xl text-brand-brownDark text-center mb-16 font-semibold pt-12">
           Mi carrito
-        </h1>
+        </h2>
         
         {products.length === 0 ? (
           <div className="text-center bg-white p-12 rounded-3xl shadow-sm max-w-2xl mx-auto">
@@ -144,8 +154,8 @@ return (
                   <CartItem 
                     key={productId} 
                     item={item} 
-                    discount={discount}       /* Pasamos el % */
-                    finalPrice={finalPrice}   /* Pasamos el precio nuevo */
+                    discount={discount}       
+                    finalPrice={finalPrice}   
                     onUpdateQuantity={handleUpdateQuantity}
                     onRemove={handleRemoveProduct}
                   />

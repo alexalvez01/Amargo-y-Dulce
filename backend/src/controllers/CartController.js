@@ -50,7 +50,7 @@ export const addProductToCart = async (req, res) => {
   const { idProducto, cantidad } = req.body;
 
   try {
-    // 1. Verificar si el producto existe y traernos SU PRECIO y SU STOCK
+    // Verificar si el producto existe y traernos SU PRECIO y SU STOCK
     const prod = await sql`SELECT precio, stock FROM producto WHERE idProducto = ${idProducto}`;
     
     if (prod.length === 0) {
@@ -60,7 +60,7 @@ export const addProductToCart = async (req, res) => {
     const precioUnitario = prod[0].precio;
     const stockDisponible = prod[0].stock;
 
-    // 2. Buscar si ya hay un carrito activo
+    // Buscar si ya hay un carrito activo
     let carrito = await sql`
       SELECT idCarrito FROM carrito
       WHERE idUsuarioFK = ${userId} AND estado = 'activo'
@@ -69,7 +69,7 @@ export const addProductToCart = async (req, res) => {
 
     let idCarrito;
 
-    // 3. Si no hay carrito, crearlo
+    // Si no hay carrito, crearlo
     if (carrito.length === 0) {
       const nuevo = await sql`
         INSERT INTO carrito (idUsuarioFK, estado, fechaCreacion, total)
@@ -81,22 +81,19 @@ export const addProductToCart = async (req, res) => {
       idCarrito = carrito[0].idcarrito;
     }
 
-    // --- NUEVA BARRERA DE SEGURIDAD: VERIFICAR STOCK ---
-    // Averiguamos cuántas cajas de este chocolate YA TIENE en el carrito
+    // Control de stock: Ver cuántos ya tengo en el carrito y cuánto quiero agregar
     const productoEnCarrito = await sql`
       SELECT cantidad FROM productocarrito
       WHERE idCarritoFK = ${idCarrito} AND idProductoFK = ${idProducto}
     `;
     
     const cantidadActual = productoEnCarrito.length > 0 ? productoEnCarrito[0].cantidad : 0;
-
-    // Si lo que ya tiene + lo que quiere agregar supera el stock, ¡Lo frenamos!
     if (cantidadActual + cantidad > stockDisponible) {
       return res.status(400).json({ 
         error: `No hay suficiente stock. Ya tienes ${cantidadActual} en el carrito y solo quedan ${stockDisponible} disponibles.` 
       });
     }
-    // ---------------------------------------------------
+    
 
     // 4. Insertar o actualizar
     await sql`
@@ -104,17 +101,6 @@ export const addProductToCart = async (req, res) => {
       VALUES (${idCarrito}, ${idProducto}, ${cantidad}, ${precioUnitario})
       ON CONFLICT ON CONSTRAINT productocarrito_pkey 
       DO UPDATE SET cantidad = productocarrito.cantidad + EXCLUDED.cantidad
-    `;
-
-    // 5. Actualizar el Total del Carrito
-    await sql`
-      UPDATE carrito
-      SET total = (
-        SELECT COALESCE(SUM(cantidad * precioUnitario), 0)
-        FROM productocarrito
-        WHERE idCarritoFK = ${idCarrito}
-      )
-      WHERE idCarrito = ${idCarrito}
     `;
 
     res.json({ message: "Producto agregado al carrito", idCarrito });
@@ -136,17 +122,6 @@ export const updateProductQuantity = async (req, res) => {
       WHERE idCarritoFK = ${idCarrito} AND idProductoFK = ${idProducto}
     `;
 
-    // 2. Recalculamos el total del carrito
-    await sql`
-      UPDATE carrito
-      SET total = (
-        SELECT COALESCE(SUM(cantidad * precioUnitario), 0)
-        FROM productocarrito
-        WHERE idCarritoFK = ${idCarrito}
-      )
-      WHERE idCarrito = ${idCarrito}
-    `;
-
     res.json({ message: "Cantidad actualizada correctamente" });
   } catch (error) {
     console.error("Error actualizando cantidad:", error);
@@ -156,24 +131,13 @@ export const updateProductQuantity = async (req, res) => {
 
 // Eliminar un producto
 export const removeProductFromCart = async (req, res) => {
-  const { idCarrito, idProducto } = req.body; // Puedes pasarlo por params también si prefieres
+  const { idCarrito, idProducto } = req.body; 
 
   try {
     // 1. Borramos el producto del carrito
     await sql`
       DELETE FROM productocarrito
       WHERE idCarritoFK = ${idCarrito} AND idProductoFK = ${idProducto}
-    `;
-
-    // 2. Recalculamos el total del carrito
-    await sql`
-      UPDATE carrito
-      SET total = (
-        SELECT COALESCE(SUM(cantidad * precioUnitario), 0)
-        FROM productocarrito
-        WHERE idCarritoFK = ${idCarrito}
-      )
-      WHERE idCarrito = ${idCarrito}
     `;
 
     res.json({ message: "Producto eliminado del carrito" });
