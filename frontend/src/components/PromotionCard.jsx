@@ -37,7 +37,7 @@ export default function PromotionCard({ promo }) {
           </p>
         )}
         <button
-        onClick={() => navigate(`/promociones/${promo.idpromocion}`)}
+        onClick={() => navigate('/shop', { state: { promoActiva: promo.idpromocion } })}
         className="mt-3 bg-brand-brown text-white px-4 py-2 rounded hover:bg-brand-brownDark transition"
         >
         Ver productos

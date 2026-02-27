@@ -103,7 +103,7 @@ export default function ProductDetail() {
 
       <button
         type="button"
-        className="absolute left-2 top-12 lg:top-15 flex items-center gap-2 text-brand-brownDark hover:text-brand-brown hover:underline transition-colors z-100 cursor-pointer "
+        className="absolute left-2 top-12 lg:top-15 flex items-center gap-2 text-brand-brownDark hover:text-brand-brown hover:underline transition-colors z-200 cursor-pointer "
         onClick={() => navigate(-1)}
       >
         <ChevronLeft size={28} />

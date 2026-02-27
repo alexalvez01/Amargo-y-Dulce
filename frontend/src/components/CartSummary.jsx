@@ -1,6 +1,6 @@
 export default function CartSummary({ total, onConfirm, isConfirming }) {
   return (
-    <div className="bg-white rounded-3xl shadow-sm p-8 w-full md:w-[350px] lg:w-[400px] h-fit sticky top-28">
+    <div className="bg-white rounded-3xl shadow-sm p-8 w-full  lg:w-[400px] h-fit sticky top-28">
       
       <h2 className="text-3xl font-bold text-[#6B4C3A] font-brand mb-6">
         Resumen de compra

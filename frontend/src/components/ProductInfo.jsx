@@ -3,6 +3,7 @@ import { Star, Heart, ShoppingCart, Minus, Plus, LogIn } from "lucide-react";
 import toast from 'react-hot-toast'; 
 import { useAuth } from "../context/AuthContext";
 import { addToCartRequest } from "../api/cart";
+import { usePromotions } from "../context/PromotionContext"; 
 
 export default function ProductInfo({ 
   product, 
@@ -13,6 +14,14 @@ export default function ProductInfo({
 }) {
   const [quantity, setQuantity] = useState(1);
   const { isAuthenticated } = useAuth();
+  const { promotions } = usePromotions();
+  
+  const activePromo = promotions?.find(promo => 
+    promo.productos.some(p => String(p.idproducto) === String(product.idproducto || product.idProducto))
+  );
+
+  const discount = activePromo ? activePromo.valor : 0;
+  const finalPrice = discount > 0 ? product.precio * (1 - discount / 100) : product.precio;
 
   const [isFlying, setIsFlying] = useState(false);
   const [flyPos, setFlyPos] = useState({ top: 0, left: 0 });
@@ -31,7 +40,6 @@ export default function ProductInfo({
     }
   };
 
-  
   const handleAddToCart = async (e) => {
     if (!isAuthenticated) {
       toast.custom((t) => (
@@ -42,12 +50,11 @@ export default function ProductInfo({
           </span>
         </div>
       ), { id: 'login-toast', duration: 2500 });
-
+      
       return;
     }
 
     if (!isFlying) {
-
       setFlyPos({
         top: e.clientY - 10,
         left: e.clientX - 10
@@ -57,11 +64,9 @@ export default function ProductInfo({
     }
 
     try {
-    
       const productId = product.idproducto || product.idProducto;
       await addToCartRequest(productId, quantity);
       
-
       window.dispatchEvent(new Event('cart-updated'));
       toast.custom((t) => (
         <div className={`flex items-center gap-3 bg-[#E8F5E9] border border-[#4CAF50] px-10 py-2 mt-9 rounded-full shadow-md pointer-events-auto ${t.visible ? 'toast-enter' : 'toast-leave'}`}>
@@ -72,7 +77,6 @@ export default function ProductInfo({
       </div>
       ), { id: 'cart-toast', duration: 2500 }); 
 
-      
       setQuantity(1);
 
     } catch (error) {
@@ -98,6 +102,11 @@ return (
         {/* COLUMNA IZQUIERDA: Imagen */}
         <div className="w-full md:w-1/2">
           <div className="relative rounded-2xl overflow-hidden aspect-square shadow-md group">
+            {discount > 0 && (
+              <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full font-bold text-sm shadow-sm z-30">
+                {discount}% OFF
+              </div>
+            )}
             <img 
               src={product.imagen || "/images/producto-clasico.webp"} 
               alt={product.nombre} 
@@ -141,26 +150,28 @@ return (
               <span className="text-gray-400 text-sm ml-2 font-brand">({averageRating})</span>
           </div>
 
-          <p className="text-3xl font-bold text-black mb-2 font-brand">
-            $ {Number(product.precio).toLocaleString('es-AR')}
+          {/* 4. PRECIOS DINÁMICOS (Tachado vs Normal) */}
+          <div className="mb-4">
+            {discount > 0 ? (
+              <div className="flex flex-col">
+                <span className="text-gray-400 line-through text-lg font-brand">
+                  $ {Number(product.precio).toLocaleString('es-AR')}
+                </span>
+                <span className="text-3xl font-bold text-green-600 font-brand">
+                  $ {Number(finalPrice).toLocaleString('es-AR')}
+                </span>
+              </div>
+            ) : (
+              <p className="text-3xl font-bold text-black font-brand">
+                $ {Number(product.precio).toLocaleString('es-AR')}
+              </p>
+            )}
+          </div>
+
+          <p className="text-green-600 font-semibold mb-6 flex items-center gap-2 font-brand">
+            <span className="w-2 h-2 rounded-full bg-green-600"></span>
+            En Stock ({product.stock} disponibles)
           </p>
-          {/* stock status */}
-          {product.stock > 10 ? (
-            <p className="text-green-600 font-semibold mb-6 flex items-center gap-2 font-brand">
-              <span className="w-2 h-2 rounded-full bg-green-600"></span>
-              En stock
-            </p>
-          ) : product.stock > 0 ? (
-            <p className="text-blue-600 font-semibold mb-6 flex items-center gap-2 font-brand">
-              <span className="w-2 h-2 rounded-full bg-blue-600"></span>
-              Últimas unidades
-            </p>
-          ) : (
-            <p className="text-red-600 font-semibold mb-6 flex items-center gap-2 font-brand">
-              <span className="w-2 h-2 rounded-full bg-red-600"></span>
-              Sin stock
-            </p>
-          )}
 
           <div className="mb-6">
               <span className="text-sm font-bold text-brand-brown block mb-2 font-brand">Cantidad:</span>

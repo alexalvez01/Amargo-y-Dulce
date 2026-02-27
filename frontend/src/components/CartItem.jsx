@@ -1,10 +1,10 @@
 import { Minus, Plus } from "lucide-react";
 
-export default function CartItem({ item, onUpdateQuantity, onRemove }) {
-  // Aseguramos que la imagen y el nombre no den error si vienen vacíos
+export default function CartItem({ item, discount, finalPrice, onUpdateQuantity, onRemove }) {
   const imagen = item.imagen || "/images/producto-clasico.webp";
-  // Usamos el idProductoFK que es como lo devuelve tu backend en el GET
   const productId = item.idproductofk || item.idProductoFK; 
+
+  const basePrice = Number(item.preciounitario || item.precio);
 
   const handleDecrease = () => {
     if (item.cantidad > 1) {
@@ -18,14 +18,22 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }) {
     onUpdateQuantity(productId, item.cantidad + 1);
   };
 
-  return (
+return (
     <div className="flex gap-4 md:gap-6 p-6 border-b border-gray-200 last:border-0 bg-white first:rounded-t-2xl last:rounded-b-2xl">
-      {/* IMAGEN */}
-      <img 
-        src={imagen} 
-        alt={item.nombre} 
-        className="w-24 h-24 md:w-32 md:h-32 rounded-xl object-cover shadow-sm"
-      />
+      
+      {/* IMAGEN CON CARTELITO DE PROMOCIÓN */}
+      <div className="relative shrink-0">
+        {discount > 0 && (
+          <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded z-10 shadow-sm">
+            {discount}% OFF
+          </span>
+        )}
+        <img 
+          src={imagen} 
+          alt={item.nombre} 
+          className="w-24 h-24 md:w-32 md:h-32 rounded-xl object-cover shadow-sm"
+        />
+      </div>
 
       {/* INFORMACIÓN */}
       <div className="flex flex-col flex-1 justify-between">
@@ -36,11 +44,24 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }) {
             <h3 className="text-xl md:text-2xl font-bold text-[#6B4C3A] font-brand leading-tight">
               {item.nombre}
             </h3>
-            <p className="text-lg md:text-xl font-medium text-gray-800 font-brand whitespace-nowrap">
-              $ {Number(item.preciounitario || item.precio).toLocaleString('es-AR')}
-            </p>
+            
+            {/* LÓGICA DEL PRECIO TACHADO */}
+            {discount > 0 ? (
+              <div className="flex flex-col items-end">
+                <span className="text-gray-400 line-through text-sm font-brand">
+                  $ {basePrice.toLocaleString('es-AR')}
+                </span>
+                <p className="text-lg md:text-xl font-bold text-green-600 font-brand whitespace-nowrap">
+                  $ {Number(finalPrice).toLocaleString('es-AR')}
+                </p>
+              </div>
+            ) : (
+              <p className="text-lg md:text-xl font-medium text-gray-800 font-brand whitespace-nowrap">
+                $ {basePrice.toLocaleString('es-AR')}
+              </p>
+            )}
           </div>
-          {/* El tamaño lo dejamos por defecto ya que tu backend (en el GET) no lo trae aún */}
+          
           <p className="text-sm text-gray-500 italic mt-1 font-brand">Tamaño: {item.tamaño}</p>
         </div>
 

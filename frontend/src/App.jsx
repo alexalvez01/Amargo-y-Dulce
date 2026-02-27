@@ -19,7 +19,7 @@ import FavoritesPage from "./pages/Favorites.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import AdminRoute from "./components/AdminRoute.jsx";
 import CartPage from "./pages/CartPage.jsx";
-
+import Promotions from "./pages/Promotions.jsx";
 
 function App() {
   return (
@@ -38,9 +38,10 @@ function App() {
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
               <Route path="/product/:id" element={<ProductDetail />} />
+              <Route path="/promotions" element={<Promotions />} />
               <Route element={<ProtectedRoute />}>
               <Route path="/cart" element={<CartPage />} />
-                <Route path="/favorites" element={<FavoritesPage />} />
+              <Route path="/favorites" element={<FavoritesPage />} />
               </Route>
               <Route element={<AdminRoute />}>
                 <Route path="/admin-panel" element={<AdminPanel />} />
