@@ -12,7 +12,7 @@ export const createMpPreference = async ({
   total,
   email
 }) => {
-  const backendUrl = (process.env.BACKEND_URL || "http://localhost:3000").replace(/\/+$/, "");
+  const frontendUrl = (process.env.FRONTEND_URL)
   const preference = new Preference(client);
 
   const preferenceBody = {
@@ -28,9 +28,9 @@ export const createMpPreference = async ({
     },
     external_reference: String(idFactura),
     back_urls: {
-      success: `${backendUrl}/api/payments/return/success?idFactura=${idFactura}`,
-      failure: `${backendUrl}/api/payments/return/failure?idFactura=${idFactura}`,
-      pending: `${backendUrl}/api/payments/return/pending?idFactura=${idFactura}`
+      success: `${frontendUrl}/payment/success?idFactura=${idFactura}`,
+      failure: `${frontendUrl}/payment/failure?idFactura=${idFactura}`,
+      pending: `${frontendUrl}/payment/pending?idFactura=${idFactura}`
     }
   };
 

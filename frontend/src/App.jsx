@@ -42,14 +42,14 @@ function App() {
               <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
               <Route path="/product/:id" element={<ProductDetail />} />
               <Route path="/promotions" element={<Promotions />} />
-              <Route path="/payment/success" element={<PaymentSuccessPage />} />
-              <Route path="/payment/pending" element={<PaymentStatusPage />} />
-              <Route path="/payment/failure" element={<PaymentStatusPage />} />
               {/* --- RUTAS PROTEGIDAS (Entra solo si estás logueado) --- */}
               <Route element={<ProtectedRoute />}>
               <Route path="/cart" element={<CartPage />} />
               <Route path="/favorites" element={<FavoritesPage />} />
               <Route path="/order-detail" element={<OrderDetail />} />
+              <Route path="/payment/success" element={<PaymentSuccessPage />} />
+              <Route path="/payment/pending" element={<PaymentStatusPage />} />
+              <Route path="/payment/failure" element={<PaymentStatusPage />} />
               </Route>
               {/* --- RUTAS ADMIN (Entra solo si sos admin) --- */}
               <Route element={<AdminRoute />}>

@@ -168,10 +168,25 @@ return (
             )}
           </div>
 
-          <p className="text-green-600 font-semibold mb-6 flex items-center gap-2 font-brand">
-            <span className="w-2 h-2 rounded-full bg-green-600"></span>
-            En Stock ({product.stock} disponibles)
-          </p>
+          {product.stock > 10 && (
+            <p className="text-green-600 font-semibold mb-6 flex items-center gap-2 font-brand">
+              <span className="w-2 h-2 rounded-full bg-green-600"></span>
+              En stock
+            </p>
+          )}
+          {product.stock > 0 && product.stock <= 10 && (
+            <p className="text-blue-600 font-semibold mb-6 flex items-center gap-2 font-brand">
+              <span className="w-2 h-2 rounded-full bg-blue-600"></span>
+              Ultimas unidades
+            </p>
+          )}
+          {product.stock <= 0 && (
+            <p className="text-red-600 font-semibold mb-6 flex items-center gap-2 font-brand">
+              <span className="w-2 h-2 rounded-full bg-red-600"></span>
+              Sin stock
+            </p>
+          )}
+          
 
           <div className="mb-6">
               <span className="text-sm font-bold text-brand-brown block mb-2 font-brand">Cantidad:</span>
