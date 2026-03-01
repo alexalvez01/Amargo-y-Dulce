@@ -25,10 +25,10 @@ export default function Promotions() {
     <div className="bg-[#EBE7E0] flex flex-col min-h-screen font-brand">
       <Navbar />
 
-      <main className="grow max-w-6xl mx-auto w-full px-4 pt-24 pb-24">
-        <h1 className="text-4xl md:text-5xl font-semibold text-brand-brownDark text-center mb-15">
+      <main className="grow max-w-6xl min-h-screen mx-auto w-full px-4 pt-24 pb-24">
+        <h2 className="text-4xl md:text-5xl font-semibold text-brand-brownDark text-center mb-15">
           Promociones
-        </h1>
+        </h2>
 
         {loading ? (
           <div className="text-center py-20 text-gray-500 font-medium">

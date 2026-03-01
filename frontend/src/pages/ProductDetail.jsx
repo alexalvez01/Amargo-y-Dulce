@@ -89,7 +89,8 @@ export default function ProductDetail() {
   return (
     <div className="bg-[#f7f2ec] flex flex-col min-h-screen font-brand">
       <Navbar />
-
+      
+      <main className="min-h-screen">
       {/* Componente Superior: La info del producto */}
       <div className="max-w-6xl mx-auto p-4 md:p-8 mt-16 grow">
         <ProductInfo 
@@ -103,7 +104,7 @@ export default function ProductDetail() {
 
       <button
         type="button"
-        className="absolute left-2 top-12 lg:top-15 flex items-center gap-2 text-brand-brownDark hover:text-brand-brown hover:underline transition-colors z-200 cursor-pointer "
+        className="absolute left-2 top-12 lg:top-15 flex items-center gap-2 text-brand-brownDark hover:text-brand-brown hover:underline transition-colors z-20 cursor-pointer "
         onClick={() => navigate(-1)}
       >
         <ChevronLeft size={28} />
@@ -125,6 +126,8 @@ export default function ProductDetail() {
         productName={product.nombre} 
         onReviewAdded={() => setRefreshReviews(!refreshReviews)} 
       />
+
+      </main>
 
       <Footer />
     </div>

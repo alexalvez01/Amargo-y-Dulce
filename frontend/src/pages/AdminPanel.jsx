@@ -16,6 +16,7 @@ function AdminPanel() {
   return (
     <div>
       <Navbar/>
+      <main className="min-h-screen">
       <div className="min-h-screen bg-[#f7f2ec] flex items-center justify-center font-brand">
 
         <div className="my-20 py-14 bg-white rounded-2xl max-w-5xl w-full p-8 shadow-md">
@@ -45,6 +46,7 @@ function AdminPanel() {
           </div>
         </div>
       </div>
+      </main>
     </div>
   );
 }

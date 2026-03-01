@@ -110,9 +110,12 @@ export default function CartPage() {
 return (
     <div className="min-h-screen bg-[#f7f2ec] flex flex-col font-brand">
       <Navbar />
+
+
+      <main className="min-h-screen">
       <button
         type="button"
-        className="absolute left-2 top-16 flex items-center gap-2 text-brand-brownDark hover:text-brand-brown hover:underline transition-colors z-200 cursor-pointer"
+        className="absolute left-2 top-16 flex items-center gap-2 text-brand-brownDark hover:text-brand-brown hover:underline transition-colors z-20 cursor-pointer"
         onClick={() => navigate(-1)}
       >
         <ChevronLeft size={28} />
@@ -174,6 +177,8 @@ return (
         )}
 
       </div>
+      </main>
+      
       <Footer />
     </div>
   );

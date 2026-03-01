@@ -140,6 +140,7 @@ export default function UpdateProductPanel() {
     <div className="min-h-screen bg-[#f7f2ec] font-brand relative">
       <Navbar />
 
+      <main className="min-h-screen">
       <button
         className="absolute left-6 top-24 flex items-center gap-2 text-brand-brownDark hover:text-brand-brown hover:underline transition-colors z-20 cursor-pointer"
         onClick={() => navigate("/admin-panel")}
@@ -295,6 +296,7 @@ export default function UpdateProductPanel() {
           </div>
         </div>
       )}
+      </main>
     </div>
   );
 }

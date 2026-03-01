@@ -1,5 +1,4 @@
-import { MercadoPagoConfig, Preference } from "mercadopago";
-
+﻿import { MercadoPagoConfig, Preference } from "mercadopago";
 
 // Cliente MP
 const client = new MercadoPagoConfig({
@@ -12,7 +11,16 @@ export const createMpPreference = async ({
   total,
   email
 }) => {
-  const frontendUrl = (process.env.FRONTEND_URL)
+  const frontendUrl = process.env.FRONTEND_URL;
+  const backendUrl = process.env.BACKEND_URL;
+
+  if (!frontendUrl) {
+    throw new Error("FRONTEND_URL no esta definida en .env");
+  }
+
+  const isLocalFrontend =
+    frontendUrl.includes("localhost") || frontendUrl.includes("127.0.0.1");
+
   const preference = new Preference(client);
 
   const preferenceBody = {
@@ -20,7 +28,8 @@ export const createMpPreference = async ({
       {
         title: `Pedido #${idFactura}`,
         quantity: 1,
-        unit_price: Number(total)
+        unit_price: Number(total),
+        currency_id: "ARS"
       }
     ],
     payer: {
@@ -28,25 +37,21 @@ export const createMpPreference = async ({
     },
     external_reference: String(idFactura),
     back_urls: {
-      success: `${frontendUrl}/payment/success?idFactura=${idFactura}`,
-      failure: `${frontendUrl}/payment/failure?idFactura=${idFactura}`,
-      pending: `${frontendUrl}/payment/pending?idFactura=${idFactura}`
-    }
+      success: `${frontendUrl}/payment/success`,
+      failure: `${frontendUrl}/payment/failure`,
+      pending: `${frontendUrl}/payment/pending`
+    },
+    binary_mode: true,
+    notification_url: backendUrl
+      ? `${backendUrl}/api/payments/webhook`
+      : undefined
   };
 
-  preferenceBody.auto_return = "approved";
-
-  let response;
-  try {
-    response = await preference.create({ body: preferenceBody });
-  } catch (error) {
-    if (error?.error === "invalid_auto_return") {
-      delete preferenceBody.auto_return;
-      response = await preference.create({ body: preferenceBody });
-    } else {
-      throw error;
-    }
+  if (!isLocalFrontend) {
+    preferenceBody.auto_return = "approved";
   }
+
+  const response = await preference.create({ body: preferenceBody });
 
   return {
     id: response.id,

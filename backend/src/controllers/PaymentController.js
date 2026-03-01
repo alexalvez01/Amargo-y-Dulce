@@ -62,13 +62,13 @@ export const createPaymentPreference = async (req, res) => {
     if (factura.length === 0) {
       return res.status(404).json({ error: "Factura no encontrada" });
     }
-
+  
+    
     const preference = await createMpPreference({
       idFactura: factura[0].idfactura,
       total: factura[0].total,
       email: factura[0].mail
     });
-
     res.json({
       preferenceId: preference.id,
       initPoint: preference.initPoint,
@@ -107,29 +107,3 @@ export const confirmPayment = async (req, res) => {
   }
 };
 
-const redirectToFrontend = (res, path, query) => {
-  const frontendUrl = (process.env.FRONTEND_URL || "http://localhost:5173").replace(/\/+$/, "");
-  const qs = new URLSearchParams(query).toString();
-  const target = `${frontendUrl}${path}${qs ? `?${qs}` : ""}`;
-  return res.redirect(target);
-};
-
-export const handlePaymentSuccessReturn = async (req, res) => {
-  const idFactura = Number(req.query.external_reference || req.query.idFactura);
-
-  if (idFactura) {
-    try {
-      await registerPaymentByFactura(idFactura);
-    } catch (error) {
-      console.error("Error confirming payment on success return:", error);
-    }
-  }
-
-  return redirectToFrontend(res, "/payment/success", req.query);
-};
-
-export const handlePaymentPendingReturn = async (req, res) =>
-  redirectToFrontend(res, "/payment/pending", req.query);
-
-export const handlePaymentFailureReturn = async (req, res) =>
-  redirectToFrontend(res, "/payment/failure", req.query);

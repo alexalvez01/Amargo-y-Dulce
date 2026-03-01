@@ -138,7 +138,7 @@ export default function OrderDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#d9d9d9] flex flex-col font-brand">
+      <div className="min-h-screen bg-[#f7f2ec] flex flex-col font-brand">
         <Navbar />
         <div className="flex-1 flex items-center justify-center">
           <p className="text-2xl text-brand-brown">Cargando detalle de pedido...</p>
@@ -148,11 +148,13 @@ export default function OrderDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-[#d9d9d9] flex flex-col font-brand">
+    <div className="min-h-screen bg-[#f7f2ec] flex flex-col font-brand">
       <Navbar />
+      
 
+      <main className="min-h-screen">
       <div className="max-w-6xl mx-auto w-full px-4 mt-10 md:mt-30 mb-16">
-        <h1 className="text-4xl md:text-5xl text-brand-brownDark font-semibold mb-7 text-center">Detalles de Pedido</h1>
+        <h2 className="text-4xl md:text-5xl text-brand-brownDark font-semibold mb-7 text-center">Detalles de Pedido</h2>
 
         <div className="flex gap-5 max-w-3xl mx-auto mb-10">
           <Step number={1} label="Carrito" state="done" />
@@ -162,7 +164,7 @@ export default function OrderDetail() {
 
         <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-6 items-start">
           <div className="space-y-4">
-            <form onSubmit={handleSubmit} className="bg-[#f4f4f4] rounded-xl p-5 shadow-sm">
+            <form onSubmit={handleSubmit} className="bg-white rounded-xl p-5 shadow-sm">
               <h2 className="text-3xl font-semibold text-brand-brownDark mb-4">Dirección de envío</h2>
 
               <div className="space-y-3">
@@ -229,7 +231,7 @@ export default function OrderDetail() {
               </div>
             </form>
 
-            <section className="bg-[#f4f4f4] rounded-xl p-5 shadow-sm">
+            <section className="bg-white rounded-xl p-5 shadow-sm">
               <h3 className="text-3xl font-semibold text-brand-brownDark mb-3">Método de pago (único método)</h3>
                 <label className="border border-brand-brownDark rounded px-3 py-2 bg-gray-200 flex items-center gap-3 pointer-events-none select-none">
                 <input type="radio" checked readOnly className="accent-[#6b4c3a]" />
@@ -247,7 +249,7 @@ export default function OrderDetail() {
             </button>
           </div>
 
-          <section className="bg-[#f4f4f4] rounded-xl p-5 shadow-sm h-fit">
+          <section className="bg-white rounded-xl p-5 shadow-sm h-fit">
             <h2 className="text-3xl font-semibold text-[#6b4c3a] mb-3">Orden de compra</h2>
 
             <div className="space-y-2 max-h-[360px] overflow-auto pr-1">
@@ -277,6 +279,7 @@ export default function OrderDetail() {
           </section>
         </div>
       </div>
+      </main>
 
       <Footer />
     </div>

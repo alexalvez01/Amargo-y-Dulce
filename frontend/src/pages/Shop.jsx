@@ -87,11 +87,12 @@ export default function Shop() {
     <div className="bg-[#f7f2ec] min-h-screen">
       <Navbar />
 
-      <div className="max-w-svw mx-auto py-10 pt-20 font-brand text-sm">
-        {/* Buscador y ordenar */}
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-10 border-b border-[#664C3E44] pb-6">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
-            
+      <main className="min-h-screen">
+        <div className="max-w-svw mx-auto py-10 pt-20 font-brand text-sm">
+          {/* Buscador y ordenar */}
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-10 border-b border-[#664C3E44] pb-6">
+            <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
+              
             {/* Buscador */}
             <div className="flex w-full max-w-md">
               <input
@@ -305,6 +306,7 @@ export default function Shop() {
           </div>
         </div>
       </div>
+      </main>
       <Footer />
     </div>
   );

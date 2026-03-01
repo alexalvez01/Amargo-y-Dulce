@@ -1,10 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+﻿import { Link } from "react-router-dom";
 import { Check } from "lucide-react";
-import toast from "react-hot-toast";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { confirmPaymentRequest } from "../api/payments";
 
 function Step({ label, state, number }) {
   const done = state === "done";
@@ -33,55 +30,26 @@ function Step({ label, state, number }) {
   );
 }
 
-export default function PaymentSuccessPage() {
-  const location = useLocation();
-  const params = useMemo(() => new URLSearchParams(location.search), [location.search]);
-  const [confirming, setConfirming] = useState(false);
-  const confirmedRef = useRef(false);
-
-  useEffect(() => {
-    const idFactura = params.get("external_reference");
-    if (!idFactura || confirmedRef.current) return;
-
-    const confirm = async () => {
-      try {
-        confirmedRef.current = true;
-        setConfirming(true);
-        await confirmPaymentRequest(Number(idFactura));
-      } catch (error) {
-        const msg = error?.response?.data?.error;
-        if (msg !== "El pago ya fue registrado") {
-          toast.error("No se pudo registrar el pago automaticamente");
-        }
-      } finally {
-        setConfirming(false);
-      }
-    };
-
-    confirm();
-  }, [params]);
-
+export default function PaymentPendingPage() {
   return (
     <div className="min-h-screen bg-[#f7f2ec] flex flex-col font-brand">
       <Navbar />
 
-
       <main className="min-h-screen">
       <div className="max-w-6xl min-h-screen mx-auto w-full px-4 mt-20 md:mt-30 mb-16">
-        <h2 className="text-4xl md:text-5xl text-brand-brownDark font-semibold mb-7 text-center">Detalles de Pedido</h2>
+        <h1 className="text-4xl md:text-5xl text-brand-brownDark font-semibold mb-7 text-center">Detalles de Pedido</h1>
 
         <div className="flex gap-5 max-w-3xl mx-auto mb-16">
           <Step number={1} label="Carrito" state="done" />
           <Step number={2} label="Detalles de pago" state="done" />
-          <Step number={3} label="Estado de pedido" state="active" />
+          <Step number={3} label="Estado de Pedido" state="active" />
         </div>
 
-        <div className="max-w-md mx-auto mt-40 bg-white rounded-xl p-8 shadow-sm text-center">
-          <h2 className="text-3xl font-semibold text-brand-brownDark mb-3">Pago finalizado</h2>
+        <div className="max-w-md mt-40 mx-auto bg-white rounded-xl p-8 shadow-sm text-center">
+          <h2 className="text-3xl font-semibold text-brand-brownDark mb-3">Pago Pendiente</h2>
           <p className="text-[#7a7a7a] text-sm mb-6">
-            Su compra ha sido completada exitosamente, puede seguir viendo el catalogo si lo desea.
+            Estamos procesando su pago, porfavor aguarde pacientemente.
           </p>
-          {confirming && <p className="text-xs text-gray-500 mb-4">Registrando pago...</p>}
 
           <Link
             to="/shop"
@@ -92,7 +60,6 @@ export default function PaymentSuccessPage() {
         </div>
       </div>
       </main>
-
       <Footer />
     </div>
   );

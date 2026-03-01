@@ -21,8 +21,9 @@ import AdminRoute from "./components/AdminRoute.jsx";
 import CartPage from "./pages/CartPage.jsx";
 import Promotions from "./pages/Promotions.jsx";
 import OrderDetail from "./pages/OrderDetail.jsx";
-import PaymentStatusPage from "./pages/PaymentStatusPage.jsx";
 import PaymentSuccessPage from "./pages/PaymentSuccessPage.jsx";
+import PaymentPendingPage from "./pages/PaymentPendingPage.jsx";
+import PaymentFailurePage from "./pages/PaymentFailurePage.jsx";
 
 function App() {
   return (
@@ -48,8 +49,8 @@ function App() {
               <Route path="/favorites" element={<FavoritesPage />} />
               <Route path="/order-detail" element={<OrderDetail />} />
               <Route path="/payment/success" element={<PaymentSuccessPage />} />
-              <Route path="/payment/pending" element={<PaymentStatusPage />} />
-              <Route path="/payment/failure" element={<PaymentStatusPage />} />
+              <Route path="/payment/pending" element={<PaymentPendingPage />} />
+              <Route path="/payment/failure" element={<PaymentFailurePage />} />
               </Route>
               {/* --- RUTAS ADMIN (Entra solo si sos admin) --- */}
               <Route element={<AdminRoute />}>
