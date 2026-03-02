@@ -8,7 +8,7 @@ import { authMiddleware } from "../middlewares/auth-middleware.js";
 
 const orderRoutes = Router();
 
-orderRoutes.get("/history", authMiddleware, getPurchaseHistory);
+orderRoutes.get("/my-orders", authMiddleware, getPurchaseHistory);
 orderRoutes.get("/latest", authMiddleware, getLatestOrderDetail);
 orderRoutes.post("/details", authMiddleware, saveOrderDetailData);
 

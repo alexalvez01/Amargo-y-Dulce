@@ -24,6 +24,7 @@ import OrderDetail from "./pages/OrderDetail.jsx";
 import PaymentSuccessPage from "./pages/PaymentSuccessPage.jsx";
 import PaymentPendingPage from "./pages/PaymentPendingPage.jsx";
 import PaymentFailurePage from "./pages/PaymentFailurePage.jsx";
+import PurchaseHistory from "./pages/PucharseHistory.jsx";
 
 function App() {
   return (
@@ -51,6 +52,7 @@ function App() {
               <Route path="/payment/success" element={<PaymentSuccessPage />} />
               <Route path="/payment/pending" element={<PaymentPendingPage />} />
               <Route path="/payment/failure" element={<PaymentFailurePage />} />
+              <Route path="/purchase-history" element={<PurchaseHistory />} />
               </Route>
               {/* --- RUTAS ADMIN (Entra solo si sos admin) --- */}
               <Route element={<AdminRoute />}>

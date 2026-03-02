@@ -96,8 +96,8 @@ export const getPromotionById = async (req, res) => {
 };
 
 /* --------------------------------------------------
-   POST /api/promotions (ADMIN)
-   Crea promoción con ID automático
+  POST /api/promotions 
+  Crea promoción y asocia MULTIPLES productos
 -------------------------------------------------- */
 export const createPromotion = async (req, res) => {
   const {
@@ -106,15 +106,15 @@ export const createPromotion = async (req, res) => {
     valor,
     fechaInicio,
     fechaFin,
-    idProducto
+    productosIds
   } = req.body;
 
-  if (!nombre || !descripcion || !valor || !fechaInicio || !fechaFin || !idProducto) {
-    return res.status(400).json({ error: "Faltan campos obligatorios" });
+  if (!nombre || !descripcion || !valor || !fechaInicio || !fechaFin || !productosIds || productosIds.length === 0) {
+    return res.status(400).json({ error: "Faltan campos obligatorios o no seleccionaste ningún producto" });
   }
 
   try {
-    // Crear promoción (ID automático)
+    // 1. Creamos la promoción y obtenemos su ID generado
     const result = await sql`
       INSERT INTO promocion
       (nombre, descripcion, valor, fechainicio, fechafin, estado)
@@ -125,21 +125,23 @@ export const createPromotion = async (req, res) => {
 
     const idPromocion = result[0].idpromocion;
 
-    // Asociar producto a la promoción
-    await sql`
-      INSERT INTO promocionproducto
-      (idpromocionfk, idproductofk)
-      VALUES
-      (${idPromocion}, ${idProducto});
-    `;
+    // Asociamos TODOS los productos tildados a la promoción
+    for (const idProd of productosIds) {
+      await sql`
+        INSERT INTO promocionproducto
+        (idpromocionfk, idproductofk)
+        VALUES
+        (${idPromocion}, ${idProd});
+      `;
+    }
 
     return res.status(201).json({
       message: "Promoción creada correctamente",
       idPromocion
     });
   } catch (error) {
-    console.error("Error createPromotion:", error);
-    return res.status(500).json({ error: error.message });
+    console.error("Error al crear promoción:", error);
+    return res.status(500).json({ error: "Error interno del servidor al crear la promoción." });
   }
 };
 

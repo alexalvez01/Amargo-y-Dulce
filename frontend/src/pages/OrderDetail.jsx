@@ -121,7 +121,7 @@ export default function OrderDetail() {
       }
 
       const paymentRes = await createPaymentPreferenceRequest(idFactura);
-      const initPoint = paymentRes.data.initPoint || paymentRes.data.sandboxInitPoint;
+      const initPoint = paymentRes.data.sandboxInitPoint || paymentRes.data.initPoint;
 
       if (!initPoint) {
         toast.error("No se pudo generar el link de pago");

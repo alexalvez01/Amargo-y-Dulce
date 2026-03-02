@@ -4,19 +4,36 @@ export const getPurchaseHistory = async (req, res) => {
   const userId = req.user.userId;
 
   try {
+    // Usamos json_agg para agrupar los productos adentro del pedido
+    // y subconsultas para traer la última dirección del usuario.
     const history = await sql`
       SELECT
-        idFactura,
-        fecha_factura,
-        total_factura,
-        idProducto,
-        nombre_producto,
-        cantidad,
-        precioUnitario,
-        subtotalProducto
-      FROM vw_historial_compras
-      WHERE idUsuario = ${userId}
-      ORDER BY fecha_factura DESC
+        f.idFactura AS idpedido,
+        f.fechaCreacion AS fecha,
+        f.total,
+        COALESCE(
+          (SELECT d.calle || ' ' || d.numero 
+            FROM direccion d 
+            WHERE d.idUsuarioFK = ${userId} 
+            ORDER BY d.idDireccion DESC LIMIT 1),
+          'Retiro en local'
+        ) AS direccion,
+        json_agg(
+          json_build_object(
+            'idproducto', p.idProducto,
+            'nombre', p.nombre,
+            'cantidad', lf.cantidad,
+            'precio', lf.precioUnitario,
+            'imagen', p.imagen,
+            'tamano', p."tamaño"
+          )
+        ) AS productos
+      FROM factura f
+      JOIN lineafactura lf ON f.idFactura = lf.idFacturaFK
+      JOIN producto p ON lf.idProductoFK = p.idProducto
+      WHERE f.idUsuarioFK = ${userId}
+      GROUP BY f.idFactura, f.fechaCreacion, f.total
+      ORDER BY f.fechaCreacion DESC
     `;
 
     res.json(history);
