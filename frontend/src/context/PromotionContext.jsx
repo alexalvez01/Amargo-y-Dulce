@@ -9,11 +9,13 @@ export const usePromotions = () => {
   return context;
 };
 
+
 export const PromotionProvider = ({ children }) => {
   const [promotions, setPromotions] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Obtener todas las promociones
+
+// Obtener todas las promociones
   const getPromotions = async () => {
     try {
       const res = await getPromotionsRequest();
@@ -25,43 +27,34 @@ export const PromotionProvider = ({ children }) => {
     }
   };
 
+
   // Ocultar una promoción (actualizar su estado a oculto)
   const hidePromotion = async (id) => {
     try {
       await hidePromotionRequest(id);
-      getPromotions(); // Refresca la lista automáticamente
+      getPromotions();
     } catch (error) {
       console.log(error);
     }
   };
+
 
   // Mostrar una promoción (actualizar su estado a visible)
   const showPromotion = async (id) => {
     try {
       await showPromotionRequest(id);
-      getPromotions(); // Refresca la lista automáticamente
+      getPromotions();
     } catch (error) {
       console.log(error);
-    }
-  };
+    }};
+
 
   useEffect(() => {
     getPromotions();
   }, []);
 
-  const activePromotions = promotions.filter(promo => promo.estado === 'activo');
-
   return (
-    <PromotionContext.Provider 
-      value={{ 
-        promotions,         // Para el Admin
-        activePromotions,   // Para la Tienda
-        loading, 
-        getPromotions, 
-        hidePromotion, 
-        showPromotion
-      }}
-    >
+    <PromotionContext.Provider value={{ promotions, loading, getPromotions, hidePromotion, showPromotion}}>
       {children}
     </PromotionContext.Provider>
   );

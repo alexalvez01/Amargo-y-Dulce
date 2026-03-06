@@ -9,6 +9,3 @@ export const createReviewRequest = (data) => axios.post(`/reviews/create`, data)
 
 // Elimina una reseña del usuario logueado (DELETE /delete/:productId)
 export const deleteReviewRequest = (productId) => axios.delete(`/reviews/delete/${productId}`);
-
-export const deleteReviewAsAdminRequest = (productId, userId) => 
-    axios.delete(`/reviews/delete-admin/${ userId}/${productId}`);

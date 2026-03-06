@@ -87,21 +87,3 @@ export const deleteReview = async (req, res) => {
         res.status(500).json({ error: "Error eliminando reseña" });
     }
 };
-
-// Eliminar reseña de cualquier usuario (SOLO ADMINISTRADOR)
-export const deleteReviewAsAdmin = async (req, res) => {
-    const { userId, productId } = req.params;
-
-    try {
-        await sql`
-            DELETE FROM reseña
-            WHERE idUsuarioFK = ${userId}
-            AND idProductoFK = ${productId};
-        `;
-
-        res.json({ message: "Reseña eliminada correctamente por el administrador" });
-    } catch (error) {
-        console.error("Error eliminando reseña (admin):", error);
-        res.status(500).json({ error: "Error al intentar eliminar la reseña" });
-    }
-};

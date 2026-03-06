@@ -11,7 +11,7 @@ export default function Shop() {
   const location = useLocation();
   const navigate = useNavigate();
   const { products, loading: loadingProducts } = useProducts();
-  const { activePromotions, getPromotions } = usePromotions();
+  const { promotions, getPromotions } = usePromotions();
   const [visible, setVisible] = useState(6);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("");
@@ -53,8 +53,8 @@ export default function Shop() {
       filtered = filtered.filter((product) => product.tamaño === selectedSize);
     }
 
-    if (selectedPromotion && activePromotions) {
-      const promoInfo = activePromotions.find(p => String(p.idpromocion) === String(selectedPromotion));
+    if (selectedPromotion && promotions) {
+      const promoInfo = promotions.find(p => String(p.idpromocion) === String(selectedPromotion));
       
       if (promoInfo && promoInfo.productos) {
         const promoProductIds = promoInfo.productos.map(p => p.idproducto);
@@ -81,7 +81,7 @@ export default function Shop() {
     }
 
     return filtered;
-  }, [products, search, sort, selectedCollection, selectedSize, selectedPromotion, activePromotions]);
+  }, [products, search, sort, selectedCollection, selectedSize, selectedPromotion, promotions]);
 
   return (
     <div className="bg-[#f7f2ec] min-h-screen">
@@ -146,12 +146,12 @@ export default function Shop() {
           <div className="w-full max-w-2xl 2xl:w-64 mx-auto bg-white p-6 rounded-xl shadow-sm h-fit text-center 2xl:text-start flex flex-row justify-center 2xl:flex-col flex-wrap gap-4 mb-8 2xl:mb-0 ">
             
             {/* NUEVO: FILTRO POR PROMOCIONES ACTIVAS */}
-            {activePromotions && activePromotions.length > 0 && (
+            {promotions && promotions.length > 0 && (
               <div className="mb-6 w-full md:w-auto">
                 <h3 className="font-semibold mb-3 text-brand-brown text-center 2xl:text-left">
                   Promociones Especiales
                 </h3>
-                {activePromotions.map((promo) => (
+                {promotions.map((promo) => (
                   <label
                     key={promo.idpromocion}
                     className="flex justify-center 2xl:items-center 2xl:justify-normal gap-2 mb-2 cursor-pointer"

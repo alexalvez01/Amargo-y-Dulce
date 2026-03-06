@@ -5,7 +5,7 @@ import PromotionCard from "../components/PromotionCard";
 import { usePromotions } from "../context/PromotionContext";
 
 export default function Promotions() {
-    const { activePromotions, getPromotions } = usePromotions();
+    const { promotions, getPromotions } = usePromotions();
     const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -34,9 +34,9 @@ export default function Promotions() {
           <div className="text-center py-20 text-gray-500 font-medium">
             Cargando promociones...
           </div>
-        ) : activePromotions && activePromotions.length > 0 ? (
+        ) : promotions && promotions.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {activePromotions.map((promo) => (
+            {promotions.map((promo) => (
               <PromotionCard key={promo.idpromocion || promo.id} promo={promo} />
             ))}
           </div>
