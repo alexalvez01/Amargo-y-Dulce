@@ -97,51 +97,60 @@ export const getPromotionById = async (req, res) => {
 
 /* --------------------------------------------------
   POST /api/promotions 
-  Crea promoción y asocia MULTIPLES productos
+  Crea promoción, asocia MULTIPLES productos y sobreescribe si es necesario (ADMIN)
 -------------------------------------------------- */
 export const createPromotion = async (req, res) => {
-  const {
-    nombre,
-    descripcion,
-    valor,
-    fechaInicio,
-    fechaFin,
-    productosIds
-  } = req.body;
+  const { nombre, descripcion, valor, fechaInicio, fechaFin, productosIds, overwrite } = req.body;
 
   if (!nombre || !descripcion || !valor || !fechaInicio || !fechaFin || !productosIds || productosIds.length === 0) {
-    return res.status(400).json({ error: "Faltan campos obligatorios o no seleccionaste ningún producto" });
+    return res.status(400).json({ error: "Faltan campos obligatorios" });
   }
 
   try {
-    // 1. Creamos la promoción y obtenemos su ID generado
+    if (!overwrite) {
+      const productosConPromo = await sql`
+        SELECT p.nombre
+        FROM producto p
+        JOIN promocionproducto pp ON p.idProducto = pp.idProductoFK
+        JOIN promocion pr ON pr.idPromocion = pp.idPromocionFK
+        WHERE p.idProducto = ANY(${productosIds}) AND pr.estado = 'activo'
+      `;
+
+      if (productosConPromo.length > 0) {
+        return res.status(409).json({
+          error: "Hay productos que ya tienen una promoción activa.",
+          productosAfectados: productosConPromo.map(p => p.nombre)
+        });
+      }
+    }
+
+    if (overwrite) {
+      await sql`
+        DELETE FROM promocionproducto
+        WHERE idProductoFK = ANY(${productosIds})
+        AND idPromocionFK IN (SELECT idPromocion FROM promocion WHERE estado = 'activo')
+      `;
+    }
+
     const result = await sql`
-      INSERT INTO promocion
-      (nombre, descripcion, valor, fechainicio, fechafin, estado)
-      VALUES
-      (${nombre}, ${descripcion}, ${valor}, ${fechaInicio}, ${fechaFin}, 'activo')
+      INSERT INTO promocion (nombre, descripcion, valor, fechainicio, fechafin, estado)
+      VALUES (${nombre}, ${descripcion}, ${valor}, ${fechaInicio}, ${fechaFin}, 'activo')
       RETURNING idpromocion;
     `;
 
     const idPromocion = result[0].idpromocion;
 
-    // Asociamos TODOS los productos tildados a la promoción
     for (const idProd of productosIds) {
       await sql`
-        INSERT INTO promocionproducto
-        (idpromocionfk, idproductofk)
-        VALUES
-        (${idPromocion}, ${idProd});
+        INSERT INTO promocionproducto (idpromocionfk, idproductofk)
+        VALUES (${idPromocion}, ${idProd});
       `;
     }
 
-    return res.status(201).json({
-      message: "Promoción creada correctamente",
-      idPromocion
-    });
+    return res.status(201).json({ message: "Promoción creada correctamente" });
   } catch (error) {
     console.error("Error al crear promoción:", error);
-    return res.status(500).json({ error: "Error interno del servidor al crear la promoción." });
+    return res.status(500).json({ error: "Error interno del servidor" });
   }
 };
 
