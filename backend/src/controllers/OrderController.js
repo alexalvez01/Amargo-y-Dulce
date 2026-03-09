@@ -31,9 +31,10 @@ export const getPurchaseHistory = async (req, res) => {
       FROM factura f
       JOIN lineafactura lf ON f.idFactura = lf.idFacturaFK
       JOIN producto p ON lf.idProductoFK = p.idProducto
+      JOIN pago pa ON f.idFactura = pa.idFacturaFK
       WHERE f.idUsuarioFK = ${userId}
       GROUP BY f.idFactura, f.fechaCreacion, f.total
-      ORDER BY f.fechaCreacion DESC
+      ORDER BY f.idFactura DESC
     `;
 
     res.json(history);
@@ -51,7 +52,7 @@ export const getLatestOrderDetail = async (req, res) => {
       SELECT
         f.idFactura,
         f.fechaCreacion,
-        f.total
+        (SELECT SUM(subtotalProducto) FROM lineafactura WHERE idFacturaFK = f.idFactura) AS total
       FROM factura f
       WHERE f.idUsuarioFK = ${userId}
       ORDER BY f.fechaCreacion DESC, f.idFactura DESC

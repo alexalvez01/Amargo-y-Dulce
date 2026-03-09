@@ -82,6 +82,8 @@ export default function Shop() {
 
     return filtered;
   }, [products, search, sort, selectedCollection, selectedSize, selectedPromotion, promotions]);
+  
+  const activePromotions = promotions ? promotions.filter(promo => promo.estado === 'activo') : [];
 
   return (
     <div className="bg-[#f7f2ec] min-h-screen">
@@ -146,12 +148,12 @@ export default function Shop() {
           <div className="w-full max-w-2xl 2xl:w-64 mx-auto bg-white p-6 rounded-xl shadow-sm h-fit text-center 2xl:text-start flex flex-row justify-center 2xl:flex-col flex-wrap gap-4 mb-8 2xl:mb-0 ">
             
             {/* NUEVO: FILTRO POR PROMOCIONES ACTIVAS */}
-            {promotions && promotions.length > 0 && (
+            {activePromotions && activePromotions.length > 0 && (
               <div className="mb-6 w-full md:w-auto">
                 <h3 className="font-semibold mb-3 text-brand-brown text-center 2xl:text-left">
                   Promociones Especiales
                 </h3>
-                {promotions.map((promo) => (
+                {activePromotions.map((promo) => (
                   <label
                     key={promo.idpromocion}
                     className="flex justify-center 2xl:items-center 2xl:justify-normal gap-2 mb-2 cursor-pointer"

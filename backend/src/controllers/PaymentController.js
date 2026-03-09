@@ -52,7 +52,10 @@ export const createPaymentPreference = async (req, res) => {
 
   try {
     const factura = await sql`
-      SELECT f.idFactura, f.total, u.mail
+      SELECT 
+      f.idFactura,
+      (SELECT SUM(subtotalProducto) FROM lineafactura WHERE idFacturaFK = f.idFactura) AS total,
+      u.mail
       FROM factura f
       JOIN usuario u ON f.idUsuarioFK = u.idUsuario
       WHERE f.idFactura = ${idFactura}
