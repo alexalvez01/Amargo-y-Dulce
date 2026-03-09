@@ -53,7 +53,7 @@ function App() {
               <Route path="/payment/success" element={<PaymentSuccessPage />} />
               <Route path="/payment/pending" element={<PaymentPendingPage />} />
               <Route path="/payment/failure" element={<PaymentFailurePage />} />
-              <Route path="/purchase-history" element={<PurchaseHistory />} />
+              <Route path="/history" element={<PurchaseHistory />} />
               </Route>
               {/* --- RUTAS ADMIN (Entra solo si sos admin) --- */}
               <Route element={<AdminRoute />}>

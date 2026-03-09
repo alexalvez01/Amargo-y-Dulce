@@ -21,6 +21,8 @@ export default function Promotions() {
     fetchPromos();
   }, [getPromotions]);
 
+  const activePromotions = promotions ? promotions.filter(promo => promo.estado === 'activo') : [];
+
   return (
     <div className="bg-[#EBE7E0] flex flex-col min-h-screen font-brand">
       <Navbar />
@@ -34,9 +36,9 @@ export default function Promotions() {
           <div className="text-center py-20 text-gray-500 font-medium">
             Cargando promociones...
           </div>
-        ) : promotions && promotions.length > 0 ? (
+        ) : activePromotions && activePromotions.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {promotions.map((promo) => (
+            {activePromotions.map((promo) => (
               <PromotionCard key={promo.idpromocion || promo.id} promo={promo} />
             ))}
           </div>
