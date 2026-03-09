@@ -15,6 +15,7 @@ import AdminPanel from "./pages/AdminPanel.jsx";
 import DeleteProductPromotionPanel from "./pages/DeleteProductPromotionPanel.jsx";
 import EnableProductPromotionPanel from "./pages/EnableProductPromotionPanel.jsx";
 import UpdateProductPanel from "./pages/UpdateProductPanel.jsx";
+import UpdateStockPanel from "./pages/UpdateStockPanel.jsx";
 import FavoritesPage from "./pages/Favorites.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import AdminRoute from "./components/AdminRoute.jsx";
@@ -60,6 +61,7 @@ function App() {
                 <Route path="/admin/enable-product-promotion" element={<EnableProductPromotionPanel />} />
                 <Route path="/admin/delete-product-promotion" element={<DeleteProductPromotionPanel />} />
                 <Route path="/admin/update-product" element={<UpdateProductPanel />} />
+                <Route path="/admin/update-stock" element={<UpdateStockPanel />} />
               </Route>
             </Routes>
           </BrowserRouter>

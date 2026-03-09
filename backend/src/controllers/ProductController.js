@@ -191,12 +191,18 @@ export const showProduct = async (req, res) => {
 
 export const updateStock = async (req, res) => {
   const { id } = req.params;
-  const { stock } = req.body; 
+  const { stock } = req.body;
+  const stockValue = Number(stock);
+
+  if (!Number.isFinite(stockValue) || stockValue < 0) {
+    return res.status(400).json({ error: "Stock invalido" });
+  }
 
   try {
     const income = await sql`
       INSERT INTO ingreso (idIngreso, idProductoFK, cantidad, fechaActualizacion)
-      VALUES ((SELECT COALESCE(MAX(idIngreso),0) + 1 FROM ingreso), ${id}, ${stock}, NOW());
+      VALUES ((SELECT COALESCE(MAX(idIngreso),0) + 1 FROM ingreso), ${id}, ${stockValue}, NOW())
+      RETURNING idIngreso;
     `;
 
     if (income.length === 0) {
@@ -205,7 +211,7 @@ export const updateStock = async (req, res) => {
 
     const updated = await sql`
       UPDATE producto
-      SET stock = ${stock}
+      SET stock = stock + ${stockValue}
       WHERE idproducto = ${id}
       RETURNING *;
     `;

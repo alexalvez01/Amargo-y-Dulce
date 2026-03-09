@@ -11,15 +11,7 @@ export const createMpPreference = async ({
   total,
   email
 }) => {
-  const frontendUrl = process.env.FRONTEND_URL;
-  const backendUrl = process.env.BACKEND_URL;
-
-  if (!frontendUrl) {
-    throw new Error("FRONTEND_URL no esta definida en .env");
-  }
-
-  const isLocalFrontend =
-    frontendUrl.includes("localhost") || frontendUrl.includes("127.0.0.1");
+  const frontendUrl = (process.env.FRONTEND_URL || "").replace(/\/+$/, "");
 
   const preference = new Preference(client);
 
@@ -32,6 +24,7 @@ export const createMpPreference = async ({
         currency_id: "ARS"
       }
     ],
+    purpose: "wallet_purchase",
     payer: {
       email
     },
@@ -40,16 +33,8 @@ export const createMpPreference = async ({
       success: `${frontendUrl}/payment/success`,
       failure: `${frontendUrl}/payment/failure`,
       pending: `${frontendUrl}/payment/pending`
-    },
-    binary_mode: true,
-    notification_url: backendUrl
-      ? `${backendUrl}/api/payments/webhook`
-      : undefined
+    }
   };
-
-  if (!isLocalFrontend) {
-    preferenceBody.auto_return = "approved";
-  }
 
   const response = await preference.create({ body: preferenceBody });
 

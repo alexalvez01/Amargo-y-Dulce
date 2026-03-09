@@ -6,7 +6,8 @@ import {
   hideProductRequest,
   getProductRequest,
   getTopSalesProductsRequest,
-  showProductRequest
+  showProductRequest,
+  updateProductStockRequest
 } from "../api/products";
 
   const ProductContext = createContext();
@@ -82,6 +83,22 @@ export const ProductProvider = ({ children }) => {
     }
   };
 
+  // Actualizar stock de un producto por id
+  const updateProductStock = async (id, stock) => {
+    try {
+      const res = await updateProductStockRequest(id, stock);
+      setProducts((prevProducts) =>
+        prevProducts.map((product) =>
+          Number(product.idproducto) === Number(id) ? { ...product, ...res.data } : product
+        )
+      );
+      return { success: true, data: res.data };
+    } catch (error) {
+      console.log(error);
+      return { success: false, error };
+    }
+  };
+
 // Ocultar un producto (actualizar su estado a oculto)
   const hideProduct = async (id) => {
     try {
@@ -116,7 +133,8 @@ export const ProductProvider = ({ children }) => {
         hideProduct,
         getProductById,
         getTopSalesProducts,
-        showProduct
+        showProduct,
+        updateProductStock
       }}
     >
       {children}

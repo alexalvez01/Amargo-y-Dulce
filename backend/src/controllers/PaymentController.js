@@ -106,4 +106,3 @@ export const confirmPayment = async (req, res) => {
     res.status(500).json({ error: "Error confirmando el pago" });
   }
 };
-

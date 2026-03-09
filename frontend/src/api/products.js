@@ -16,3 +16,6 @@ export const showProductRequest = (id) => axios.patch(`/products/${id}/show`);
 export const getProductRequest = (id) => axios.get(`/products/${id}`);
 
 export const getTopSalesProductsRequest = () => axios.get("/products/top-sales");
+
+export const updateProductStockRequest = (id, stock) =>
+  axios.put(`/products/stock/${id}`, { stock });

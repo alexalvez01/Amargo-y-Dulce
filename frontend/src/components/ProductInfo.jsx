@@ -13,8 +13,11 @@ export default function ProductInfo({
   onToggleFavorite 
 }) {
   const [quantity, setQuantity] = useState(1);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const { promotions } = usePromotions();
+  
+  const stockValue = Number(product.stock || 0);
+  const isAdmin = user?.rol === "admin";
   
   const activePromo = promotions?.find(promo => 
     promo.productos.some(p => String(p.idproducto) === String(product.idproducto || product.idProducto))
@@ -168,23 +171,32 @@ return (
             )}
           </div>
 
-          {product.stock > 10 && (
-            <p className="text-green-600 font-semibold mb-6 flex items-center gap-2 font-brand">
-              <span className="w-2 h-2 rounded-full bg-green-600"></span>
-              En stock
+          {isAdmin ? (
+            <p className="text-brand-brownDark font-semibold mb-6 flex items-center gap-2 font-brand">
+              <span className={`w-2 h-2 rounded-full ${stockValue > 0 ? "bg-green-600" : "bg-red-600"}`}></span>
+              Stock disponible: {stockValue} unidades
             </p>
-          )}
-          {product.stock > 0 && product.stock <= 10 && (
-            <p className="text-blue-600 font-semibold mb-6 flex items-center gap-2 font-brand">
-              <span className="w-2 h-2 rounded-full bg-blue-600"></span>
-              Ultimas unidades
-            </p>
-          )}
-          {product.stock <= 0 && (
-            <p className="text-red-600 font-semibold mb-6 flex items-center gap-2 font-brand">
-              <span className="w-2 h-2 rounded-full bg-red-600"></span>
-              Sin stock
-            </p>
+          ) : (
+            <>
+              {stockValue > 10 && (
+                <p className="text-green-600 font-semibold mb-6 flex items-center gap-2 font-brand">
+                  <span className="w-2 h-2 rounded-full bg-green-600"></span>
+                  En stock
+                </p>
+              )}
+              {stockValue > 0 && stockValue <= 10 && (
+                <p className="text-blue-600 font-semibold mb-6 flex items-center gap-2 font-brand">
+                  <span className="w-2 h-2 rounded-full bg-blue-600"></span>
+                  Ultimas unidades
+                </p>
+              )}
+              {stockValue <= 0 && (
+                <p className="text-red-600 font-semibold mb-6 flex items-center gap-2 font-brand">
+                  <span className="w-2 h-2 rounded-full bg-red-600"></span>
+                  Sin stock
+                </p>
+              )}
+            </>
           )}
           
 
