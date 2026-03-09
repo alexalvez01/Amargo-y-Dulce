@@ -2,6 +2,7 @@ import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import AddPromotionModal from "../components/AddPromotionModal";
+import AddProductModal from "../components/AddProductModal";
 
 const adminMenu = [
   { id: 1, title: 'Añadir un producto' },
@@ -16,6 +17,7 @@ const adminMenu = [
 function AdminPanel() {
   const navigate = useNavigate();
   const [isPromoModalOpen, setIsPromoModalOpen] = useState(false);
+  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
 
   return (
     <div>
@@ -34,7 +36,8 @@ function AdminPanel() {
                 key={item.id}
                 className="bg-brand-beige rounded-lg shadow h-[120px] flex flex-col items-center justify-center px-4 font-medium border-t-4 border-brand-brown cursor-pointer transition-transform transform hover:scale-105"
                 onClick={() => {
-                  if (item.id === 2) navigate("/admin/update-product");
+                  if (item.id === 1) setIsProductModalOpen(true);
+                  else if (item.id === 2) navigate("/admin/update-product");
                   else if (item.id === 3) navigate("/admin/delete-product-promotion")
                   else if (item.id === 5) navigate("/admin/enable-product-promotion");
                   else if (item.id === 6) setIsPromoModalOpen(true);
@@ -59,6 +62,10 @@ function AdminPanel() {
       <AddPromotionModal 
         isOpen={isPromoModalOpen} 
         onClose={() => setIsPromoModalOpen(false)} 
+      />
+      <AddProductModal
+        isOpen={isProductModalOpen} 
+        onClose={() => setIsProductModalOpen(false)} 
       />
     </div>
   );
