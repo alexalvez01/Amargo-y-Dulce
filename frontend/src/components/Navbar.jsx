@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
-import { NavLink, Link, useNavigate } from "react-router-dom";
+import { NavLink, Link} from "react-router-dom";
 import {
   User,
   ShoppingCart,
@@ -21,9 +21,34 @@ export default function Navbar() {
   const userMenuRef = useRef(null);
   const menuRef = useRef(null);
 
-  const navigate = useNavigate();
 
   const [isCartAnimating, setIsCartAnimating] = useState(false);
+
+  // Scroll suave manual 
+  const smoothScrollTo = (elementId) => {
+    const element = document.getElementById(elementId);
+    if (!element) {
+      window.location.href = `/#${elementId}`;
+      return;
+    }
+    const targetPosition = element.getBoundingClientRect().top + window.scrollY;
+    const startPosition = window.scrollY;
+    const distance = targetPosition - startPosition;
+    const duration = 800;
+    let start = null;
+
+    const step = (timestamp) => {
+      if (!start) start = timestamp;
+      const progress = Math.min((timestamp - start) / duration, 1);
+      const ease = progress < 0.5
+        ? 4 * progress * progress * progress
+        : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+      window.scrollTo(0, startPosition + distance * ease);
+      if (progress < 1) requestAnimationFrame(step);
+    };
+
+    requestAnimationFrame(step);
+  };
 
   // Función para cerrar sesión correctamente 
   const handleLogout = () => {
@@ -63,8 +88,9 @@ export default function Navbar() {
       isActive ? "text-brand-brownDark font-semibold" : ""
     }`;
 
-  const menuLinkStyles = "px-6 py-3 hover:bg-brand-brown hover:text-white transition-colors"
+  const menuLinkStyles = "px-6 py-3 hover:bg-brand-brown hover:text-white transition-colors";
   const userMenuLinkStyles = "flex items-center gap-3 px-4 py-2 text-sm hover:bg-brand-brown hover:text-white transition-colors";
+  
 
   return (
     <nav className="fixed flex flex-row w-full z-70 items-center justify-between bg-brand-beige px-3 text-brand-brown lg:px-28">
@@ -101,20 +127,15 @@ export default function Navbar() {
         </Link>
         {/* --- MENÚ PRINCIPAL PARA DESKTOP --- */}
         <div className="hidden lg:flex gap-2.5 font-brand text-sm">
-          <NavLink to="/" className={navLinkStyles}>
+          <NavLink to="/" className={navLinkStyles}
+          onClick={() => window.scrollTo(0, 0)}>
+          
             Nosotros
           </NavLink>
           <button
             className={navLinkStyles({ isActive: false }) + " bg-transparent border-none outline-none cursor-pointer"}
             id="contact"
-            onClick={() => {
-              const footer = document.getElementById("footer");
-              if (footer) {
-                footer.scrollIntoView({ behavior: "smooth" });
-              } else {
-                window.location.href = "/#footer";
-              }
-            }}
+            onClick={() => smoothScrollTo("footer")}
           >
             Contacto
           </button>
@@ -148,17 +169,12 @@ export default function Navbar() {
               Nosotros
             </NavLink>
 
-            <button
+             <button
               className={menuLinkStyles + " bg-transparent border-none outline-none text-left w-full"}
               style={{ background: "none" }}
               onClick={() => {
                 setIsMenuOpen(false);
-                const footer = document.getElementById("footer");
-                if (footer) {
-                  footer.scrollIntoView({ behavior: "smooth" });
-                } else {
-                  window.location.href = "/#footer";
-                }
+                smoothScrollTo("footer");
               }}
             >
               Contacto

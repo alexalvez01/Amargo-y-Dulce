@@ -33,7 +33,7 @@ export default function PurchaseHistory() {
       <main className="max-w-4xl mx-auto px-4 w-full mt-24 md:mt-32 mb-20 grow">
         
         {/* TÍTULO */}
-        <h1 className="text-4xl md:text-5xl font-extrabold text-[#6B4C3A] mb-10 text-center">
+        <h1 className="text-4xl md:text-5xl font-semibold text-[#6B4C3A] mb-10 text-center">
           Historial de compras
         </h1>
 
