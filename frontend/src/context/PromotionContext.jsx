@@ -16,9 +16,9 @@ export const PromotionProvider = ({ children }) => {
 
 
 // Obtener todas las promociones
-  const getPromotions = async () => {
+  const getPromotions = async (adminView = false) => {
     try {
-      const res = await getPromotionsRequest();
+      const res = await getPromotionsRequest(adminView);
       setPromotions(res.data);
     } catch (error) {
       console.log(error);
@@ -32,7 +32,7 @@ export const PromotionProvider = ({ children }) => {
   const hidePromotion = async (id) => {
     try {
       await hidePromotionRequest(id);
-      getPromotions();
+      getPromotions(true); // Refresca en modo admin para seguir viendo la lista
     } catch (error) {
       console.log(error);
     }
@@ -43,7 +43,7 @@ export const PromotionProvider = ({ children }) => {
   const showPromotion = async (id) => {
     try {
       await showPromotionRequest(id);
-      getPromotions();
+      getPromotions(true); // Refresca en modo admin
     } catch (error) {
       console.log(error);
     }};

@@ -1,6 +1,6 @@
 import axios from "./axios";
 
-export const getPromotionsRequest = () => axios.get("/promotions");
+export const getPromotionsRequest = (adminView = false) => axios.get(adminView ? "/promotions?adminView=true" : "/promotions");
 export const hidePromotionRequest = (id) => axios.patch(`/promotions/${id}/hide`);
 export const showPromotionRequest = (id) => axios.patch(`/promotions/${id}/show`);
 export const createPromotionRequest = (payload) => axios.post("/promotions", payload);

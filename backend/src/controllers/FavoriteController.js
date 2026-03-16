@@ -26,6 +26,14 @@ export const addFavorite = async (req, res) => {
     try {
         const { productId } = req.body;
 
+        const prod = await sql`SELECT estado FROM producto WHERE idProducto = ${productId}`;
+        if (prod.length === 0) {
+            return res.status(404).json({ error: "Producto inexistente" });
+        }
+        if (prod[0].estado === 'inactivo') {
+            return res.status(400).json({ error: "El producto no se encuentra disponible actualmente." });
+        }
+
         const exists = await sql`
             SELECT 1 FROM favorito
             WHERE idUsuarioFK = ${userId}
@@ -67,7 +75,6 @@ export const removeFavorite = async (req, res) => {
     }
 };
 
-// Alternar favorito (si está lo quita, si no lo agrega)
 export const toggleFavorite = async (req, res) => {
     const userId = req.user.userId;
 
@@ -87,6 +94,14 @@ export const toggleFavorite = async (req, res) => {
                   AND idProductoFK = ${productId};
             `;
             return res.json({ message: "Producto removido de favoritos" });
+        }
+
+        const prod = await sql`SELECT estado FROM producto WHERE idProducto = ${productId}`;
+        if (prod.length === 0) {
+            return res.status(404).json({ error: "Producto inexistente" });
+        }
+        if (prod[0].estado === 'inactivo') {
+            return res.status(400).json({ error: "El producto no se encuentra disponible actualmente." });
         }
 
         await sql`

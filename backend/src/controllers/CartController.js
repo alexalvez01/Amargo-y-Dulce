@@ -50,13 +50,16 @@ export const addProductToCart = async (req, res) => {
   const { idProducto, cantidad } = req.body;
 
   try {
-    // Verificar si el producto existe y traernos SU PRECIO y SU STOCK
-    const prod = await sql`SELECT precio, stock FROM producto WHERE idProducto = ${idProducto}`;
-    
+    const prod = await sql`SELECT precio, stock, estado FROM producto WHERE idProducto = ${idProducto}`;
+
     if (prod.length === 0) {
       return res.status(404).json({ error: "Producto inexistente" });
     }
-    
+
+    if (prod[0].estado === 'inactivo') {
+      return res.status(400).json({ error: "El producto no se encuentra disponible actualmente." });
+    }
+
     const precioUnitario = prod[0].precio;
     const stockDisponible = prod[0].stock;
 
@@ -86,14 +89,14 @@ export const addProductToCart = async (req, res) => {
       SELECT cantidad FROM productocarrito
       WHERE idCarritoFK = ${idCarrito} AND idProductoFK = ${idProducto}
     `;
-    
+
     const cantidadActual = productoEnCarrito.length > 0 ? productoEnCarrito[0].cantidad : 0;
     if (cantidadActual + cantidad > stockDisponible) {
-      return res.status(400).json({ 
-        error: `No hay suficiente stock. Ya tienes ${cantidadActual} en el carrito y solo quedan ${stockDisponible} disponibles.` 
+      return res.status(400).json({
+        error: `No hay suficiente stock. Ya tienes ${cantidadActual} en el carrito y solo quedan ${stockDisponible} disponibles.`
       });
     }
-    
+
 
     // 4. Insertar o actualizar
     await sql`
@@ -115,7 +118,6 @@ export const updateProductQuantity = async (req, res) => {
   const { idCarrito, idProducto, cantidad } = req.body;
 
   try {
-    // 1. Actualizamos la cantidad
     await sql`
       UPDATE productocarrito
       SET cantidad = ${cantidad}
@@ -131,10 +133,9 @@ export const updateProductQuantity = async (req, res) => {
 
 // Eliminar un producto
 export const removeProductFromCart = async (req, res) => {
-  const { idCarrito, idProducto } = req.body; 
+  const { idCarrito, idProducto } = req.body;
 
   try {
-    // 1. Borramos el producto del carrito
     await sql`
       DELETE FROM productocarrito
       WHERE idCarritoFK = ${idCarrito} AND idProductoFK = ${idProducto}
