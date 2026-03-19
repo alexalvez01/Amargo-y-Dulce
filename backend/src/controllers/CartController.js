@@ -115,6 +115,21 @@ export const updateProductQuantity = async (req, res) => {
   const { idCarrito, idProducto, cantidad } = req.body;
 
   try {
+    // Verificar stock disponible del producto
+    const prod = await sql`SELECT stock FROM producto WHERE idProducto = ${idProducto}`;
+    
+    if (prod.length === 0) {
+      return res.status(404).json({ error: "Producto inexistente" });
+    }
+
+    const stockDisponible = prod[0].stock;
+
+    if (cantidad > stockDisponible) {
+      return res.status(400).json({ 
+        error: `No hay suficiente stock. Solo quedan ${stockDisponible} unidades disponibles.` 
+      });
+    }
+
     // 1. Actualizamos la cantidad
     await sql`
       UPDATE productocarrito

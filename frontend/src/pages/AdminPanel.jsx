@@ -11,8 +11,8 @@ const adminMenu = [
   { id: 4, title: 'Gestionar Pedidos' },
   { id: 5, title: 'Dar de alta un producto o promoción' },
   { id: 6, title: 'Agregar Promociones' },
-  { id: 7, title: 'Actualizar Stock' },
 ];
+
 
 function AdminPanel() {
   const navigate = useNavigate();

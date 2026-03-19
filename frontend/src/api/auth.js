@@ -1,4 +1,7 @@
-
+/**
+ * Servicios de API para Autenticación.
+ * Contiene todas las definiciones de peticiones HTTP (registro, login y gestión de sesión).
+ */
 import axios from "./axios";
 
 export const registerRequest = (user) => axios.post(`/auth/register`, user);

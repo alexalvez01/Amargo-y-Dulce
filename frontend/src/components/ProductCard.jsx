@@ -1,5 +1,6 @@
 import { usePromotions } from "../context/PromotionContext";
 
+
 export default function ProductCard({ product }) {
   const { promotions } = usePromotions();
   const activePromo = promotions?.find(promo => 

@@ -1,3 +1,7 @@
+/**
+ * Servicios de API para Reseñas.
+ * Permite listar, agregar y eliminar opiniones de los productos.
+ */
 import axios from "./axios";
 
 // Pide las reseñas de un producto (GET /product/:productId)

@@ -3,8 +3,15 @@ import { createContext, useState, useContext, useEffect } from "react";
 import { registerRequest, loginRequest, googleLoginRequest, verifyTokenRequest } from "../api/auth";
 import Cookies from "js-cookie";
 
+// Creación del contexto de autenticación
 const AuthContext = createContext();
 
+/**
+ * Hook personalizado para acceder al contexto de autenticación
+ * Permite a los componentes hijos acceder a los datos del usuario, 
+ * funciones de login, logout, registro, estado de autenticación y errores.
+ * @returns {Object} El estado y métodos de AuthContext.
+ */
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -13,12 +20,25 @@ export const useAuth = () => {
   return context;
 };
 
+/**
+ * Proveedor del contexto de Autenticación.
+ * 
+ * Mantiene de manera global los datos del usuario logueado en la variable 'user',
+ * rastrea la autenticación en 'isAuthenticated', almacena los 'errors' que vengan
+ * del backend durante los procesos de auth, y provee las funciones de interacción 
+ * (login, signup, logout).
+ */
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [errors, setErrors] = useState([]); 
 
-  //FUNCION LOGIN CON GOOGLE
+  // --- FUNCION LOGIN CON GOOGLE ---
+  /**
+   * Envía las credenciales devueltas por el botón de Google al backend para iniciar sesión.
+   * Si es exitoso, actualiza el estado y guarda el token JWT en una cookie.
+   * @param {Object} credentialResponse - Respuesta del componente de Google Login.
+   */
   const signinGoogle = async (credentialResponse) => {
     try {
       const res = await googleLoginRequest(credentialResponse.credential);

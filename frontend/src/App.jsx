@@ -27,13 +27,18 @@ import PaymentPendingPage from "./pages/PaymentPendingPage.jsx";
 import PaymentFailurePage from "./pages/PaymentFailurePage.jsx";
 import PurchaseHistory from "./pages/PucharseHistory.jsx";
 
+
 function App() {
+  // Proveedores de contexto para el manejo global del estado de productos y promociones
   return (
     <ProductProvider>
       <PromotionProvider>
+        {/* Proveedor de estado de autenticación de usuarios */}
         <AuthProvider>
           <BrowserRouter>
+            {/* Componente para volver al inicio de la página al cambiar de ruta */}
             <ScrollToTop />
+            {/* Contenedor de notificaciones globales (toast) */}
             <Toaster position="top-center" reverseOrder={false} />
             <Routes>
               {/* --- RUTAS PÚBLICAS (Entra cualquiera) --- */}

@@ -1,5 +1,9 @@
 import { Facebook, Instagram, Twitter, Phone } from "lucide-react";
 
+/**
+ * Componente pie de página de la aplicación.
+ * Muestra las redes sociales, la dirección física y el teléfono de contacto de Amargo y Dulce.
+ */
 export default function Footer() {
   return (
 

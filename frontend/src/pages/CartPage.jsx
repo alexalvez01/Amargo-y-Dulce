@@ -14,6 +14,7 @@ import {
   confirmCartRequest
 } from "../api/cart";
 
+
 export default function CartPage() {
   const [cartData, setCartData] = useState(null);
   const [products, setProducts] = useState([]);

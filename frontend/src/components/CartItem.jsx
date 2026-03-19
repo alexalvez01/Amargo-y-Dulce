@@ -1,5 +1,6 @@
 import { Minus, Plus } from "lucide-react";
 
+
 export default function CartItem({ item, discount, finalPrice, onUpdateQuantity, onRemove }) {
   const imagen = item.imagen || "/images/producto-clasico.webp";
   const productId = item.idproductofk || item.idProductoFK; 
@@ -13,8 +14,6 @@ export default function CartItem({ item, discount, finalPrice, onUpdateQuantity,
   };
 
   const handleIncrease = () => {
-    // Por ahora le sumamos 1. (Nota: Tu backend actual en el update no verifica stock, 
-    // ¡sería una buena mejora agregarlo después!)
     onUpdateQuantity(productId, item.cantidad + 1);
   };
 

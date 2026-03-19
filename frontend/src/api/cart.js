@@ -1,3 +1,7 @@
+/**
+ * Servicios de API para el Carrito de Compras.
+ * Define las rutas para añadir productos, modificar su cantidad o borrarlos del carrito.
+ */
 import axios from "./axios";
 
 // Petición para agregar un producto (la que ya teníamos)

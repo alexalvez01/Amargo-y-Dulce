@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 
+
 export default function Hero() {
   const [visible, setVisible] = useState(false);
   const [entered, setEntered] = useState(false);

@@ -1,3 +1,7 @@
+/**
+ * Servicios de API para Productos.
+ * Define el CRUD completo de los productos, incluyendo visibilidad y actualización de stock.
+ */
 import axios from "./axios";
 
 export const getProductsRequest = () => axios.get("/products");

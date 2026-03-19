@@ -1,3 +1,7 @@
+/**
+ * Servicios de API para Promociones.
+ * Rutas para obtener, crear y gestionar el estado (visible/oculto) de las promociones.
+ */
 import axios from "./axios";
 
 export const getPromotionsRequest = () => axios.get("/promotions");

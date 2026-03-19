@@ -12,6 +12,7 @@ import {
   X,
 } from "lucide-react";
 
+
 export default function Navbar() {
   const { user, logout } = useAuth();
 

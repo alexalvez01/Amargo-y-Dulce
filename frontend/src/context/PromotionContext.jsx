@@ -1,15 +1,22 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { getPromotionsRequest, hidePromotionRequest, showPromotionRequest} from "../api/promotions";
 
+// Contexto global de Promociones
 const PromotionContext = createContext();
 
+/**
+ * Hook para consumir el PromotionContext.
+ */
 export const usePromotions = () => {
   const context = useContext(PromotionContext);
   if (!context) throw new Error("usePromotions must be used inside PromotionProvider");
   return context;
 };
 
-
+/**
+ * Proveedor de Contexto para gestionar el estado global y 
+ * listado de las promociones de productos.
+ */
 export const PromotionProvider = ({ children }) => {
   const [promotions, setPromotions] = useState([]);
   const [loading, setLoading] = useState(true);

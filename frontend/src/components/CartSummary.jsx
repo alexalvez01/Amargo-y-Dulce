@@ -1,3 +1,4 @@
+
 export default function CartSummary({ total, onConfirm, isConfirming }) {
   return (
     <div className="bg-white rounded-3xl shadow-sm p-8 w-full  lg:w-[400px] h-fit sticky top-28">

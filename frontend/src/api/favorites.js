@@ -1,3 +1,7 @@
+/**
+ * Servicios de API para Favoritos.
+ * Rutas destinadas a obtener, añadir o eliminar productos guardados como favoritos.
+ */
 import axios from './axios';
 
 export const getFavoritesRequest = () => axios.get('/favorites');
