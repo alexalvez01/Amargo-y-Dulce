@@ -60,3 +60,40 @@ export const advanceShipmentStatus = async (req, res) => {
     res.status(500).json({ error: "Failed to update shipment" });
   }
 };
+
+export const cancelShipment = async (req, res) => {
+  const { idEnvio } = req.params;
+
+  try {
+    const shipment = await sql`
+      SELECT estado
+      FROM envio
+      WHERE idEnvio = ${idEnvio}
+    `;
+
+    if (shipment.length === 0) {
+      return res.status(404).json({ error: "Shipment not found" });
+    }
+
+    if (shipment[0].estado === "recibido" || shipment[0].estado === "cancelado") {
+      return res.status(400).json({
+        error: "Shipment cannot be cancelled from its current state"
+      });
+    }
+
+    await sql`
+      UPDATE envio
+      SET estado = 'cancelado'
+      WHERE idEnvio = ${idEnvio}
+    `;
+
+    res.json({
+      message: "Shipment cancelled successfully",
+      newStatus: "cancelado"
+    });
+
+  } catch (error) {
+    console.error("Error cancelling shipment:", error);
+    res.status(500).json({ error: "Failed to cancel shipment" });
+  }
+};

@@ -4,6 +4,7 @@ import { useState } from "react";
 import AddPromotionModal from "../components/AddPromotionModal";
 import AddProductModal from "../components/AddProductModal";
 import UpdateStockModal from "../components/UpdateStockModal";
+import ShippingManagementModal from "../components/ShippingManagementModal";
 
 const adminMenu = [
   { id: 1, title: 'Añadir un producto' },
@@ -20,6 +21,7 @@ function AdminPanel() {
   const [isPromoModalOpen, setIsPromoModalOpen] = useState(false);
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
   const [isStockModalOpen, setIsStockModalOpen] = useState(false);
+  const [isShippingModalOpen, setIsShippingModalOpen] = useState(false);
 
   return (
     <div>
@@ -40,6 +42,7 @@ function AdminPanel() {
                     if (item.id === 1) setIsProductModalOpen(true);
                     else if (item.id === 2) navigate("/admin/update-product");
                     else if (item.id === 3) navigate("/admin/delete-product-promotion")
+                    else if (item.id === 4) setIsShippingModalOpen(true);
                     else if (item.id === 5) navigate("/admin/enable-product-promotion");
                     else if (item.id === 6) setIsPromoModalOpen(true);
                   }}
@@ -72,6 +75,10 @@ function AdminPanel() {
         isOpen={isStockModalOpen}
         onClose={() => setIsStockModalOpen(false)}
         product={null}
+      />
+      <ShippingManagementModal
+        isOpen={isShippingModalOpen}
+        onClose={() => setIsShippingModalOpen(false)}
       />
     </div>
   );

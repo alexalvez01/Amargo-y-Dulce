@@ -22,7 +22,7 @@ export default function PopularProducts() {
         </h2>
 
         {products.length === 0 ? (
-          <p className="text-brand-beige text-center">Cargando best sellers...</p>
+          <p className="text-brand-beige text-center">Cargando Productos Populares...</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             {/* Ya no necesitamos .slice ni .filter, el backend hace el trabajo duro */}
