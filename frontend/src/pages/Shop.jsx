@@ -17,6 +17,7 @@ export default function Shop() {
   const [sort, setSort] = useState("");
   const [selectedCollection, setSelectedCollection] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
+  const [isSortOpen, setIsSortOpen] = useState(false);
 
   const [selectedPromotion, setSelectedPromotion] = useState("");
 
@@ -114,29 +115,65 @@ export default function Shop() {
             </div>
 
             {/* Ordenar */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 relative">
               <span className="text-brand-brown font-bold font-brand">Ordenar por:</span>
 
-              <select
-                value={sort}
-                onChange={(e) => setSort(e.target.value)}
-                className="
-                  appearance-none bg-[#fcf8f5] text-brand-brownDark font-brand border border-[#d4c3b3] 
-                  rounded-lg py-2 pl-4 pr-12 cursor-pointer outline-none shadow-sm hover:border-brand-brown 
-                  focus:ring-2 focus:ring-[#968373]/50 transition-all bg-no-repeat
-                "
-                style={{
-                  backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%234A3024' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                  backgroundPosition: 'right 1rem center',
-                  backgroundSize: '1.5em 1.5em',
-                }}
-              >
-                <option value="">Seleccionar</option>
-                <option value="price-asc">Menor precio</option>
-                <option value="price-desc">Mayor precio</option>
-                <option value="name-asc">Nombre A-Z</option>
-                <option value="name-desc">Nombre Z-A</option>
-              </select>
+              <div className="relative">
+                <button
+                  onClick={() => setIsSortOpen(!isSortOpen)}
+                  onBlur={() => setTimeout(() => setIsSortOpen(false), 200)}
+                  className="
+                    flex items-center justify-between w-48 bg-[#fcf8f5] text-brand-brownDark font-brand border border-[#d4c3b3] 
+                    rounded-lg py-2 px-4 cursor-pointer outline-none shadow-sm hover:border-brand-brown 
+                    focus:ring-2 focus:ring-[#968373]/50 transition-all
+                  "
+                >
+                  <span className="truncate">
+                    {sort === "" ? "Seleccionar" : 
+                     sort === "price-asc" ? "Menor precio" : 
+                     sort === "price-desc" ? "Mayor precio" : 
+                     sort === "name-asc" ? "Nombre A-Z" : 
+                     "Nombre Z-A"}
+                  </span>
+                  <svg 
+                    className={`w-5 h-5 text-brand-brownDark transition-transform duration-300 ${isSortOpen ? "rotate-180" : ""}`} 
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                </button>
+
+                {/* Dropdown Menu Animado */}
+                <div 
+                  className={`
+                    absolute top-full left-0 mt-2 w-full bg-white border border-[#d4c3b3] rounded-lg shadow-xl 
+                    z-50 overflow-hidden transition-all duration-300 origin-top
+                    ${isSortOpen ? "opacity-100 scale-y-100 translate-y-0" : "opacity-0 scale-y-95 -translate-y-2 pointer-events-none"}
+                  `}
+                >
+                  {[
+                    { value: "", label: "Seleccionar" },
+                    { value: "price-asc", label: "Menor precio" },
+                    { value: "price-desc", label: "Mayor precio" },
+                    { value: "name-asc", label: "Nombre A-Z" },
+                    { value: "name-desc", label: "Nombre Z-A" },
+                  ].map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={() => {
+                        setSort(option.value);
+                        setIsSortOpen(false);
+                      }}
+                      className={`
+                        w-full text-left px-4 py-2 hover:bg-[#f7f2ec] transition-colors font-brand
+                        ${sort === option.value ? "text-brand-brown font-bold bg-[#fcf8f5]" : "text-gray-700"}
+                      `}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -156,7 +193,7 @@ export default function Shop() {
                 {activePromotions.map((promo) => (
                   <label
                     key={promo.idpromocion}
-                    className="flex justify-center 2xl:items-center 2xl:justify-normal gap-2 mb-2 cursor-pointer"
+                    className="flex justify-center 2xl:items-center 2xl:justify-normal gap-2 px-3 py-2 cursor-pointer rounded-lg hover:bg-brand-beige/60 active:scale-95 transition-all duration-200"
                   >
                     <input
                       type="radio"
@@ -206,7 +243,7 @@ export default function Shop() {
               ].map((col) => (
                 <label
                   key={col}
-                  className="flex justify-center 2xl:items-center 2xl:justify-normal gap-2 mb-2 cursor-pointer"
+                  className="flex justify-center 2xl:items-center 2xl:justify-normal gap-2 px-3 py-2 cursor-pointer rounded-lg hover:bg-brand-beige/60 active:scale-95 transition-all duration-200"
                 >
                   <input
                     type="radio"
@@ -243,7 +280,7 @@ export default function Shop() {
               {["6", "12", "24"].map((size) => (
                 <label
                   key={size}
-                  className="flex justify-center 2xl:items-center 2xl:justify-normal gap-2 mb-2 cursor-pointer"
+                  className="flex justify-center 2xl:items-center 2xl:justify-normal gap-2 px-3 py-2 cursor-pointer rounded-lg hover:bg-brand-beige/60 active:scale-95 transition-all duration-200"
                 >
                   <input
                     type="radio"
@@ -286,8 +323,16 @@ export default function Shop() {
                 )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 ">
-                  {filteredProducts.filter(p => p.estado === "activo").slice(0, visible).map((product) => (
-                    <Link to={`/product/${product.idproducto}`} key={product.idproducto}>
+                  {filteredProducts.filter(p => p.estado === "activo").slice(0, visible).map((product, index) => (
+                    <Link 
+                      to={`/product/${product.idproducto}`} 
+                      key={product.idproducto}
+                      style={{ 
+                        animation: `slideDownFade 0.5s ease-out forwards`,
+                        animationDelay: `${index * 50}ms`,
+                        opacity: 0 // Cascada
+                      }}
+                    >
                       <ProductCard product={product} />
                     </Link>
                   ))}
@@ -297,7 +342,7 @@ export default function Shop() {
                   <div className="flex justify-center mt-10">
                     <button
                       onClick={() => setVisible((prev) => prev + 6)}
-                      className="px-6 py-3 bg-brand-brown text-white rounded-lg hover:bg-brand-brownDark transition shadow-md"
+                      className="px-8 py-3 bg-[#6B4C3A] text-white font-bold rounded-xl shadow-md hover:shadow-xl hover:bg-[#543b2d] hover:-translate-y-1 active:scale-95 transition-all duration-300"
                     >
                       Ver más
                     </button>

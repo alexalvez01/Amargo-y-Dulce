@@ -15,7 +15,7 @@ export default function ProductCard({ product }) {
   const isInactive = product.estado === 'inactivo';
 
   return (
-    <div className="group bg-white rounded-xl w-full  overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
+    <div className="group bg-white rounded-xl w-full overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
       <div className="relative overflow-hidden">
         {discount > 0 && !isInactive && (
           <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-2xl z-10 shadow-sm">
@@ -32,7 +32,7 @@ export default function ProductCard({ product }) {
         <img
           src={product?.imagen}
           alt={product.nombre}
-          className={`w-full h-72 object-cover transition-transform duration-500 ${isInactive ? 'opacity-60 grayscale' : 'group-hover:scale-105'}`}
+          className={`w-full h-72 object-cover transition-transform duration-700 ease-out ${isInactive ? 'opacity-60 grayscale' : 'group-hover:scale-110'}`}
         />
       </div>
 

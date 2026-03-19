@@ -92,8 +92,10 @@ export default function ProductInfo({
   return (
     <>
       {isFlying && (
-        <div
+        <img
           className="flying-ball"
+          src={product.imagen || "/images/producto-clasico.webp"}
+          alt="volando"
           style={{
             '--start-top': `${flyPos.top}px`,
             '--start-left': `${flyPos.left}px`

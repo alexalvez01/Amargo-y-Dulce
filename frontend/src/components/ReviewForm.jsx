@@ -7,7 +7,7 @@ import { createReviewRequest } from "../api/reviews";
 export default function ReviewForm({ productId, productName, onReviewAdded }) {
   const { isAuthenticated } = useAuth();
   const [rating, setRating] = useState(0);
-  const [hoverRating, setHoverRating] = useState(0); // Para la animación de las estrellas
+  const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -24,7 +24,7 @@ export default function ReviewForm({ productId, productName, onReviewAdded }) {
           </span>
         </div>
       ), { id: 'login-toast', duration: 2500 });
-      
+
       return;
     }
 
@@ -62,7 +62,7 @@ export default function ReviewForm({ productId, productName, onReviewAdded }) {
       // Limpiamos el formulario
       setRating(0);
       setComment("");
-      
+
       // Le avisamos a la página que actualice las reseñas de arriba
       if (onReviewAdded) onReviewAdded();
 
@@ -82,13 +82,13 @@ export default function ReviewForm({ productId, productName, onReviewAdded }) {
     // Fondo marrón que abarca todo el ancho, tal como en tu Figma
     <div className="w-full bg-[#968373] py-16 mt-12">
       <div className="max-w-4xl mx-auto px-4 md:px-8">
-        
+
         <h3 className="text-2xl md:text-3xl font-bold text-white mb-8 font-brand">
           Compartí tu opinión de "{productName}" acá:
         </h3>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-          
+
           {/* Selector de Estrellas */}
           <div>
             <p className="text-white md:text-lg mb-3 font-brand">Tu valoración del producto</p>
@@ -100,12 +100,12 @@ export default function ReviewForm({ productId, productName, onReviewAdded }) {
                   onClick={() => setRating(star)}
                   onMouseEnter={() => setHoverRating(star)}
                   onMouseLeave={() => setHoverRating(0)}
-                  className="focus:outline-none transition-transform hover:scale-110"
+                  className="focus:outline-none transition-all duration-300 hover:scale-125 hover:-translate-y-1"
                 >
                   <Star
-                    size={28}
+                    size={32}
                     fill={(hoverRating || rating) >= star ? "#fbbf24" : "transparent"}
-                    className={(hoverRating || rating) >= star ? "text-yellow-400" : "text-yellow-400"}
+                    className={`transition-all duration-300 ease-out ${(hoverRating || rating) >= star ? "text-yellow-400 scale-110 drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]" : "text-yellow-400 opacity-40"} `}
                     strokeWidth={1.5}
                   />
                 </button>
@@ -129,9 +129,8 @@ export default function ReviewForm({ productId, productName, onReviewAdded }) {
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`bg-[#543b2d] text-white font-bold py-3 px-10 rounded-lg shadow-md hover:bg-[#3f2c22] transition-colors font-brand ${
-                isSubmitting ? "opacity-70 cursor-not-allowed" : ""
-              }`}
+              className={`bg-[#543b2d] text-white font-bold py-3 px-10 rounded-lg shadow-md hover:bg-[#3f2c22] transition-colors font-brand ${isSubmitting ? "opacity-70 cursor-not-allowed" : ""
+                }`}
             >
               {isSubmitting ? "Enviando..." : "Enviar"}
             </button>
