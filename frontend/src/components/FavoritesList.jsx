@@ -100,9 +100,10 @@ const FavoritesList = () => {
             const itemPrice = item.precio || item.price;
             const itemImage = item.imagen || "/images/producto-clasico.png";
             const itemSize = item.tamaño || item.tamano || item.size || 'Único';
+            const isInactive = item.estado === 'inactivo';
 
             return (
-              <div key={itemId} className="flex items-center p-4 border-b border-gray-100 last:border-b-0">
+              <div key={itemId} className={`flex items-center p-4 border-b border-gray-100 last:border-b-0 ${isInactive ? 'opacity-60 grayscale' : ''}`}>
                 
                 <input 
                   type="checkbox" 
@@ -117,6 +118,11 @@ const FavoritesList = () => {
                     alt={itemName} 
                     className="w-full h-full object-cover" 
                   />
+                  {isInactive && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                      <span className="bg-gray-800 text-white text-[10px] uppercase font-bold px-2 py-1 rounded">No disponible</span>
+                    </div>
+                  )}
                 </Link>
 
                 <div className="grow flex flex-col justify-center">

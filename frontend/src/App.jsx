@@ -3,9 +3,9 @@ import { AuthProvider } from './context/AuthContext';
 import { ProductProvider } from './context/ProductContext';
 import { PromotionProvider } from './context/PromotionContext';
 import { Toaster } from "react-hot-toast";
-import Home from "./pages/Home.jsx"; 
+import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
-import ProductDetail from "./pages/ProductDetail.jsx"; // Tu página
+import ProductDetail from "./pages/ProductDetail.jsx";
 import Register from "./pages/Register.jsx";
 import Shop from "./pages/Shop.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
@@ -15,7 +15,6 @@ import AdminPanel from "./pages/AdminPanel.jsx";
 import DeleteProductPromotionPanel from "./pages/DeleteProductPromotionPanel.jsx";
 import EnableProductPromotionPanel from "./pages/EnableProductPromotionPanel.jsx";
 import UpdateProductPanel from "./pages/UpdateProductPanel.jsx";
-import UpdateStockPanel from "./pages/UpdateStockPanel.jsx";
 import FavoritesPage from "./pages/Favorites.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import AdminRoute from "./components/AdminRoute.jsx";
@@ -52,13 +51,13 @@ function App() {
               <Route path="/promotions" element={<Promotions />} />
               {/* --- RUTAS PROTEGIDAS (Entra solo si estás logueado) --- */}
               <Route element={<ProtectedRoute />}>
-              <Route path="/cart" element={<CartPage />} />
-              <Route path="/favorites" element={<FavoritesPage />} />
-              <Route path="/order-detail" element={<OrderDetail />} />
-              <Route path="/payment/success" element={<PaymentSuccessPage />} />
-              <Route path="/payment/pending" element={<PaymentPendingPage />} />
-              <Route path="/payment/failure" element={<PaymentFailurePage />} />
-              <Route path="/history" element={<PurchaseHistory />} />
+                <Route path="/cart" element={<CartPage />} />
+                <Route path="/favorites" element={<FavoritesPage />} />
+                <Route path="/order-detail" element={<OrderDetail />} />
+                <Route path="/payment/success" element={<PaymentSuccessPage />} />
+                <Route path="/payment/pending" element={<PaymentPendingPage />} />
+                <Route path="/payment/failure" element={<PaymentFailurePage />} />
+                <Route path="/history" element={<PurchaseHistory />} />
               </Route>
               {/* --- RUTAS ADMIN (Entra solo si sos admin) --- */}
               <Route element={<AdminRoute />}>
@@ -66,7 +65,6 @@ function App() {
                 <Route path="/admin/enable-product-promotion" element={<EnableProductPromotionPanel />} />
                 <Route path="/admin/delete-product-promotion" element={<DeleteProductPromotionPanel />} />
                 <Route path="/admin/update-product" element={<UpdateProductPanel />} />
-                <Route path="/admin/update-stock" element={<UpdateStockPanel />} />
               </Route>
             </Routes>
           </BrowserRouter>

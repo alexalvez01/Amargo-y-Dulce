@@ -112,7 +112,7 @@ export const createProduct = async (req, res) => {
 
 export const updateProduct = async (req, res) => {
   const { id } = req.params;
-  const { nombre, descripcion, precio, imagen, tamaño, sabor } = req.body;
+  const { nombre, descripcion, precio, imagen, tamaño, sabor, estado } = req.body;
 
   try {
     const updated = await sql`
@@ -123,13 +123,21 @@ export const updateProduct = async (req, res) => {
         precio = COALESCE(${precio}, precio),
         imagen = COALESCE(${imagen}, imagen),
         "tamaño" = COALESCE(${tamaño}, "tamaño"),
-        sabor = COALESCE(${sabor}, sabor)
+        sabor = COALESCE(${sabor}, sabor),
+        estado = COALESCE(${estado}, estado)
       WHERE idproducto = ${id}
       RETURNING *;
     `;
 
     if (updated.length === 0) {
       return res.status(404).json({ error: "Producto no encontrado" });
+    }
+
+    // Limpieza asíncrona: Si el producto quedo inactivo, lo sacamos de los carritos vigentes
+    if (updated[0].estado === 'inactivo') {
+      sql`DELETE FROM productocarrito WHERE idProductoFK = ${id}`.catch(err => 
+        console.error(`Error asíncrono limpiando carrito para el producto inactivo ${id}:`, err)
+      );
     }
 
     return res.status(200).json(updated[0]);
@@ -156,6 +164,11 @@ export const hideProduct = async (req, res) => {
     if (hidden.length === 0) {
       return res.status(404).json({ error: "Producto no encontrado" });
     }
+
+    // Limpieza asíncrona: Eliminar este producto de todos los carritos
+    sql`DELETE FROM productocarrito WHERE idProductoFK = ${id}`.catch(err => 
+      console.error(`Error asíncrono limpiando carrito para producto oculto ${id}:`, err)
+    );
 
     return res.status(200).json({ message: "Producto ocultado", product: hidden[0] });
   } catch (error) {

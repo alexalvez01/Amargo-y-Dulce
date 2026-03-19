@@ -1,4 +1,5 @@
 import { sql } from "../config/db.js";
+import jwt from "jsonwebtoken";
 
 /* --------------------------------------------------
    GET /api/promotions
@@ -6,28 +7,72 @@ import { sql } from "../config/db.js";
 -------------------------------------------------- */
 export const getAllPromotions = async (req, res) => {
   try {
-    const rows = await sql`
-      SELECT 
-        pr.idpromocion,
-        pr.nombre,
-        pr.descripcion,
-        pr.valor,
-        pr.fechainicio,
-        pr.fechafin,
-        pr.estado,
-        p.idproducto,
-        p.nombre AS nombreproducto,
-        p.precio
-      FROM promocion pr
-      JOIN promocionproducto pp 
-        ON pp.idpromocionfk = pr.idpromocion
-      JOIN producto p 
-        ON p.idproducto = pp.idproductofk
-      WHERE CURRENT_DATE BETWEEN pr.fechainicio AND pr.fechafin
-      ORDER BY pr.fechainicio ASC;
-    `;
+    let isAdmin = false;
+    const authHeader = req.headers.authorization;
 
-    // 🔥 Agrupar promociones
+    // Verificamos de forma pasiva si la solicitud viene de un Administrador
+    if (authHeader) {
+      const token = authHeader.split(" ")[1];
+      if (token && token !== "undefined") {
+        try {
+          const decoded = jwt.verify(token, process.env.JWT_SECRET);
+          if (decoded && decoded.rol === "admin") {
+            isAdmin = true;
+          }
+        } catch (error) {
+          // Token inválido/expirado, será tratado por defecto como visitante
+        }
+      }
+    }
+
+    let rows;
+
+    if (isAdmin && req.query.adminView === 'true') {
+      // ROL ADMIN: Consulta libre de filtros con LEFT JOIN (incluye inactivas y vacías)
+      rows = await sql`
+        SELECT 
+          pr.idpromocion,
+          pr.nombre,
+          pr.descripcion,
+          pr.valor,
+          pr.fechainicio,
+          pr.fechafin,
+          pr.estado,
+          p.idproducto,
+          p.nombre AS nombreproducto,
+          p.precio
+        FROM promocion pr
+        LEFT JOIN promocionproducto pp 
+          ON pp.idpromocionfk = pr.idpromocion
+        LEFT JOIN producto p 
+          ON p.idproducto = pp.idproductofk
+        ORDER BY pr.fechainicio ASC;
+      `;
+    } else {
+      // ROL USUARIO: Consulta estricta filtrada (solo vigentes y válidas)
+      rows = await sql`
+        SELECT 
+          pr.idpromocion,
+          pr.nombre,
+          pr.descripcion,
+          pr.valor,
+          pr.fechainicio,
+          pr.fechafin,
+          pr.estado,
+          p.idproducto,
+          p.nombre AS nombreproducto,
+          p.precio
+        FROM promocion pr
+        JOIN promocionproducto pp 
+          ON pp.idpromocionfk = pr.idpromocion
+        JOIN producto p 
+          ON p.idproducto = pp.idproductofk
+        WHERE pr.estado = 'activo' 
+          AND CURRENT_DATE BETWEEN pr.fechainicio AND pr.fechafin
+        ORDER BY pr.fechainicio ASC;
+      `;
+    }
+
     const promotionsMap = {};
 
     rows.forEach(row => {
@@ -44,11 +89,13 @@ export const getAllPromotions = async (req, res) => {
         };
       }
 
-      promotionsMap[row.idpromocion].productos.push({
-        idproducto: row.idproducto,
-        nombre: row.nombreproducto,
-        precio: row.precio
-      });
+      if (row.idproducto) {
+        promotionsMap[row.idpromocion].productos.push({
+          idproducto: row.idproducto,
+          nombre: row.nombreproducto,
+          precio: row.precio
+        });
+      }
     });
 
     const promotions = Object.values(promotionsMap);
