@@ -50,7 +50,7 @@ export default function AboutSection() {
           }}
         >
           <p>
-            Somos un negocio familiar que empezó en 2016 de bombones artesanales el cual cuenta con encargos personalizados a todo el país en cualquier momento.
+            Somos un negocio familiar de bombones artesanales, que empezó en 2016 como una idea y hoy es una realidad. Nos encargamos de hacer sentir la magia del chocolate en cada mordida. Contamos con una amplia variedad de productos para todos los gustos. 
           </p>
           <p>
             Buscamos llegar a la casa de todos con nuestras recetas caseras artesanales.

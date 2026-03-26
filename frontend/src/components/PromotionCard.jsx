@@ -12,12 +12,12 @@ export default function PromotionCard({ promo }) {
   }
 
   return (
-    <div className="group bg-white rounded-xl w-full overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 p-8 relative">
+    <div className="h-full flex flex-col group bg-white rounded-xl w-full overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 p-8 relative">
       <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
         {promo.valor}%
       </span>
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 grow">
         <h3 className="text-lg font-semibold text-brand-brownDark">
           {promo.nombre}
         </h3>
@@ -38,7 +38,7 @@ export default function PromotionCard({ promo }) {
         )}
         <button
         onClick={() => navigate('/shop', { state: { promoActiva: promo.idpromocion } })}
-        className="mt-3 bg-brand-brown text-white px-4 py-2 rounded hover:bg-brand-brownDark transition"
+        className="mt-auto bg-brand-brown text-white px-4 py-2 rounded hover:bg-brand-brownDark transition"
         >
         Ver productos
         </button>

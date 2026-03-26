@@ -1,7 +1,7 @@
 import { usePromotions } from "../context/PromotionContext";
 
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, disableHover = false }) {
   const { promotions } = usePromotions();
   const activePromo = promotions?.find(promo =>
     promo.estado === 'activo' && promo.productos.some(p => String(p.idproducto) === String(product.idproducto))
@@ -15,8 +15,8 @@ export default function ProductCard({ product }) {
   const isInactive = product.estado === 'inactivo';
 
   return (
-    <div className="group bg-white rounded-xl w-full overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
-      <div className="relative overflow-hidden">
+    <div className={`h-full flex flex-col group bg-white rounded-xl w-full overflow-hidden shadow-sm transition-all duration-500 ${disableHover ? '' : 'hover:shadow-2xl hover:-translate-y-2'}`}>
+      <div className="relative overflow-hidden shrink-0">
         {discount > 0 && !isInactive && (
           <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-2xl z-10 shadow-sm">
             {discount}% OFF
@@ -32,11 +32,11 @@ export default function ProductCard({ product }) {
         <img
           src={product?.imagen}
           alt={product.nombre}
-          className={`w-full h-72 object-cover transition-transform duration-700 ease-out ${isInactive ? 'opacity-60 grayscale' : 'group-hover:scale-110'}`}
+          className={`w-full h-72 object-cover transition-transform duration-700 ease-out ${isInactive ? 'opacity-60 grayscale' : ''} group-hover:scale-110`}
         />
       </div>
 
-      <div className="p-4 space-y-2">
+      <div className="p-4 space-y-2 grow flex flex-col justify-between">
         <div className="flex justify-between items-start gap-3">
           <h3 className="text-sm text-brand-brownDark font-semibold wrap-break-words min-w-0 flex-1">
             {product.nombre}
@@ -53,9 +53,21 @@ export default function ProductCard({ product }) {
         </div>
 
         <div className="flex justify-between items-center">
-          <span className="text-sm font-medium">
-            $ {Number(product.precio).toLocaleString('es-AR')}
-          </span>
+
+          {discount > 0 ? (
+              <div className="flex items-center gap-2">
+                <span className="text-gray-400 line-through text-sm font-medium">
+                  $ {Number(product.precio).toLocaleString('es-AR')}
+                </span>
+                <span className="text-sm font-bold text-green-600">
+                  $ {Number(finalPrice).toLocaleString('es-AR')}
+                </span>
+              </div>
+              ) : (
+                <span className="text-sm font-medium">
+                  $ {Number(product.precio).toLocaleString('es-AR')}
+                </span>
+              )}
 
           <span className="text-xs text-gray-500">
             Tamaño: {product.tamaño}

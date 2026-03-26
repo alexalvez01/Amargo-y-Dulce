@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { ChevronLeft, Pencil } from "lucide-react";
+import { ChevronLeft, Pencil, Search } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import Navbar from "../components/Navbar";
@@ -22,10 +22,14 @@ export default function UpdateProductPanel() {
     descripcion: "",
   });
   const [saving, setSaving] = useState(false);
+  const [search, setSearch] = useState("");
 
   const activeProducts = useMemo(
-    () => products.filter((product) => product.estado === "activo"),
-    [products]
+    () => products.filter((product) => 
+      product.estado === "activo" && 
+      product.nombre.toLowerCase().includes(search.toLowerCase())
+    ),
+    [products, search]
   );
 
   const openModal = (product) => {
@@ -154,11 +158,26 @@ export default function UpdateProductPanel() {
           Actualizar un producto
         </h2>
 
+        <div className="max-w-4xl mx-auto px-4 mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="flex w-full max-w-md">
+            <input
+              type="text"
+              placeholder="Buscar producto..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full px-5 py-2 bg-white rounded-l-md focus:outline-none shadow-sm"
+            />
+            <button className="px-6 bg-brand-brown text-white rounded-r-4xl hover:bg-brand-brownDark transition shadow-sm">
+              <Search size={18} />
+            </button>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mx-auto max-w-4xl px-4">
           {activeProducts.map((product) => (
-            <div key={product.idproducto} className="relative">
-              <Link to={`/product/${product.idproducto}`} className="block">
-                <ProductCard product={product} />
+            <div key={product.idproducto} className="relative h-full">
+              <Link to={`/product/${product.idproducto}`} className="block h-full">
+                <ProductCard product={product} disableHover={true} />
               </Link>
               <button
                 type="button"

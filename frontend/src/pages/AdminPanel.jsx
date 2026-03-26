@@ -55,7 +55,7 @@ function AdminPanel() {
                 className="md:col-span-2 bg-brand-beige rounded-lg shadow h-[120px] flex flex-col md:flex-row justify-center items-center px-4 border-t-4 border-brand-brown cursor-pointer transition-transform transform hover:scale-105"
                 onClick={() => setIsStockModalOpen(true)}
               >
-                <span className="flex items-center justify-center w-12 h-12 rounded-full bg-[#ded1be] font-medium text-brand-brownDark text-xl md:mr-4">07</span>
+                <span className="flex items-center justify-center w-12 h-12 rounded-full bg-[#ded1be] font-bold text-brand-brownDark text-xl md:mr-4">07</span>
                 <span className="text-xl text-center font-medium text-brand-brownDark">Actualizar Stock</span>
               </div>
             </div>

@@ -5,13 +5,14 @@ import { usePromotions } from "../context/PromotionContext";
 import Navbar from "../components/Navbar";
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Search } from "lucide-react";
 
 export default function DeleteProductPromotionPanel() {
   const { products, loading: loadingProducts, hideProduct } = useProducts();
   const { promotions, loading: loadingPromotions, hidePromotion } = usePromotions();
   const [modal, setModal] = useState({ open: false, type: null, item: null });
   const [entityFilter, setEntityFilter] = useState("all");
+  const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
   const loading = loadingProducts || loadingPromotions;
@@ -40,6 +41,12 @@ export default function DeleteProductPromotionPanel() {
     return date.toLocaleDateString('es-ES', options);
   }
 
+  const isPromoValid = (fechafin) => {
+    if (!fechafin) return false;
+    const end = new Date(fechafin);
+    end.setHours(23, 59, 59, 999);
+    return end >= new Date();
+  };
 
   if (loading) return <div className="text-center py-10">Cargando...</div>;
 
@@ -59,8 +66,21 @@ export default function DeleteProductPromotionPanel() {
             Dar de baja un producto o promoción
           </h2>
 
-          <div className="max-w-4xl mx-auto px-4 mb-6">
-            <div className="flex items-center justify-end gap-3">
+          <div className="max-w-4xl mx-auto px-4 mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="flex w-full max-w-md">
+              <input
+                type="text"
+                placeholder="Buscar..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full px-5 py-2 bg-white rounded-l-md focus:outline-none shadow-sm"
+              />
+              <button className="px-6 bg-brand-brown text-white rounded-r-4xl hover:bg-brand-brownDark transition shadow-sm">
+                <Search size={18} />
+              </button>
+            </div>
+            
+            <div className="flex items-center gap-3">
               <span className="text-brand-brown font-bold">Mostrar:</span>
               <select
                 value={entityFilter}
@@ -81,10 +101,10 @@ export default function DeleteProductPromotionPanel() {
 
           {/* Productos */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mx-auto max-w-4xl px-4">
-            {showProducts && products.filter(p => p.estado === "activo").map((product) => (
-              <div key={product.idproducto} className="relative">
-                <Link to={`/product/${product.idproducto}`} key={product.idproducto}>
-                  <ProductCard product={product} />
+            {showProducts && products.filter(p => p.estado === "activo" && p.nombre.toLowerCase().includes(search.toLowerCase())).map((product) => (
+              <div key={product.idproducto} className="relative h-full">
+                <Link to={`/product/${product.idproducto}`} key={product.idproducto} className="block h-full">
+                  <ProductCard product={product} disableHover={true} />
                 </Link>
                 <button
                   onClick={() => openModal("product", product)}
@@ -96,8 +116,8 @@ export default function DeleteProductPromotionPanel() {
               </div>
             ))}
             {/* Promociones */}
-            {showPromotions && promotions.filter(p => p.estado === "activo").map((promo) => (
-              <div key={promo.idpromocion} className="relative">
+            {showPromotions && promotions.filter(p => p.estado === "activo" && isPromoValid(p.fechafin) && p.nombre.toLowerCase().includes(search.toLowerCase())).map((promo) => (
+              <div key={promo.idpromocion} className="relative h-full">
                 <PromotionCard promo={promo} />
                 <button
                   onClick={() => openModal("promotion", promo)}

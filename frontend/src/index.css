@@ -41,7 +41,7 @@ html {
   }
 }
 
-/* Clases que vamos a usar en React */
+/* Clases para usar en React */
 .toast-enter {
   animation: slideDownFade 0.4s ease-out forwards;
 }
