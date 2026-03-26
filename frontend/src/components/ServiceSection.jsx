@@ -62,8 +62,7 @@ export default function ServiceSection() {
               style={{
                 opacity: inView ? 1 : 0,
                 transform: inView ? "translateY(0)" : "translateY(40px)",
-                transition: "opacity 600ms ease-out, transform 600ms ease-out",
-                transitionDelay: `${300 + index * 200}ms`,
+                transition: `opacity 600ms ease-out ${300 + index * 200}ms, transform 600ms ease-out ${300 + index * 200}ms`,
               }}
             >
               {service.icon}

@@ -45,8 +45,7 @@ export default function AboutSection() {
           style={{
             opacity: inView ? 1 : 0,
             transform: inView ? "translateX(0)" : "translateX(-60px)",
-            transition: "opacity 700ms ease-out, transform 700ms ease-out",
-            transitionDelay: "350ms",
+            transition: "opacity 700ms ease-out 350ms, transform 700ms ease-out 350ms",
           }}
         >
           <p>

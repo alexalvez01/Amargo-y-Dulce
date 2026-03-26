@@ -81,8 +81,7 @@ export default function Hero() {
               ? (buttonPos.x === 0 && buttonPos.y === 0
                 ? "transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.3s, box-shadow 0.3s"
                 : "transform 0.1s ease-out, background-color 0.3s, box-shadow 0.3s")
-              : "opacity 700ms ease-out, transform 700ms ease-out",
-            transitionDelay: entered ? "0ms" : "400ms",
+              : "opacity 700ms ease-out 400ms, transform 700ms ease-out 400ms",
           }}
         >
           Pedí tus bombones ya!

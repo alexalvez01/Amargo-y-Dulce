@@ -39,6 +39,7 @@ export const deleteExpiredInvoices = async () => {
 
 export const initCronJobs = () => {
   // Se ejecuta en el minuto 0 de cada hora
+  console.log("Se ejecuta el cron para reponer stock");
   cron.schedule("0 * * * *", () => {
     deleteExpiredInvoices();
   });
