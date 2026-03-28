@@ -18,10 +18,9 @@ function useAnimatedNumber(value, duration = 800) {
     const animate = (currentTime) => {
       if (!startTime) startTime = currentTime;
       const progress = Math.min((currentTime - startTime) / durationToUse, 1);
-      
-      // Easing function (easeOutExpo)
+
       const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
-      
+
       setDisplayValue(startValue + (endValue - startValue) * easeProgress);
 
       if (progress < 1) {
@@ -33,7 +32,7 @@ function useAnimatedNumber(value, duration = 800) {
 
     const animationId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationId);
-  }, [value]); // eslint-disable-line
+  }, [value]);
 
   return { displayValue: Math.round(displayValue), trend };
 }
@@ -43,36 +42,34 @@ export default function CartSummary({ total, onConfirm, isConfirming }) {
 
   return (
     <div className="bg-white rounded-3xl shadow-sm p-8 w-full lg:w-[400px] h-fit sticky top-28 transition-all duration-300">
-      
+
       <h2 className="text-3xl font-bold text-[#6B4C3A] font-brand mb-6">
         Resumen de compra
       </h2>
-      
+
       <div className="h-px bg-gray-200 w-full mb-6"></div>
 
       <div className="flex justify-between items-center mb-10">
         <span className="text-lg font-bold text-gray-800 font-brand">Total</span>
-        <span 
-          className={`text-2xl font-bold font-brand inline-block transition-all duration-300 ${
-            trend === 'up' 
-              ? 'text-green-600 scale-110 drop-shadow-sm' 
-              : trend === 'down' 
-                ? 'text-red-500 scale-95 drop-shadow-sm' 
+        <span
+          className={`text-2xl font-bold font-brand inline-block transition-all duration-300 ${trend === 'up'
+              ? 'text-green-600 scale-110 drop-shadow-sm'
+              : trend === 'down'
+                ? 'text-red-500 scale-95 drop-shadow-sm'
                 : 'text-gray-900 scale-100'
-          }`}
+            }`}
         >
           $ {Number(displayValue).toLocaleString('es-AR')}
         </span>
       </div>
 
-      <button 
+      <button
         onClick={onConfirm}
         disabled={isConfirming || total === 0}
-        className={`w-full bg-[#6B4C3A] text-white font-bold py-4 rounded-xl transition-all font-brand shadow-md hover:shadow-lg ${
-          isConfirming || total === 0 
-            ? "opacity-50 cursor-not-allowed" 
+        className={`w-full bg-[#6B4C3A] text-white font-bold py-4 rounded-xl transition-all font-brand shadow-md hover:shadow-lg ${isConfirming || total === 0
+            ? "opacity-50 cursor-not-allowed"
             : "hover:bg-[#543b2d] hover:scale-105"
-        }`}
+          }`}
       >
         {isConfirming ? "Confirmando..." : "Confirmar"}
       </button>

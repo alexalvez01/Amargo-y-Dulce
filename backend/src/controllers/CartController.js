@@ -18,6 +18,13 @@ export const getActiveCart = async (req, res) => {
 
     const idCarrito = carrito[0].idcarrito;
 
+    // Limpieza automática: eliminar del carrito los productos sin stock
+    await sql`
+      DELETE FROM productocarrito 
+      WHERE idCarritoFK = ${idCarrito} 
+      AND idProductoFK IN (SELECT idProducto FROM producto WHERE stock <= 0)
+    `;
+
     // Obtener productos del carrito, incluyendo la imagen y sumando el subtotal
     const productos = await sql`
       SELECT 
