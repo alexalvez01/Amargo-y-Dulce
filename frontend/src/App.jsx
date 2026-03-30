@@ -24,7 +24,7 @@ import OrderDetail from "./pages/OrderDetail.jsx";
 import PaymentSuccessPage from "./pages/PaymentSuccessPage.jsx";
 import PaymentPendingPage from "./pages/PaymentPendingPage.jsx";
 import PaymentFailurePage from "./pages/PaymentFailurePage.jsx";
-import PurchaseHistory from "./pages/PucharseHistory.jsx";
+import PurchaseHistory from "./pages/PurchaseHistory.jsx";
 
 
 function App() {
