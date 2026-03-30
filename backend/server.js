@@ -16,14 +16,21 @@ import { initCronJobs } from "./src/services/cronStock.js";
 const app = express();
 
 const PORT = process.env.PORT || 3000;
-const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+// Normalizar la URL del frontend para evitar errores de CORS con la barra final (/)
+const FRONTEND_URL = (process.env.FRONTEND_URL || "http://localhost:5173").replace(/\/+$/, "");
 
 app.use(cors({
   origin: FRONTEND_URL, 
   credentials: true
 }));
+
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+
+// Ruta de estado inicial
+app.get("/", (req, res) => {
+  res.send("Servidor de Amargo y Dulce en ejecución 🚀");
+});
 
 // Rutas
 app.use("/api/products", productRoutes);
