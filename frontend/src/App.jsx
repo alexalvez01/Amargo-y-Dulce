@@ -10,7 +10,7 @@ import Register from "./pages/Register.jsx";
 import Shop from "./pages/Shop.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage.jsx";
-import ResetPasswordPage from "./pages/ResetPassword.jsx";
+import ResetPasswordPage from "./pages/ResetPasswordPage.jsx";
 import AdminPanel from "./pages/AdminPanel.jsx";
 import DeleteProductPromotionPanel from "./pages/DeleteProductPromotionPanel.jsx";
 import EnableProductPromotionPanel from "./pages/EnableProductPromotionPanel.jsx";
