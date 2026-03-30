@@ -29,7 +29,7 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 // Ruta de estado inicial
 app.get("/", (req, res) => {
-  res.send("Servidor de Amargo y Dulce en ejecución 🚀");
+  res.send("Servidor de Amargo y Dulce en ejecución");
 });
 
 // Rutas
