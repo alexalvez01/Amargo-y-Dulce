@@ -4,11 +4,13 @@ import { authMiddleware } from "../middlewares/auth-middleware.js";
 import {
   createPaymentPreference,
   confirmPayment,
+  handleWebhook,
 } from "../controllers/PaymentController.js";
 
 const paymentRoutes = Router();
 
 paymentRoutes.post("/create", authMiddleware, createPaymentPreference);
 paymentRoutes.post("/confirm", authMiddleware, confirmPayment);
+paymentRoutes.post("/webhook", handleWebhook);
 
 export default paymentRoutes;

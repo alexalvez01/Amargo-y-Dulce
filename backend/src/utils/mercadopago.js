@@ -1,7 +1,7 @@
-﻿import { MercadoPagoConfig, Preference } from "mercadopago";
+import { MercadoPagoConfig, Preference } from "mercadopago";
 
 // Cliente MP
-const client = new MercadoPagoConfig({
+export const client = new MercadoPagoConfig({
   accessToken: process.env.MP_ACCESS_TOKEN
 });
 
@@ -12,6 +12,7 @@ export const createMpPreference = async ({
   email
 }) => {
   const frontendUrl = (process.env.FRONTEND_URL || "").replace(/\/+$/, "");
+  const backendUrl = (process.env.BACKEND_URL || "").replace(/\/+$/, "");
 
   const preference = new Preference(client);
 
@@ -29,6 +30,7 @@ export const createMpPreference = async ({
       email
     },
     external_reference: String(idFactura),
+    notification_url: backendUrl ? `${backendUrl}/api/payments/webhook` : undefined,
     back_urls: {
       success: `${frontendUrl}/payment/success`,
       failure: `${frontendUrl}/payment/failure`,

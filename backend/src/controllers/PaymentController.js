@@ -1,6 +1,6 @@
-// src/controllers/PaymentController.js
 import { sql } from "../config/db.js";
-import { createMpPreference } from "../utils/mercadopago.js";
+import { createMpPreference, client } from "../utils/mercadopago.js";
+import { Payment } from "mercadopago";
 
 const registerPaymentByFactura = async (idFactura) => {
   const exists = await sql`
@@ -107,5 +107,30 @@ export const confirmPayment = async (req, res) => {
   } catch (error) {
     console.error("Error confirmPayment:", error);
     res.status(500).json({ error: "Error confirmando el pago" });
+  }
+};
+
+export const handleWebhook = async (req, res) => {
+  const { query } = req;
+  const topic = query.topic || query.type;
+
+  try {
+    if (topic === "payment") {
+      const paymentId = query.id || query["data.id"];
+      const payment = new Payment(client);
+      const data = await payment.get({ id: paymentId });
+
+      if (data.status === "approved") {
+        const idFactura = data.external_reference;
+        if (idFactura) {
+          await registerPaymentByFactura(Number(idFactura));
+          console.log(`Pago aprobado para factura ${idFactura} via Webhook`);
+        }
+      }
+    }
+    res.sendStatus(200);
+  } catch (error) {
+    console.error("Error handleWebhook:", error);
+    res.sendStatus(500);
   }
 };
