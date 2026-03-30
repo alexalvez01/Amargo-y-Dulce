@@ -1,7 +1,7 @@
-import ResetPasswordForm from '../components/ResetpasswordForm';
+import ResetPasswordForm from '../components/ResetPasswordForm';
 
 
-const ResetpasswordPage = () => {
+const ResetPasswordPage = () => {
   return (
     <div className="h-screen w-full flex bg-zinc-100 overflow-hidden">
       {/* Columna Izquierda: Componente del Formulario */}
@@ -21,4 +21,4 @@ const ResetpasswordPage = () => {
   );
 };
 
-export default ResetpasswordPage;
+export default ResetPasswordPage;
