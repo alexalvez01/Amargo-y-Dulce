@@ -4,9 +4,7 @@ export const getPurchaseHistory = async (req, res) => {
   const userId = req.user.userId;
 
   try {
-    // Usamos json_agg para agrupar los productos adentro del pedido
-    // y subconsultas para traer la última dirección del usuario.
-    const history = await sql`
+    const rows = await sql`
       SELECT
         f.idFactura AS idpedido,
         f.fechaCreacion AS fecha,
@@ -18,26 +16,45 @@ export const getPurchaseHistory = async (req, res) => {
             ORDER BY d.idDireccion DESC LIMIT 1),
           'Retiro en local'
         ) AS direccion,
-        json_agg(
-          json_build_object(
-            'idproducto', p.idProducto,
-            'nombre', p.nombre,
-            'cantidad', lf.cantidad,
-            'precio', lf.precioUnitario,
-            'imagen', p.imagen,
-            'tamano', p."tamaño"
-          )
-        ) AS productos
+        p.idProducto AS idproducto,
+        p.nombre AS nombre,
+        lf.cantidad,
+        lf.precioUnitario AS precio,
+        p.imagen,
+        p."tamaño" AS tamano
       FROM factura f
       JOIN lineafactura lf ON f.idFactura = lf.idFacturaFK
       JOIN producto p ON lf.idProductoFK = p.idProducto
       JOIN pago pa ON f.idFactura = pa.idFacturaFK
       WHERE f.idUsuarioFK = ${userId}
-      GROUP BY f.idFactura, f.fechaCreacion, f.total
       ORDER BY f.idFactura DESC
     `;
 
-    res.json(history);
+    const pedidosMap = {};
+
+    rows.forEach(row => {
+      if (!pedidosMap[row.idpedido]) {
+        pedidosMap[row.idpedido] = {
+          idpedido: row.idpedido,
+          fecha: row.fecha,
+          total: row.total,
+          direccion: row.direccion,
+          productos: []
+        };
+      }
+      pedidosMap[row.idpedido].productos.push({
+        idproducto: row.idproducto,
+        nombre: row.nombre,
+        cantidad: row.cantidad,
+        precio: row.precio,
+        imagen: row.imagen,
+        tamano: row.tamano
+      });
+    });
+
+    const pedidosAgrupados = Object.values(pedidosMap);
+    return res.status(200).json(pedidosAgrupados);
+
   } catch (error) {
     console.error("Error fetching purchase history:", error);
     res.status(500).json({ error: "Failed to fetch purchase history" });
