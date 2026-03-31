@@ -95,6 +95,9 @@ export default function CartPage() {
 
   // CALCULAR EL TOTAL REAL (Con los descuentos aplicados)
   const finalCartTotal = products.reduce((total, item) => {
+    // Producto sin stock no suma al total
+    if (item.stock <= 0) return total;
+    
     const productId = item.idproductofk || item.idProductoFK;
     
     const activePromo = promotions?.find(promo => 

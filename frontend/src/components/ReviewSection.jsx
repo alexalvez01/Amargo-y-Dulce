@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { getProductReviewsRequest, deleteReviewAsAdminRequest, deleteReviewRequest } from "../api/reviews";
 import { useAuth } from "../context/AuthContext";
 
-export default function ReviewSection({ productId, onRatingCalculated, refreshTrigger }) {
+export default function ReviewSection({ productId, onRatingCalculated, refreshTrigger, onUserReviewedStatus }) {
   const { user } = useAuth();
   const currentUserId = user?.idUsuario || user?.userId || user?.id;
 
@@ -15,6 +15,17 @@ export default function ReviewSection({ productId, onRatingCalculated, refreshTr
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [reviewToDelete, setReviewToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    if (onUserReviewedStatus) {
+      if (!currentUserId) {
+        onUserReviewedStatus(false);
+      } else {
+        const hasReviewed = reviews.some(r => r.idUsuarioFK === currentUserId || r.idusuariofk === currentUserId);
+        onUserReviewedStatus(hasReviewed);
+      }
+    }
+  }, [reviews, currentUserId, onUserReviewedStatus]);
 
   useEffect(() => {
     const fetchReviews = async () => {

@@ -6,6 +6,7 @@ export default function CartItem({ item, discount, finalPrice, onUpdateQuantity,
   const productId = item.idproductofk || item.idProductoFK; 
 
   const basePrice = Number(item.preciounitario || item.precio);
+  const isOutOfStock = item.stock <= 0;
 
   const handleDecrease = () => {
     if (item.cantidad > 1) {
@@ -18,14 +19,20 @@ export default function CartItem({ item, discount, finalPrice, onUpdateQuantity,
   };
 
 return (
-    <div className="flex gap-4 md:gap-6 p-6 border-b border-gray-200 last:border-0 bg-white first:rounded-t-2xl last:rounded-b-2xl">
+    <div className={`flex gap-4 md:gap-6 p-6 border-b border-gray-200 last:border-0 bg-white first:rounded-t-2xl last:rounded-b-2xl transition-all ${isOutOfStock ? "grayscale opacity-60" : ""}`}>
       
-      {/* IMAGEN CON CARTELITO DE PROMOCIÓN */}
+      {/* IMAGEN CON CARTELITO DE PROMOCIÓN O AGOTADO */}
       <div className="relative shrink-0">
-        {discount > 0 && (
-          <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded z-10 shadow-sm">
-            {discount}% OFF
+        {isOutOfStock ? (
+          <span className="absolute top-2 left-2 bg-gray-800 text-white text-xs font-bold px-2 py-1 rounded z-10 shadow-sm">
+            Sin stock
           </span>
+        ) : (
+          discount > 0 && (
+            <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded z-10 shadow-sm">
+              {discount}% OFF
+            </span>
+          )
         )}
         <img 
           src={imagen} 
@@ -44,8 +51,12 @@ return (
               {item.nombre}
             </h3>
             
-            {/* LÓGICA DEL PRECIO TACHADO */}
-            {discount > 0 ? (
+            {/* LÓGICA DEL PRECIO */}
+            {isOutOfStock ? (
+              <p className="text-lg md:text-xl font-bold text-gray-500 font-brand whitespace-nowrap">
+                Agotado
+              </p>
+            ) : discount > 0 ? (
               <div className="flex flex-col items-end">
                 <span className="text-gray-400 line-through text-sm font-brand">
                   $ {basePrice.toLocaleString('es-AR')}
@@ -66,23 +77,25 @@ return (
 
         {/* Controles de Cantidad y Eliminar */}
         <div className="flex flex-col gap-2 mt-4 items-start">
-          <div className="flex items-center gap-3">
-            <button 
-              onClick={handleDecrease}
-              className="w-8 h-8 rounded-full bg-[#e2e8f0] flex items-center justify-center hover:bg-gray-300 transition-colors text-gray-600"
-            >
-              <Minus size={16}/>
-            </button>
-            
-            <span className="font-semibold w-4 text-center font-brand">{item.cantidad}</span>
-            
-            <button 
-              onClick={handleIncrease}
-              className="w-8 h-8 rounded-full bg-[#e2e8f0] flex items-center justify-center hover:bg-gray-300 transition-colors text-gray-600"
-            >
-              <Plus size={16}/>
-            </button>
-          </div>
+          {!isOutOfStock && (
+            <div className="flex items-center gap-3">
+              <button 
+                onClick={handleDecrease}
+                className="w-8 h-8 rounded-full bg-[#e2e8f0] flex items-center justify-center hover:bg-gray-300 transition-colors text-gray-600"
+              >
+                <Minus size={16}/>
+              </button>
+              
+              <span className="font-semibold w-4 text-center font-brand">{item.cantidad}</span>
+              
+              <button 
+                onClick={handleIncrease}
+                className="w-8 h-8 rounded-full bg-[#e2e8f0] flex items-center justify-center hover:bg-gray-300 transition-colors text-gray-600"
+              >
+                <Plus size={16}/>
+              </button>
+            </div>
+          )}
           
           <button 
             onClick={() => onRemove(productId)}

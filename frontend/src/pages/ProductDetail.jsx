@@ -31,6 +31,7 @@ export default function ProductDetail() {
   const navigate = useNavigate();
 
   const [refreshReviews, setRefreshReviews] = useState(false);
+  const [userHasReviewed, setUserHasReviewed] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -117,15 +118,26 @@ export default function ProductDetail() {
           productId={id} 
           onRatingCalculated={setAverageRating} 
           refreshTrigger={refreshReviews} 
+          onUserReviewedStatus={setUserHasReviewed}
         />
       </div>
 
-      {/* Formulario de Reseñas de borde a borde */}
-      <ReviewForm 
-        productId={id} 
-        productName={product.nombre} 
-        onReviewAdded={() => setRefreshReviews(!refreshReviews)} 
-      />
+      {/* Formulario de Reseñas de borde a borde condicional */}
+      {!userHasReviewed ? (
+        <ReviewForm 
+          productId={id} 
+          productName={product.nombre} 
+          onReviewAdded={() => setRefreshReviews(!refreshReviews)} 
+        />
+      ) : (
+        <div className="w-full bg-[#968373] py-16 mt-12 flex justify-center items-center">
+            <div className="max-w-4xl mx-auto px-4 md:px-8 text-center">
+                <h3 className="text-2xl md:text-3xl font-bold text-white font-brand">
+                    ¡Gracias! Ya compartiste tu opinión sobre "{product.nombre}".
+                </h3>
+            </div>
+        </div>
+      )}
 
       </main>
 

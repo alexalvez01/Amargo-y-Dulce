@@ -1,5 +1,6 @@
-﻿import { useEffect, useMemo, useState } from "react";
-import { Check } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import { Check, ChevronLeft } from "lucide-react";
 import toast from "react-hot-toast";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -106,7 +107,7 @@ export default function OrderDetail() {
 
     try {
       setSaving(true);
-      await saveOrderDetailDataRequest({
+      const res = await saveOrderDetailDataRequest({
         calle: formData.direccion.trim(),
         provincia: formData.provincia.trim(),
         nombreCiudad: formData.nombreCiudad.trim(),
@@ -114,7 +115,7 @@ export default function OrderDetail() {
         pais: formData.pais
       });
 
-      const idFactura = factura?.idfactura ?? factura?.idFactura;
+      const idFactura = res.data?.idFactura;
       if (!idFactura) {
         toast.error("No se encontro la factura para iniciar el pago");
         return;
@@ -153,7 +154,15 @@ export default function OrderDetail() {
       
 
       <main className="min-h-screen">
-      <div className="max-w-6xl mx-auto w-full px-4 mt-10 md:mt-30 mb-16">
+      <div className="max-w-6xl mx-auto w-full px-4 mt-6 md:mt-24 mb-16">
+        <Link 
+          to="/cart" 
+          className="inline-flex items-center gap-2 text-brand-brownDark hover:text-brand-brown hover:underline transition-colors mb-4 font-semibold text-lg"
+        >
+          <ChevronLeft size={28} />
+          Volver
+        </Link>
+        
         <h2 className="text-4xl md:text-5xl text-brand-brownDark font-semibold mb-7 text-center">Detalles de Pedido</h2>
 
         <div className="flex gap-5 max-w-3xl mx-auto mb-10">

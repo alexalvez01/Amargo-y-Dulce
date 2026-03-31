@@ -48,38 +48,41 @@ export const getLatestOrderDetail = async (req, res) => {
   const userId = req.user.userId;
 
   try {
-    const factura = await sql`
-      SELECT
-        f.idFactura,
-        f.fechaCreacion,
-        (SELECT SUM(subtotalProducto) FROM lineafactura WHERE idFacturaFK = f.idFactura) AS total
-      FROM factura f
-      WHERE f.idUsuarioFK = ${userId}
-      ORDER BY f.fechaCreacion DESC, f.idFactura DESC
+    const carrito = await sql`
+      SELECT idCarrito 
+      FROM carrito 
+      WHERE idUsuarioFK = ${userId} AND estado = 'activo'
       LIMIT 1
     `;
 
-    if (factura.length === 0) {
-      return res.status(404).json({ error: "No hay pedidos confirmados." });
+    if (carrito.length === 0) {
+      return res.status(404).json({ error: "No hay carrito activo para procesar." });
     }
 
-    const idFactura = factura[0].idfactura;
+    const idCarrito = carrito[0].idcarrito;
 
     const productos = await sql`
       SELECT
-        lf.idProductoFK,
+        pc.idProductoFK as idproductofk,
         p.nombre,
         p.imagen,
         p."tamaño" AS tamano,
-        lf.cantidad,
-        lf.precioUnitario,
-        lf.subtotalProducto,
-        lf.valorDescuento
-      FROM lineafactura lf
-      JOIN producto p ON p.idProducto = lf.idProductoFK
-      WHERE lf.idFacturaFK = ${idFactura}
-      ORDER BY lf.idProductoFK
+        pc.cantidad,
+        pc.precioUnitario as preciounitario,
+        (pc.cantidad * pc.precioUnitario) AS subtotalproducto,
+        0 AS valordescuento
+      FROM productocarrito pc
+      JOIN producto p ON p.idProducto = pc.idProductoFK
+      WHERE pc.idCarritoFK = ${idCarrito}
+      ORDER BY pc.idProductoFK
     `;
+
+    const total = productos.reduce((acc, current) => acc + Number(current.subtotalproducto), 0);
+    const facturaMock = {
+      idFactura: null, 
+      fechaCreacion: new Date().toISOString(),
+      total
+    };
 
     const direccion = await sql`
       SELECT
@@ -99,7 +102,7 @@ export const getLatestOrderDetail = async (req, res) => {
     `;
 
     res.json({
-      factura: factura[0],
+      factura: facturaMock,
       productos,
       direccion: direccion[0] || null
     });
@@ -185,8 +188,55 @@ export const saveOrderDetailData = async (req, res) => {
       idDireccion = nuevaDireccion[0].iddireccion;
     }
 
+    // ============================================
+    // CONVERTIR CARRITO ACTIVO A FACTURA
+    // ============================================
+    const carritoInfo = await sql`
+      SELECT idCarrito 
+      FROM carrito 
+      WHERE idUsuarioFK = ${userId} AND estado = 'activo'
+      LIMIT 1
+    `;
+
+    if (carritoInfo.length === 0) {
+      return res.status(404).json({ error: "Carrito no encontrado" });
+    }
+    const idCarrito = carritoInfo[0].idcarrito;
+
+    const productos = await sql`
+      SELECT idProductoFK, cantidad, precioUnitario 
+      FROM productocarrito 
+      WHERE idCarritoFK = ${idCarrito}
+    `;
+
+    if (productos.length === 0) {
+      return res.status(400).json({ error: "El carrito está vacio" });
+    }
+
+    const total = productos.reduce((acc, p) => acc + (p.cantidad * p.preciounitario), 0);
+
+    const nuevaFactura = await sql`
+      INSERT INTO factura (idUsuarioFK, fechaCreacion, total)
+      VALUES (${userId}, NOW(), ${total})
+      RETURNING idFactura
+    `;
+    const finalIdFactura = nuevaFactura[0].idfactura;
+
+    for (const prod of productos) {
+      const subtotal = prod.cantidad * prod.preciounitario;
+      await sql`
+        INSERT INTO lineafactura (idFacturaFK, idProductoFK, cantidad, precioUnitario, subtotalProducto)
+        VALUES (${finalIdFactura}, ${prod.idproductofk}, ${prod.cantidad}, ${prod.preciounitario}, ${subtotal})
+      `;
+    }
+
+    // Limpieza: Vaciar el carrito y sus productos
+    await sql`DELETE FROM productocarrito WHERE idCarritoFK = ${idCarrito}`;
+    await sql`DELETE FROM carrito WHERE idCarrito = ${idCarrito}`;
+
     res.json({
-      message: "Datos de envio guardados correctamente",
+      message: "Datos de envio guardados correctamente y Factura generada",
+      idFactura: finalIdFactura,
       direccion: {
         idDireccion,
         calle: calleLimpia,
@@ -200,6 +250,6 @@ export const saveOrderDetailData = async (req, res) => {
     });
   } catch (error) {
     console.error("Error saving order detail data:", error);
-    res.status(500).json({ error: "No se pudieron guardar los datos de envio" });
+    res.status(500).json({ error: "No se pudieron guardar los datos de envio y orden combinada" });
   }
 };

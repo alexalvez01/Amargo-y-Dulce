@@ -18,12 +18,6 @@ export const getActiveCart = async (req, res) => {
 
     const idCarrito = carrito[0].idcarrito;
 
-    // Limpieza automática: eliminar del carrito los productos sin stock
-    await sql`
-      DELETE FROM productocarrito 
-      WHERE idCarritoFK = ${idCarrito} 
-      AND idProductoFK IN (SELECT idProducto FROM producto WHERE stock <= 0)
-    `;
 
     // Obtener productos del carrito, incluyendo la imagen y sumando el subtotal
     const productos = await sql`
@@ -33,6 +27,7 @@ export const getActiveCart = async (req, res) => {
         p.precio, 
         p.imagen,
         p."tamaño" AS tamaño,
+        p.stock,
         pc.cantidad, 
         pc.precioUnitario,
         (pc.cantidad * pc.precioUnitario) as subtotal
@@ -176,13 +171,15 @@ export const confirmCart = async (req, res) => {
   const { idCarrito } = req.params;
 
   try {
+    // 1. Limpieza final asegurando que no se incorporen productos sin stock
     await sql`
-      UPDATE carrito
-      SET estado = 'confirmado'
-      WHERE idCarrito = ${idCarrito}
+      DELETE FROM productocarrito 
+      WHERE idCarritoFK = ${idCarrito} 
+      AND idProductoFK IN (SELECT idProducto FROM producto WHERE stock <= 0)
     `;
 
-    res.json({ message: "Carrito confirmado correctamente" });
+    // El carrito no se cambia a 'confirmado' aquí. Se hará en OrderController.
+    res.json({ message: "Carrito verificado correctamente" });
   } catch (error) {
     console.error("Error confirmando carrito:", error);
     res.status(500).json({ error: "Error confirmando carrito" });
