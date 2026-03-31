@@ -144,19 +144,19 @@ export default function UpdateProductPanel() {
     <div className="min-h-screen bg-[#f7f2ec] font-brand relative">
       <Navbar />
 
-      <main className="min-h-screen">
-      <button
-        className="absolute left-6 top-24 flex items-center gap-2 text-brand-brownDark hover:text-brand-brown hover:underline transition-colors z-20 cursor-pointer"
-        onClick={() => navigate("/admin-panel")}
-      >
-        <ChevronLeft size={28} />
-        <span className="font-semibold text-lg">Volver</span>
-      </button>
+      <main className="min-h-screen max-w-6xl mx-auto px-4 pt-24">
+        <button
+          className="flex items-center gap-2 text-brand-brownDark hover:text-brand-brown hover:underline transition-colors z-20 cursor-pointer mb-6"
+          onClick={() => navigate("/admin-panel")}
+        >
+          <ChevronLeft size={28} />
+          <span className="font-semibold text-lg">Volver</span>
+        </button>
 
-      <div className="max-w-svw mx-auto py-10 pt-20 font-brand text-sm">
-        <h2 className="text-center text-4xl md:text-5xl font-semibold text-brand-brownDark mb-8 border-b border-[#664C3E44] pb-4">
-          Actualizar un producto
-        </h2>
+        <div className="font-brand text-sm">
+          <h2 className="text-center text-4xl md:text-5xl font-semibold text-brand-brownDark mb-8 border-b border-[#664C3E44] pb-4">
+            Actualizar un producto
+          </h2>
 
         <div className="max-w-4xl mx-auto px-4 mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="flex w-full max-w-md">

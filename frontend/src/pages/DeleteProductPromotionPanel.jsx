@@ -53,15 +53,16 @@ export default function DeleteProductPromotionPanel() {
   return (
     <div className="min-h-screen bg-[#f7f2ec] font-brand relative">
       <Navbar />
-      <main className="min-h-screen">
+      <main className="min-h-screen max-w-6xl mx-auto px-4 pt-24">
         <button
-          className="absolute left-6 top-24 flex items-center gap-2 text-brand-brownDark hover:text-brand-brown hover:underline transition-colors z-20 cursor-pointer "
+          className="flex items-center gap-2 text-brand-brownDark hover:text-brand-brown hover:underline transition-colors z-20 cursor-pointer mb-6"
           onClick={() => navigate("/admin-panel")}
         >
           <ChevronLeft size={28} />
           <span className="font-semibold text-lg">Volver</span>
         </button>
-        <div className="max-w-svw mx-auto py-10 pt-20 font-brand text-sm">
+
+        <div className="font-brand text-sm">
           <h2 className="text-center text-4xl md:text-5xl font-semibold text-brand-brownDark mb-8 border-b border-[#664C3E44] pb-4">
             Dar de baja un producto o promoción
           </h2>
