@@ -3,7 +3,7 @@ import { AuthProvider } from './context/AuthContext';
 import { ProductProvider } from './context/ProductContext';
 import { PromotionProvider } from './context/PromotionContext';
 import { Toaster } from "react-hot-toast";
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { SpeedInsights } from "@vercel/speed-insights/react"
 import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
 import ProductDetail from "./pages/ProductDetail.jsx";
