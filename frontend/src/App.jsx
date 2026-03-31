@@ -3,6 +3,7 @@ import { AuthProvider } from './context/AuthContext';
 import { ProductProvider } from './context/ProductContext';
 import { PromotionProvider } from './context/PromotionContext';
 import { Toaster } from "react-hot-toast";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
 import ProductDetail from "./pages/ProductDetail.jsx";
@@ -35,6 +36,7 @@ function App() {
         {/* Proveedor de estado de autenticación de usuarios */}
         <AuthProvider>
           <BrowserRouter>
+            <SpeedInsights />
             {/* Componente para volver al inicio de la página al cambiar de ruta */}
             <ScrollToTop />
             {/* Contenedor de notificaciones globales (toast) */}
