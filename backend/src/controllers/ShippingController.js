@@ -2,11 +2,21 @@ import { sql } from "../config/db.js";
 
 export const getActiveShipments = async (req, res) => {
   try {
-    const shipments = await sql`
+    const rows = await sql`
       SELECT *
       FROM vw_envios_activos
       ORDER BY fechaSalida DESC
     `;
+
+    // Filter to remove any duplicate shipments caused by the view if there are any
+    const enviosMap = {};
+    rows.forEach(row => {
+      if (!enviosMap[row.idenvio]) {
+        enviosMap[row.idenvio] = row;
+      }
+    });
+    
+    const shipments = Object.values(enviosMap);
 
     res.json(shipments);
   } catch (error) {
