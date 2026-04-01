@@ -8,16 +8,17 @@ export const getActiveShipments = async (req, res) => {
       ORDER BY fechaSalida DESC
     `;
 
-    // Filter to remove any duplicate shipments caused by the view if there are any
-    const enviosMap = {};
+    // Filtro por ID de envio para eliminar registros duplicados que pueda devolver la vista (por joins anidados)
+    const enviosMap = new Map();
     rows.forEach(row => {
-      if (!enviosMap[row.idenvio]) {
-        enviosMap[row.idenvio] = row;
+      // Usamos el ID del envio como clave unica
+      const idEnvio = row.idenvio || row.idEnvio || row.idenvio; 
+      if (idEnvio && !enviosMap.has(idEnvio)) {
+        enviosMap.set(idEnvio, row);
       }
     });
     
-    const shipments = Object.values(enviosMap);
-
+    const shipments = Array.from(enviosMap.values());
     res.json(shipments);
   } catch (error) {
     console.error("Error fetching shipments:", error);
