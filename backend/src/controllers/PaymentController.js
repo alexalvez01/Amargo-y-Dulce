@@ -84,31 +84,7 @@ export const createPaymentPreference = async (req, res) => {
   }
 };
 
-// Confirmar pago 
-export const confirmPayment = async (req, res) => {
-  const { idFactura } = req.body;
 
-  if (!idFactura) {
-    return res.status(400).json({ error: "idFactura es obligatorio" });
-  }
-
-  try {
-    const payment = await registerPaymentByFactura(idFactura);
-    if (payment.alreadyRegistered) {
-      return res.status(400).json({ error: "El pago ya fue registrado" });
-    }
-
-    res.status(201).json({
-      message: "Pago confirmado correctamente",
-      idPago: payment.idPago,
-      comprobante: payment.comprobante
-    });
-
-  } catch (error) {
-    console.error("Error confirmPayment:", error);
-    res.status(500).json({ error: "Error confirmando el pago" });
-  }
-};
 
 export const handleWebhook = async (req, res) => {
   const { query } = req;

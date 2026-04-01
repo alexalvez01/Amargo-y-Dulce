@@ -1,10 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Check } from "lucide-react";
-import toast from "react-hot-toast";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { confirmPaymentRequest } from "../api/payments";
 
 function Step({ label, state, number }) {
   const done = state === "done";
@@ -34,33 +31,6 @@ function Step({ label, state, number }) {
 }
 
 export default function PaymentSuccessPage() {
-  const location = useLocation();
-  const params = useMemo(() => new URLSearchParams(location.search), [location.search]);
-  const [confirming, setConfirming] = useState(false);
-  const confirmedRef = useRef(false);
-
-  useEffect(() => {
-    const idFactura = params.get("external_reference");
-    if (!idFactura || confirmedRef.current) return;
-
-    const confirm = async () => {
-      try {
-        confirmedRef.current = true;
-        setConfirming(true);
-        await confirmPaymentRequest(Number(idFactura));
-      } catch (error) {
-        const msg = error?.response?.data?.error;
-        if (msg !== "El pago ya fue registrado") {
-          toast.error("No se pudo registrar el pago automaticamente");
-        }
-      } finally {
-        setConfirming(false);
-      }
-    };
-
-    confirm();
-  }, [params]);
-
   return (
     <div className="min-h-screen bg-[#f7f2ec] flex flex-col font-brand">
       <Navbar />
@@ -81,7 +51,6 @@ export default function PaymentSuccessPage() {
           <p className="text-[#7a7a7a] text-sm mb-6">
             Su compra ha sido completada exitosamente, puede seguir viendo el catalogo si lo desea.
           </p>
-          {confirming && <p className="text-xs text-gray-500 mb-4">Registrando pago...</p>}
 
           <Link
             to="/shop"
