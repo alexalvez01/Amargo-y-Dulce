@@ -53,12 +53,6 @@ export default function PaymentFailurePage() {
 
           <div className="space-y-3">
             <Link
-              to="/order-detail"
-              className="inline-block w-full bg-[#6b4c3a] text-white font-semibold py-2.5 rounded-md hover:bg-[#543b2d] transition-colors"
-            >
-              Intentar nuevamente
-            </Link>
-            <Link
               to="/shop"
               className="inline-block w-full bg-[#6b4c3a] text-white font-semibold py-2.5 rounded-md hover:bg-[#543b2d] transition-colors"
             >
