@@ -46,6 +46,7 @@ export const getAllPromotions = async (req, res) => {
           ON pp.idpromocionfk = pr.idpromocion
         LEFT JOIN producto p 
           ON p.idproducto = pp.idproductofk
+        WHERE pr.fechafin >= CURRENT_DATE
         ORDER BY pr.fechainicio ASC;
       `;
     } else {
