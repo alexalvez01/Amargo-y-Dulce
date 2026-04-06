@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Check, ShoppingCart } from "lucide-react";
-import toast from "react-hot-toast";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { reactivateCartRequest } from "../api/cart";
@@ -38,10 +37,6 @@ export default function PaymentFailurePage() {
     const restoreCart = async () => {
       try {
         await reactivateCartRequest();
-        toast.info("Tu pedido no se completó, pero tus productos han sido devueltos al carrito.", {
-          duration: 5000,
-          icon: '🛒'
-        });
       } catch (error) {
         console.error("Error al reactivar carrito:", error);
       }
