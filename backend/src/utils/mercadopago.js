@@ -32,7 +32,7 @@ export const createMpPreference = async ({
     external_reference: String(idFactura),
     notification_url: backendUrl ? `${backendUrl}/api/payments/webhook` : undefined,
     expires: true,
-    expiration_date_to: new Date(Date.now() + 1 * 60 * 1000).toISOString(),
+    expiration_date_to: new Date(Date.now() + 20 * 60 * 1000).toISOString(),
     back_urls: {
       success: `${frontendUrl}/payment/success`,
       failure: `${frontendUrl}/payment/failure`,

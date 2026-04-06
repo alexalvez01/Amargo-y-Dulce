@@ -186,20 +186,42 @@ export const confirmCart = async (req, res) => {
   }
 };
 
-// Cancelar carrito
-export const cancelCart = async (req, res) => {
-  const { idCarrito } = req.params;
+// Reactivar carrito (Volver de un intento de pago fallido o cancelado)
+export const reactivateCart = async (req, res) => {
+  const userId = req.user.userId;
 
   try {
-    await sql`
-      UPDATE carrito
-      SET estado = 'cancelado'
-      WHERE idCarrito = ${idCarrito}
+    // Buscar si hay una factura para este usuario que NO tenga pago aún
+    const facturaPendiente = await sql`
+      SELECT f.idFactura 
+      FROM factura f
+      LEFT JOIN pago p ON f.idFactura = p.idFacturaFK
+      WHERE f.idUsuarioFK = ${userId} AND p.idPago IS NULL
+      ORDER BY f.idFactura DESC LIMIT 1
     `;
 
-    res.json({ message: "Carrito cancelado correctamente" });
+    if (facturaPendiente.length > 0) {
+      const idFactura = facturaPendiente[0].idfactura;
+      // Borrar la factura y sus líneas para liberar el stock temporalmente
+      await sql`DELETE FROM lineafactura WHERE idFacturaFK = ${idFactura}`;
+      await sql`DELETE FROM factura WHERE idFactura = ${idFactura}`;
+      console.log(`[Reactivación] Factura ${idFactura} eliminada.`);
+    }
+
+    // Volver a poner el carrito en 'activo'
+    const result = await sql`
+      UPDATE carrito 
+      SET estado = 'activo' 
+      WHERE idUsuarioFK = ${userId} AND estado = 'confirmado'
+      RETURNING idCarrito
+    `;
+
+    res.json({ 
+      message: "Carrito reactivado correctamente.",
+      found: result.length > 0 
+    });
   } catch (error) {
-    console.error("Error cancelando carrito:", error);
-    res.status(500).json({ error: "Error cancelando carrito" });
+    console.error("Error reactivando carrito:", error);
+    res.status(500).json({ error: "Error reactivando carrito" });
   }
 };
