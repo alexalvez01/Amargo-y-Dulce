@@ -3,7 +3,7 @@ import { sql } from "../config/db.js";
 
 export const deleteExpiredInvoices = async () => {
   try {
-    console.log("Buscando y eliminando facturas sin pago de hace +20 minutos...");
+    console.log("Buscando y eliminando facturas sin pago de hace +1 minuto...");
 
     //Eliminamos las lineas de factura para que se reponga el stock
     const eliminatedLines = await sql`
@@ -13,7 +13,7 @@ export const deleteExpiredInvoices = async () => {
         FROM factura f
         LEFT JOIN pago p ON f.idFactura = p.idFacturaFK
         WHERE p.idPago IS NULL
-          AND f.fechaCreacion < NOW() - INTERVAL '20 minutes'
+          AND f.fechaCreacion < NOW() - INTERVAL '1 minute'
       )
       RETURNING idFacturaFK;
     `;
@@ -36,7 +36,7 @@ export const deleteExpiredInvoices = async () => {
           FROM factura f
           LEFT JOIN pago p ON f.idFactura = p.idFacturaFK
           WHERE p.idPago IS NULL
-            AND f.fechaCreacion < NOW() - INTERVAL '20 minutes'
+            AND f.fechaCreacion < NOW() - INTERVAL '1 minute'
         )
       ) 
       AND estado = 'confirmado';
@@ -56,9 +56,8 @@ export const deleteExpiredInvoices = async () => {
 };
 
 export const initCronJobs = () => {
-  // Se ejecuta cada 10 minutos
-  console.log("Se ejecuta el cron para reponer stock cada 10 minutos");
-  cron.schedule("*/10 * * * *", () => {
+  console.log("Se ejecuta el cron para reponer stock cada minuto");
+  cron.schedule("* * * * *", () => {
     deleteExpiredInvoices();
   });
 };

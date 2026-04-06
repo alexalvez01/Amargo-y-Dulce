@@ -129,12 +129,19 @@ export const handleWebhook = async (req, res) => {
           `;
           if (facturaInfo.length > 0) {
             const userId = facturaInfo[0].idusuariofk;
+            
+            //Volver el carrito a estado activo
             await sql`
               UPDATE carrito 
               SET estado = 'activo' 
               WHERE idUsuarioFK = ${userId} AND estado = 'confirmado'
             `;
-            console.log(`Pago ${data.status} para factura ${idFactura}. Carrito devuelto a estado activo.`);
+
+            //Eliminar la factura y sus líneas para liberar el stock inmediatamente
+            await sql`DELETE FROM lineafactura WHERE idFacturaFK = ${idFactura}`;
+            await sql`DELETE FROM factura WHERE idFactura = ${idFactura}`;
+
+            console.log(`Pago ${data.status} para factura ${idFactura}. Carrito reactivado y factura eliminada vía Webhook.`);
           }
         }
       }
