@@ -68,7 +68,7 @@ export const getLatestOrderDetail = async (req, res) => {
     const carrito = await sql`
       SELECT idCarrito 
       FROM carrito 
-      WHERE idUsuarioFK = ${userId} AND (estado = 'activo' OR estado = 'confirmado')
+      WHERE idUsuarioFK = ${userId} AND estado = 'activo'
       LIMIT 1
     `;
 

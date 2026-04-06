@@ -11,10 +11,8 @@ import {
   getActiveCartRequest, 
   updateCartQuantityRequest, 
   removeProductFromCartRequest,
-  confirmCartRequest,
-  reactivateCartRequest
+  confirmCartRequest
 } from "../api/cart";
-import { AlertCircle, Clock, ShoppingBag } from "lucide-react";
 
 
 export default function CartPage() {
@@ -22,7 +20,6 @@ export default function CartPage() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isConfirming, setIsConfirming] = useState(false);
-  const [isReactivating, setIsReactivating] = useState(false);
   const navigate = useNavigate();
   const { promotions } = usePromotions();
 
@@ -85,22 +82,6 @@ export default function CartPage() {
       setIsConfirming(false);
     }
   };
-
-  // Función para reactivar el carrito (volver de confirmado a activo)
-  const handleReactivateCart = async () => {
-    if (!cartData?.idcarrito) return;
-
-    try {
-      setIsReactivating(true);
-      await reactivateCartRequest(cartData.idcarrito);
-      toast.success("Carrito recuperado. Ahora puedes editar tus productos.");
-      fetchCart();
-    } catch (error) {
-      toast.error(error.response?.data?.error || "Error al intentar recuperar el carrito.");
-    } finally {
-      setIsReactivating(false);
-    }
-  };
   if (loading) {
     return (
       <div className="min-h-screen bg-[#e5e5e5] flex flex-col font-brand">
@@ -149,42 +130,6 @@ return (
         <h2 className="text-4xl md:text-5xl text-brand-brownDark text-center mb-16 font-semibold pt-12">
           Mi carrito
         </h2>
-
-        {cartData?.estado === 'confirmado' && (
-          <div className="max-w-4xl mx-auto mb-10 overflow-hidden bg-white rounded-3xl shadow-lg border-2 border-[#6b4c3a] animate-fade-in">
-            <div className="flex flex-col md:flex-row">
-              <div className="bg-[#6b4c3a] p-6 flex items-center justify-center text-white">
-                <AlertCircle size={48} className="animate-pulse" />
-              </div>
-              <div className="p-6 flex-1 bg-linear-to-br from-white to-[#fdfaf7]">
-                <h3 className="text-xl font-bold text-[#6b4c3a] mb-2 flex items-center gap-2">
-                  <Clock size={20} />
-                  Tenés un pago pendiente de finalización
-                </h3>
-                <p className="text-[#5d4037] text-sm mb-6 leading-relaxed">
-                  Iniciaste el proceso de pago hace unos minutos. Tus productos están <span className="font-bold underline">reservados temporalmente</span>.
-                  Podés continuar para terminar el pedido o recuperar el carrito si necesitás hacer cambios.
-                </p>
-                <div className="flex flex-wrap gap-4">
-                  <button
-                    onClick={() => navigate("/order-detail")}
-                    className="bg-[#6b4c3a] text-white px-6 py-2.5 rounded-xl font-bold hover:bg-[#543b2d] transition-all flex items-center gap-2 shadow-md hover:shadow-lg active:scale-95"
-                  >
-                    <ShoppingBag size={18} />
-                    Continuar con el Pago
-                  </button>
-                  <button
-                    onClick={handleReactivateCart}
-                    disabled={isReactivating}
-                    className="border-2 border-[#6b4c3a] text-[#6b4c3a] px-6 py-2.5 rounded-xl font-bold hover:bg-[#6b4c3a] hover:text-white transition-all disabled:opacity-50 active:scale-95"
-                  >
-                    {isReactivating ? "Procesando..." : "Modificar Carrito / Recuperar"}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
         
         {products.length === 0 ? (
           <div className="text-center bg-white p-12 rounded-3xl shadow-sm max-w-2xl mx-auto">
@@ -218,8 +163,8 @@ return (
                     item={item} 
                     discount={discount}       
                     finalPrice={finalPrice}   
-                    onUpdateQuantity={cartData?.estado === 'confirmado' ? null : handleUpdateQuantity}
-                    onRemove={cartData?.estado === 'confirmado' ? null : handleRemoveProduct}
+                    onUpdateQuantity={handleUpdateQuantity}
+                    onRemove={handleRemoveProduct}
                   />
                 );
               })}
@@ -228,9 +173,8 @@ return (
             {/* Le pasamos el total re-calculado, en lugar del cartData.total */}
             <CartSummary 
               total={finalCartTotal} 
-              onConfirm={cartData?.estado === 'confirmado' ? () => navigate("/order-detail") : handleConfirmOrder}
+              onConfirm={handleConfirmOrder}
               isConfirming={isConfirming}
-              isLocked={cartData?.estado === 'confirmado'}
             />
 
           </div>

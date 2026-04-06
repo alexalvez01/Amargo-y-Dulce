@@ -5,8 +5,7 @@ import {
   addProductToCart,
   updateProductQuantity,
   removeProductFromCart,
-  confirmCart,
-  reactivateCart
+  confirmCart
 } from "../controllers/CartController.js";
 
 const cartRoutes = Router();
@@ -25,8 +24,5 @@ cartRoutes.delete("/remove", authMiddleware, removeProductFromCart);
 
 // Cambiar estado a "confirmado"
 cartRoutes.put("/confirm/:idCarrito", authMiddleware, confirmCart);
-
-// Reactivar carrito
-cartRoutes.put("/reactivate/:idCarrito", authMiddleware, reactivateCart);
 
 export default cartRoutes;
