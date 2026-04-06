@@ -8,7 +8,8 @@ export const getActiveCart = async (req, res) => {
     const carrito = await sql`
       SELECT *
       FROM carrito
-      WHERE idUsuarioFK = ${userId} AND estado = 'activo'
+      WHERE idUsuarioFK = ${userId} 
+        AND (estado = 'activo' OR estado = 'confirmado')
       LIMIT 1
     `;
 
@@ -186,20 +187,41 @@ export const confirmCart = async (req, res) => {
   }
 };
 
-// Cancelar carrito
-export const cancelCart = async (req, res) => {
-  const { idCarrito } = req.params;
+// Reactivar carrito (volver de 'confirmado' a 'activo')
+export const reactivateCart = async (req, res) => {
+  const userId = req.user.userId;
 
   try {
-    await sql`
-      UPDATE carrito
-      SET estado = 'cancelado'
-      WHERE idCarrito = ${idCarrito}
+    // 1. Buscamos si hay una factura para este usuario que NO tenga pago aún
+    const facturaPendiente = await sql`
+      SELECT f.idFactura 
+      FROM factura f
+      LEFT JOIN pago p ON f.idFactura = p.idFacturaFK
+      WHERE f.idUsuarioFK = ${userId} AND p.idPago IS NULL
+      ORDER BY f.idFactura DESC LIMIT 1
     `;
 
-    res.json({ message: "Carrito cancelado correctamente" });
+    if (facturaPendiente.length === 0) {
+      return res.status(400).json({ error: "No hay pedidos pendientes de cancelación o el pago ya fue procesado." });
+    }
+
+    const { idfactura } = facturaPendiente[0];
+
+    // 2. Borramos la factura y sus líneas para liberar el stock temporalmente
+    await sql`DELETE FROM lineafactura WHERE idFacturaFK = ${idfactura}`;
+    await sql`DELETE FROM factura WHERE idFactura = ${idfactura}`;
+
+    // 3. Volvemos a poner el carrito en 'activo'
+    await sql`
+      UPDATE carrito 
+      SET estado = 'activo' 
+      WHERE idUsuarioFK = ${userId} AND estado = 'confirmado'
+    `;
+
+    res.json({ message: "Carrito reactivado correctamente." });
+
   } catch (error) {
-    console.error("Error cancelando carrito:", error);
-    res.status(500).json({ error: "Error cancelando carrito" });
+    console.error("Error al reactivar carrito:", error);
+    res.status(500).json({ error: "Error al reactivar carrito" });
   }
 };

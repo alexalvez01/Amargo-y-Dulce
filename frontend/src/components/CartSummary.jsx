@@ -37,7 +37,7 @@ function useAnimatedNumber(value, duration = 800) {
   return { displayValue: Math.round(displayValue), trend };
 }
 
-export default function CartSummary({ total, onConfirm, isConfirming }) {
+export default function CartSummary({ total, onConfirm, isConfirming, isLocked = false }) {
   const { displayValue, trend } = useAnimatedNumber(total);
 
   return (
@@ -68,10 +68,12 @@ export default function CartSummary({ total, onConfirm, isConfirming }) {
         disabled={isConfirming || total === 0}
         className={`w-full bg-[#6B4C3A] text-white font-bold py-4 rounded-xl transition-all font-brand shadow-md hover:shadow-lg ${isConfirming || total === 0
             ? "opacity-50 cursor-not-allowed"
-            : "hover:bg-[#543b2d] hover:scale-105"
+            : isLocked 
+              ? "bg-[#6b4c3a] hover:bg-[#543b2d]"
+              : "hover:bg-[#543b2d] hover:scale-105"
           }`}
       >
-        {isConfirming ? "Continuando..." : "Continuar"}
+        {isConfirming ? "Continuando..." : isLocked ? "Continuar Pago" : "Continuar"}
       </button>
 
     </div>
