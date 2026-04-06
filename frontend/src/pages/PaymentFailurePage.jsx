@@ -1,7 +1,10 @@
-﻿import { Link } from "react-router-dom";
-import { Check } from "lucide-react";
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
+import { Check, ShoppingCart } from "lucide-react";
+import toast from "react-hot-toast";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { reactivateCartRequest } from "../api/cart";
 
 function Step({ label, state, number }) {
   const done = state === "done";
@@ -31,6 +34,21 @@ function Step({ label, state, number }) {
 }
 
 export default function PaymentFailurePage() {
+  useEffect(() => {
+    const restoreCart = async () => {
+      try {
+        await reactivateCartRequest();
+        toast.info("Tu pedido no se completó, pero tus productos han sido devueltos al carrito.", {
+          duration: 5000,
+          icon: '🛒'
+        });
+      } catch (error) {
+        console.error("Error al reactivar carrito:", error);
+      }
+    };
+    restoreCart();
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#f7f2ec] flex flex-col font-brand">
       <Navbar />
@@ -46,17 +64,24 @@ export default function PaymentFailurePage() {
         </div>
 
         <div className="max-w-md mt-40 mx-auto bg-white rounded-xl p-8 shadow-sm text-center">
-          <h2 className="text-3xl font-semibold text-brand-brownDark mb-3">Pago Rechazado</h2>
+          <h2 className="text-3xl font-semibold text-brand-brownDark mb-3">Pago No Completado</h2>
           <p className="text-[#7a7a7a] text-sm mb-6">
-            Lo sentimos su pago ha sido rechazado, por lo tanto no pudimos completar correctamente su pedido.
+            Lo sentimos, no pudimos procesar tu pago. Pero no te preocupes, tus productos han sido devueltos a tu carrito para que puedas volver a intentarlo cuando quieras.
           </p>
 
           <div className="space-y-3">
             <Link
-              to="/shop"
-              className="inline-block w-full bg-[#6b4c3a] text-white font-semibold py-2.5 rounded-md hover:bg-[#543b2d] transition-colors"
+              to="/cart"
+              className="inline-flex items-center justify-center gap-2 w-full bg-[#6b4c3a] text-white font-semibold py-2.5 rounded-md hover:bg-[#543b2d] transition-colors"
             >
-              Volver a la tienda
+              <ShoppingCart size={18} />
+              Ir al Carrito
+            </Link>
+            <Link
+              to="/shop"
+              className="inline-block w-full text-brand-brownDark font-semibold py-2.5 rounded-md hover:underline transition-colors"
+            >
+              Seguir comprando
             </Link>
           </div>
         </div>

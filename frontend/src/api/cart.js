@@ -27,3 +27,6 @@ export const removeProductFromCartRequest = (idCarrito, idProducto) => {
 export const confirmCartRequest = (idCarrito) => {
   return axios.put(`/cart/confirm/${idCarrito}`);
 };
+
+// Reactivar el carrito (tras cancelación/fallo de pago)
+export const reactivateCartRequest = () => axios.post(`/cart/reactivate`);
