@@ -5,16 +5,31 @@ export const getActiveCart = async (req, res) => {
   const userId = req.user.userId;
 
   try {
+    // Buscamos carritos activos o confirmados, priorizando el confirmado para detectar pagos pendientes
     const carrito = await sql`
-      SELECT *
-      FROM carrito
-      WHERE idUsuarioFK = ${userId} 
-        AND (estado = 'activo' OR estado = 'confirmado')
+      SELECT c.*, 
+             (SELECT COUNT(*) FROM pago p 
+              JOIN factura f ON p.idFacturaFK = f.idFactura 
+              WHERE f.idUsuarioFK = ${userId} AND p.estado = 'finalizado'
+              AND f.idFactura = (SELECT idFactura FROM factura WHERE idUsuarioFK = ${userId} ORDER BY idFactura DESC LIMIT 1)
+             ) as tiene_pago
+      FROM carrito c
+      WHERE c.idUsuarioFK = ${userId} 
+        AND (c.estado = 'activo' OR c.estado = 'confirmado')
+      ORDER BY CASE WHEN c.estado = 'confirmado' THEN 1 ELSE 2 END, c.idCarrito DESC
       LIMIT 1
     `;
 
     if (carrito.length === 0) {
       return res.json({ message: "El usuario no tiene carrito activo.", productos: [] });
+    }
+
+    // SI el carrito es confirmado PERO ya detectamos un pago finalizado en la última factura, lo limpiamos (esto es un fallback de seguridad)
+    if (carrito[0].estado === 'confirmado' && Number(carrito[0].tiene_pago) > 0) {
+      const idErroneo = carrito[0].idcarrito;
+      await sql`DELETE FROM productocarrito WHERE idCarritoFK = ${idErroneo}`;
+      await sql`DELETE FROM carrito WHERE idCarrito = ${idErroneo}`;
+      return res.json({ message: "Carrito procesado anteriormente.", productos: [] });
     }
 
     const idCarrito = carrito[0].idcarrito;
@@ -66,12 +81,29 @@ export const addProductToCart = async (req, res) => {
     const precioUnitario = prod[0].precio;
     const stockDisponible = prod[0].stock;
 
-    // Buscar si ya hay un carrito activo
+    // Buscar si ya hay un carrito (activo o confirmado)
     let carrito = await sql`
-      SELECT idCarrito FROM carrito
-      WHERE idUsuarioFK = ${userId} AND estado = 'activo'
+      SELECT idCarrito, estado FROM carrito
+      WHERE idUsuarioFK = ${userId} 
+        AND (estado = 'activo' OR estado = 'confirmado')
+      ORDER BY CASE WHEN estado = 'confirmado' THEN 1 ELSE 2 END
       LIMIT 1
     `;
+
+    if (carrito.length > 0 && carrito[0].estado === 'confirmado') {
+      // Verificar si ese confirmado ya tiene pago
+      const pago = await sql`
+        SELECT 1 FROM pago p 
+        JOIN factura f ON p.idFacturaFK = f.idFactura 
+        WHERE f.idUsuarioFK = ${userId} AND p.estado = 'finalizado'
+        LIMIT 1
+      `;
+      if (pago.length === 0) {
+        return res.status(403).json({ 
+          error: "Tenés un pago pendiente. Terminalo o recuperá tu carrito para seguir comprando." 
+        });
+      }
+    }
 
     let idCarrito;
 
@@ -121,6 +153,12 @@ export const updateProductQuantity = async (req, res) => {
   const { idCarrito, idProducto, cantidad } = req.body;
 
   try {
+    // Verificar si el carrito está bloqueado (confirmado)
+    const currentStatus = await sql`SELECT estado FROM carrito WHERE idCarrito = ${idCarrito}`;
+    if (currentStatus.length > 0 && currentStatus[0].estado === 'confirmado') {
+      return res.status(403).json({ error: "No puedes editar un carrito con un pago pendiente." });
+    }
+
     // Verificar stock disponible del producto
     const prod = await sql`SELECT stock FROM producto WHERE idProducto = ${idProducto}`;
     
@@ -155,6 +193,12 @@ export const removeProductFromCart = async (req, res) => {
   const { idCarrito, idProducto } = req.body;
 
   try {
+    // Verificar si el carrito está bloqueado (confirmado)
+    const currentStatus = await sql`SELECT estado FROM carrito WHERE idCarrito = ${idCarrito}`;
+    if (currentStatus.length > 0 && currentStatus[0].estado === 'confirmado') {
+      return res.status(403).json({ error: "No puedes editar un carrito con un pago pendiente." });
+    }
+
     await sql`
       DELETE FROM productocarrito
       WHERE idCarritoFK = ${idCarrito} AND idProductoFK = ${idProducto}
@@ -207,11 +251,11 @@ export const reactivateCart = async (req, res) => {
 
     const { idfactura } = facturaPendiente[0];
 
-    // 2. Borramos la factura y sus líneas para liberar el stock temporalmente
+    //Borramos la factura y sus líneas para liberar el stock temporalmente
     await sql`DELETE FROM lineafactura WHERE idFacturaFK = ${idfactura}`;
     await sql`DELETE FROM factura WHERE idFactura = ${idfactura}`;
 
-    // 3. Volvemos a poner el carrito en 'activo'
+    //Volvemos a poner el carrito en 'activo'
     await sql`
       UPDATE carrito 
       SET estado = 'activo' 
