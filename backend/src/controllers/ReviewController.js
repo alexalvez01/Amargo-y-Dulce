@@ -1,5 +1,33 @@
 import { sql } from "../config/db.js";
 
+// Verificar si el usuario compró el producto (Comprador Verificado)
+export const checkPurchase = async (req, res) => {
+    const userId = req.user.userId;
+    const productId = Number(req.params.productId);
+
+    if (!productId) {
+        return res.status(400).json({ error: "productId inválido" });
+    }
+
+    try {
+        // Sin JOIN pago: verificamos solo factura + lineafactura
+        // (pedidos viejos pueden no tener registro de pago)
+        const result = await sql`
+            SELECT lf.idProductoFK, f.idUsuarioFK
+            FROM factura f
+            JOIN lineafactura lf ON lf.idFacturaFK = f.idFactura
+            WHERE f.idUsuarioFK = ${userId}::integer
+              AND lf.idProductoFK = ${productId}::integer
+            LIMIT 1;
+        `;
+
+        res.json({ hasPurchased: result.length > 0 });
+    } catch (error) {
+        console.error("Error verificando compra:", error);
+        res.status(500).json({ error: "Error al verificar la compra" });
+    }
+};
+
 // Obtener reseñas de un producto
 export const getReviewsByProduct = async (req, res) => {
     try {

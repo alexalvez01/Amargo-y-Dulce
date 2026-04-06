@@ -1,4 +1,5 @@
 import { Package, MapPin, CheckCircle, Clock, XCircle } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function OrderRow({ order }) {
     const formatDate = (dateString) => {
@@ -58,6 +59,12 @@ export default function OrderRow({ order }) {
                             <p className="text-xs text-gray-500 italic">
                                 Tamaño: {prod.tamano || 'M'}
                             </p>
+                            <Link
+                                to={`/product/${prod.idproducto}`}
+                                className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-[#6B4C3A] border border-[#6B4C3A] rounded-full px-3 py-1 hover:bg-[#6B4C3A] hover:text-white transition-colors w-fit"
+                            >
+                                ⭐ Calificar producto
+                            </Link>
                         </div>
                     </div>
                 ))}

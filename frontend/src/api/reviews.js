@@ -7,6 +7,9 @@ import axios from "./axios";
 // Pide las reseñas de un producto (GET /product/:productId)
 export const getProductReviewsRequest = (productId) => axios.get(`/reviews/product/${productId}`);
 
+// Verifica si el usuario autenticado compró el producto (Comprador Verificado)
+export const checkPurchaseRequest = (productId) => axios.get(`/reviews/check-purchase/${productId}`);
+
 // Crea una nueva reseña (POST /create)
 export const createReviewRequest = (data) => axios.post(`/reviews/create`, data);
 

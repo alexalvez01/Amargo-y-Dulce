@@ -1,50 +1,59 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom"; 
+import { useParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getFavoritesRequest, toggleFavoriteRequest } from "../api/favorites";
 import { useProducts } from "../context/ProductContext";
-import { LogIn, ChevronLeft } from 'lucide-react';
-import toast from 'react-hot-toast'; 
+import { LogIn, ChevronLeft, Lock } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { useNavigate } from "react-router-dom";
-
+import { checkPurchaseRequest } from "../api/reviews";
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import ProductInfo from "../components/ProductInfo"; 
-import ReviewSection from "../components/ReviewSection"; 
+import ProductInfo from "../components/ProductInfo";
+import ReviewSection from "../components/ReviewSection";
 import ReviewForm from "../components/ReviewForm";
 
 export default function ProductDetail() {
   const { id } = useParams();
-  const { isAuthenticated } = useAuth(); 
+  const { isAuthenticated } = useAuth();
   const { getProductById } = useProducts();
-  
+
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
-  
- 
+
+
   const [averageRating, setAverageRating] = useState(0);
-  
-  
+
   const [isFavorite, setIsFavorite] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const navigate = useNavigate();
 
   const [refreshReviews, setRefreshReviews] = useState(false);
   const [userHasReviewed, setUserHasReviewed] = useState(false);
+  const [hasPurchased, setHasPurchased] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const prod = await getProductById(id);
         setProduct(prod);
-        
+
         if (isAuthenticated) {
           const favRes = await getFavoritesRequest();
           const isFav = favRes.data.some(fav => String(fav.id) === String(id));
           setIsFavorite(isFav);
+
+          // Verificar si el usuario compró el producto (Comprador Verificado)
+          try {
+            const purchaseRes = await checkPurchaseRequest(id);
+            setHasPurchased(purchaseRes.data.hasPurchased);
+          } catch {
+            setHasPurchased(false);
+          }
         } else {
           setIsFavorite(false);
+          setHasPurchased(false);
         }
       } catch (error) {
         console.error("Error de conexión:", error);
@@ -55,7 +64,7 @@ export default function ProductDetail() {
     fetchData();
   }, [id, isAuthenticated, getProductById]);
 
-  
+
   // Handler para alternar favorito
   const handleToggleFavorite = async () => {
     if (!isAuthenticated) {
@@ -73,8 +82,8 @@ export default function ProductDetail() {
     }
 
     setIsAnimating(true);
-    setTimeout(() => setIsAnimating(false), 300); 
-    setIsFavorite(!isFavorite); 
+    setTimeout(() => setIsAnimating(false), 300);
+    setIsFavorite(!isFavorite);
 
     try {
       await toggleFavoriteRequest(id);
@@ -90,54 +99,66 @@ export default function ProductDetail() {
   return (
     <div className="bg-[#f7f2ec] flex flex-col min-h-screen font-brand">
       <Navbar />
-      
+
       <main className="min-h-screen">
-      {/* Componente Superior: La info del producto */}
-      <div className="max-w-6xl mx-auto p-4 md:p-8 mt-16 grow">
-        <ProductInfo 
-          product={product}
-          averageRating={averageRating}
-          isFavorite={isFavorite}
-          isAnimating={isAnimating}
-          onToggleFavorite={handleToggleFavorite}
-        />
-      </div>
-
-      <button
-        type="button"
-        className="absolute left-2 top-12 lg:top-15 flex items-center gap-2 text-brand-brownDark hover:text-brand-brown hover:underline transition-colors z-20 cursor-pointer "
-        onClick={() => navigate(-1)}
-      >
-        <ChevronLeft size={28} />
-        <span className="font-semibold text-lg">Volver</span>
-      </button>
-
-      {/* Componente Inferior: Las reseñas */}
-      <div className="max-w-6xl mx-auto mt-12 mb-20">
-        <ReviewSection 
-          productId={id} 
-          onRatingCalculated={setAverageRating} 
-          refreshTrigger={refreshReviews} 
-          onUserReviewedStatus={setUserHasReviewed}
-        />
-      </div>
-
-      {/* Formulario de Reseñas de borde a borde condicional */}
-      {!userHasReviewed ? (
-        <ReviewForm 
-          productId={id} 
-          productName={product.nombre} 
-          onReviewAdded={() => setRefreshReviews(!refreshReviews)} 
-        />
-      ) : (
-        <div className="w-full bg-[#968373] py-16 mt-12 flex justify-center items-center">
-            <div className="max-w-4xl mx-auto px-4 md:px-8 text-center">
-                <h3 className="text-2xl md:text-3xl font-bold text-white font-brand">
-                    ¡Gracias! Ya compartiste tu opinión sobre "{product.nombre}".
-                </h3>
-            </div>
+        {/* Componente Superior: La info del producto */}
+        <div className="max-w-6xl mx-auto p-4 md:p-8 mt-16 grow">
+          <ProductInfo
+            product={product}
+            averageRating={averageRating}
+            isFavorite={isFavorite}
+            isAnimating={isAnimating}
+            onToggleFavorite={handleToggleFavorite}
+          />
         </div>
-      )}
+
+        <button
+          type="button"
+          className="absolute left-2 top-12 lg:top-15 flex items-center gap-2 text-brand-brownDark hover:text-brand-brown hover:underline transition-colors z-20 cursor-pointer "
+          onClick={() => navigate(-1)}
+        >
+          <ChevronLeft size={28} />
+          <span className="font-semibold text-lg">Volver</span>
+        </button>
+
+        {/* Componente Inferior: Las reseñas */}
+        <div className="max-w-6xl mx-auto mt-12 mb-20">
+          <ReviewSection
+            productId={id}
+            onRatingCalculated={setAverageRating}
+            refreshTrigger={refreshReviews}
+            onUserReviewedStatus={setUserHasReviewed}
+          />
+        </div>
+
+        {/* Formulario de Reseñas de borde a borde condicional */}
+        {hasPurchased && !userHasReviewed ? (
+          <ReviewForm
+            productId={id}
+            productName={product.nombre}
+            onReviewAdded={() => setRefreshReviews(!refreshReviews)}
+          />
+        ) : hasPurchased && userHasReviewed ? (
+          <div className="w-full bg-[#968373] py-16 mt-12 flex justify-center items-center">
+            <div className="max-w-4xl mx-auto px-4 md:px-8 text-center">
+              <h3 className="text-2xl md:text-3xl font-bold text-white font-brand">
+                ¡Gracias! Ya compartiste tu opinión sobre "{product.nombre}".
+              </h3>
+            </div>
+          </div>
+        ) : (
+          <div className="w-full bg-[#f0ebe3] border-t border-gray-200 py-16 mt-12">
+            <div className="max-w-4xl mx-auto px-4 md:px-8 flex flex-col items-center text-center gap-4">
+              <div className="bg-gray-100 rounded-full p-4 shadow-inner">
+                <Lock size={32} className="text-[#6B4C3A]" />
+              </div>
+              <h4 className="text-lg font-bold text-[#6B4C3A] font-brand">Opiniones verificadas</h4>
+              <p className="text-gray-500 font-brand text-base md:text-lg max-w-xl leading-relaxed">
+                Solo los clientes que hayan comprado este producto pueden dejar una reseña.
+              </p>
+            </div>
+          </div>
+        )}
 
       </main>
 

@@ -35,16 +35,21 @@ export default function ProductInfo({
   };
 
   const increaseQty = () => {
-    if (quantity < product.stock) {
+    if (quantity < stockValue) {
       setQuantity(quantity + 1);
     } else {
-      toast.error(`¡Solo quedan ${product.stock} unidades en stock!`, {
+      toast.error("No hay unidades suficientes", {
         style: { fontFamily: 'inherit' }
       });
     }
   };
 
   const handleAddToCart = async (e) => {
+    if (stockValue === 0) {
+      toast.error("No hay stock disponible");
+      return;
+    }
+
     if (!isAuthenticated) {
       toast.custom((t) => (
         <div className={`flex items-center gap-3 bg-[#E8EFFF] border border-[#6B90FF] px-10 py-2 mt-9 rounded-full shadow-md pointer-events-auto ${t.visible ? 'toast-enter' : 'toast-leave'}`}>
@@ -228,15 +233,15 @@ export default function ProductInfo({
           </p>
 
           <button
-            className={`w-full md:w-auto font-bold py-4 px-8 rounded-xl shadow-lg flex items-center justify-center gap-3 font-brand transition-all ${isInactive
-                ? 'bg-gray-300 text-gray-500 cursor-not-allowed border-gray-300 pointer-events-none'
+            className={`w-full md:w-auto font-bold py-4 px-8 rounded-xl shadow-lg flex items-center justify-center gap-3 font-brand transition-all ${isInactive || stockValue === 0
+                ? 'bg-gray-400 text-white cursor-not-allowed opacity-70 pointer-events-none'
                 : 'bg-[#6B4C3A] text-white hover:bg-[#543b2d] hover:scale-105'
               }`}
             onClick={handleAddToCart}
-            disabled={isInactive}
+            disabled={isInactive || stockValue === 0}
           >
             <ShoppingCart size={24} />
-            {isInactive ? "No Disponible" : "Agregar al carrito"}
+            {isInactive ? "No Disponible" : (stockValue === 0 ? "Agotado" : "Agregar al carrito")}
           </button>
 
         </div>

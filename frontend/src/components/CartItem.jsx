@@ -1,4 +1,5 @@
 import { Minus, Plus } from "lucide-react";
+import toast from "react-hot-toast";
 
 
 export default function CartItem({ item, discount, finalPrice, onUpdateQuantity, onRemove }) {
@@ -15,7 +16,13 @@ export default function CartItem({ item, discount, finalPrice, onUpdateQuantity,
   };
 
   const handleIncrease = () => {
-    onUpdateQuantity(productId, item.cantidad + 1);
+    if (item.cantidad < item.stock) {
+      onUpdateQuantity(productId, item.cantidad + 1);
+    } else {
+      toast.error("No hay unidades suficientes", {
+        style: { fontFamily: 'inherit' }
+      });
+    }
   };
 
 return (

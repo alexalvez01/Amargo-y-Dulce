@@ -5,12 +5,14 @@ import {
     getReviewsByProduct,
     createReview,
     deleteReview,
-    deleteReviewAsAdmin
+    deleteReviewAsAdmin,
+    checkPurchase
 } from "../controllers/ReviewController.js";
 
 const reviewRoutes = Router();
 
 reviewRoutes.get("/product/:productId", getReviewsByProduct);
+reviewRoutes.get("/check-purchase/:productId", authMiddleware, checkPurchase);
 reviewRoutes.post("/create", authMiddleware, createReview);
 reviewRoutes.delete("/delete/:productId", authMiddleware, deleteReview);
 reviewRoutes.delete("/delete-admin/:userId/:productId", authMiddleware, adminMiddleware, deleteReviewAsAdmin);
