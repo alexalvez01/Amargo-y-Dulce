@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Check, ChevronLeft } from "lucide-react";
+import { Check, ChevronLeft, Clock } from "lucide-react";
 import toast from "react-hot-toast";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -247,6 +247,17 @@ export default function OrderDetail() {
                 <img src="/images/mercado-pago.webp" alt="Mercado Pago" className="h-6 w-auto object-contain" />
               </label>
             </section>
+
+            {/* Banner de Reserva de Stock */}
+            <div className="bg-[#fff9f0] border border-[#e6dccb] rounded-xl p-4 flex gap-4 items-start shadow-sm border-l-4 border-l-[#6b4c3a]">
+              <div className="bg-[#6b4c3a] p-2 rounded-lg text-white">
+                <Clock size={20} />
+              </div>
+              <div className="text-xs text-[#5d4037] leading-relaxed">
+                <p className="font-bold text-sm mb-1 text-[#6b4c3a]">Información de Reserva</p>
+                Al hacer clic en <span className="font-bold">"Ir a pagar"</span>, tus productos quedarán reservados por <span className="font-bold underline decoration-[#6b4c3a]">20 minutos</span>. Si el pago no se completa en ese tiempo, la reserva expirará para dar oportunidad a otros clientes.
+              </div>
+            </div>
 
             <button
               type="button"

@@ -37,6 +37,25 @@ const registerPaymentByFactura = async (idFactura) => {
     FROM nuevo_pago p
   `;
 
+  // Limpiar el carrito del usuario ahora que el pago fue confirmado
+  const facturaInfo = await sql`
+    SELECT idUsuarioFK FROM factura WHERE idFactura = ${idFactura}
+  `;
+  if (facturaInfo.length > 0) {
+    const userId = facturaInfo[0].idusuariofk;
+    const carrito = await sql`
+      SELECT idCarrito FROM carrito 
+      WHERE idUsuarioFK = ${userId} AND estado = 'confirmado'
+      LIMIT 1
+    `;
+    if (carrito.length > 0) {
+      const idCarrito = carrito[0].idcarrito;
+      await sql`DELETE FROM productocarrito WHERE idCarritoFK = ${idCarrito}`;
+      await sql`DELETE FROM carrito WHERE idCarrito = ${idCarrito}`;
+      console.log(`Carrito ${idCarrito} eliminado tras pago confirmado para factura ${idFactura}`);
+    }
+  }
+
   return {
     alreadyRegistered: false,
     idPago: result[0].idpago,
@@ -101,6 +120,22 @@ export const handleWebhook = async (req, res) => {
         if (idFactura) {
           await registerPaymentByFactura(Number(idFactura));
           console.log(`Pago aprobado para factura ${idFactura} via Webhook`);
+        }
+      } else if (data.status === "rejected" || data.status === "cancelled") {
+        const idFactura = data.external_reference;
+        if (idFactura) {
+          const facturaInfo = await sql`
+            SELECT idUsuarioFK FROM factura WHERE idFactura = ${idFactura}
+          `;
+          if (facturaInfo.length > 0) {
+            const userId = facturaInfo[0].idusuariofk;
+            await sql`
+              UPDATE carrito 
+              SET estado = 'activo' 
+              WHERE idUsuarioFK = ${userId} AND estado = 'confirmado'
+            `;
+            console.log(`Pago ${data.status} para factura ${idFactura}. Carrito devuelto a estado activo.`);
+          }
         }
       }
     }

@@ -247,9 +247,8 @@ export const saveOrderDetailData = async (req, res) => {
       `;
     }
 
-    // Limpieza: Vaciar el carrito y sus productos
-    await sql`DELETE FROM productocarrito WHERE idCarritoFK = ${idCarrito}`;
-    await sql`DELETE FROM carrito WHERE idCarrito = ${idCarrito}`;
+    // Marcar el carrito como confirmado (se eliminará cuando el pago sea aprobado por MercadoPago)
+    await sql`UPDATE carrito SET estado = 'confirmado' WHERE idCarrito = ${idCarrito}`;
 
     res.json({
       message: "Datos de envio guardados correctamente y Factura generada",

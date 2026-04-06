@@ -71,7 +71,7 @@ export default function CartSummary({ total, onConfirm, isConfirming }) {
             : "hover:bg-[#543b2d] hover:scale-105"
           }`}
       >
-        {isConfirming ? "Confirmando..." : "Confirmar"}
+        {isConfirming ? "Continuando..." : "Continuar"}
       </button>
 
     </div>

@@ -171,7 +171,7 @@ export const confirmCart = async (req, res) => {
   const { idCarrito } = req.params;
 
   try {
-    // 1. Limpieza final asegurando que no se incorporen productos sin stock
+    //Limpieza final asegurando que no se incorporen productos sin stock
     await sql`
       DELETE FROM productocarrito 
       WHERE idCarritoFK = ${idCarrito} 
