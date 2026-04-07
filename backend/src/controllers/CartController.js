@@ -1,26 +1,27 @@
 import { sql } from "../config/db.js";
 
 // Helper interno para reactivar un carrito (borrar factura impaga y pasar a 'activo')
-const reactivateCartInternal = async (userId) => {
+export const reactivateCartInternal = async (userId) => {
   try {
-    // Buscar si hay una factura para este usuario que NO tenga pago aún (la última)
-    const facturaPendiente = await sql`
+    // 1. Buscar facturas pendientes para este usuario (sin pago aún)
+    const facturasPendientes = await sql`
       SELECT f.idFactura 
       FROM factura f
       LEFT JOIN pago p ON f.idFactura = p.idFacturaFK
       WHERE f.idUsuarioFK = ${userId} AND p.idPago IS NULL
-      ORDER BY f.idFactura DESC LIMIT 1
     `;
 
-    if (facturaPendiente.length > 0) {
-      const idFactura = facturaPendiente[0].idfactura;
-      // Borrar la factura y sus líneas para liberar el stock temporalmente
-      await sql`DELETE FROM lineafactura WHERE idFacturaFK = ${idFactura}`;
-      await sql`DELETE FROM factura WHERE idFactura = ${idFactura}`;
-      console.log(`[Reactivación Automática] Factura ${idFactura} eliminada para usuario ${userId}.`);
+    if (facturasPendientes.length > 0) {
+      const ids = facturasPendientes.map(f => f.idfactura);
+      // Borrar las facturas y sus líneas para liberar el stock
+      await sql`DELETE FROM lineafactura WHERE idFacturaFK IN (${ids})`;
+      await sql`DELETE FROM factura WHERE idFactura IN (${ids})`;
+      console.log(`[Reactivación] ${ids.length} factura(s) eliminada(s) para usuario ${userId}.`);
     }
 
-    // Volver a poner el carrito en 'activo'
+    // 2. Consolidar TODOS los carritos 'confirmado' a 'activo'
+    // Si ya existía un carrito 'activo', esto podría crear duplicados temporales,
+    // que luego resolveremos en getActiveCart o addProductToCart unificándolos.
     await sql`
       UPDATE carrito 
       SET estado = 'activo' 
@@ -38,41 +39,40 @@ export const getActiveCart = async (req, res) => {
   const userId = req.user.userId;
 
   try {
-    // Intentar buscar el carrito activo convencional
-    let carrito = await sql`
-      SELECT *
+    // 1. Siempre intentamos reactivar cualquier carrito 'confirmado' abandonado primero
+    await reactivateCartInternal(userId);
+
+    // 2. Buscar carritos activos
+    let carritos = await sql`
+      SELECT idCarrito 
       FROM carrito
       WHERE idUsuarioFK = ${userId} AND estado = 'activo'
-      LIMIT 1
+      ORDER BY idCarrito DESC
     `;
 
-    // Si NO hay activo, buscamos si hay uno 'confirmado' (pendiente de pago)
-    // Esto permite la persistencia si el usuario cerró la pestaña de MP y volvió al sitio.
-    if (carrito.length === 0) {
-      const confirmado = await sql`
-        SELECT idCarrito FROM carrito 
-        WHERE idUsuarioFK = ${userId} AND estado = 'confirmado' 
-        LIMIT 1
-      `;
-      
-      if (confirmado.length > 0) {
-        console.log(`[Persistencia] Usuario ${userId} tiene un carrito confirmado. Reactivando...`);
-        await reactivateCartInternal(userId);
-        
-        // Re-buscamos ahora que debería estar activo
-        carrito = await sql`
-          SELECT * FROM carrito 
-          WHERE idUsuarioFK = ${userId} AND estado = 'activo' 
-          LIMIT 1
-        `;
-      }
-    }
-
-    if (carrito.length === 0) {
+    if (carritos.length === 0) {
       return res.json({ message: "El usuario no tiene carrito activo.", productos: [] });
     }
 
-    const idCarrito = carrito[0].idcarrito;
+    // 3. Unificación (Singularidad): Si hay más de un carrito activo por error, consolidamos en el más reciente
+    let idCarrito = carritos[0].idcarrito;
+    if (carritos.length > 1) {
+      console.log(`[Consolidación] Usuario ${userId} tenía ${carritos.length} carritos activos. Unificando en ${idCarrito}...`);
+      const otrosCarts = carritos.slice(1).map(c => c.idcarrito);
+      
+      // Mover productos de carritos viejos al nuevo (o actualizar cantidad si ya existen)
+      for (const oldId of otrosCarts) {
+        await sql`
+          INSERT INTO productocarrito (idCarritoFK, idProductoFK, cantidad, precioUnitario)
+          SELECT ${idCarrito}, idProductoFK, cantidad, precioUnitario 
+          FROM productocarrito WHERE idCarritoFK = ${oldId}
+          ON CONFLICT ON CONSTRAINT productocarrito_pkey 
+          DO UPDATE SET cantidad = productocarrito.cantidad + EXCLUDED.cantidad
+        `;
+        await sql`DELETE FROM productocarrito WHERE idCarritoFK = ${oldId}`;
+        await sql`DELETE FROM carrito WHERE idCarrito = ${oldId}`;
+      }
+    }
 
 
     // Obtener productos del carrito, incluyendo la imagen y sumando el subtotal
@@ -92,8 +92,11 @@ export const getActiveCart = async (req, res) => {
       WHERE pc.idCarritoFK = ${idCarrito}
     `;
 
+    // 4. Obtener el carrito final ya unificado
+    const carritoFinal = await sql`SELECT * FROM carrito WHERE idCarrito = ${idCarrito}`;
+
     res.json({
-      carrito: carrito[0],
+      carrito: carritoFinal[0],
       productos,
     });
   } catch (error) {
@@ -108,30 +111,24 @@ export const addProductToCart = async (req, res) => {
   const { idProducto, cantidad } = req.body;
 
   try {
+    // 1. Asegurar que no haya carritos 'confirmado' antes de agregar
+    await reactivateCartInternal(userId);
+
     const prod = await sql`SELECT precio, stock, estado FROM producto WHERE idProducto = ${idProducto}`;
+    
+    // ... resto de validaciones ...
 
-    if (prod.length === 0) {
-      return res.status(404).json({ error: "Producto inexistente" });
-    }
-
-    if (prod[0].estado === 'inactivo') {
-      return res.status(400).json({ error: "El producto no se encuentra disponible actualmente." });
-    }
-
-    const precioUnitario = prod[0].precio;
-    const stockDisponible = prod[0].stock;
-
-    // Buscar si ya hay un carrito activo
-    let carrito = await sql`
+    // 2. Buscar si ya hay un carrito activo (después de reactivar)
+    let carritos = await sql`
       SELECT idCarrito FROM carrito
       WHERE idUsuarioFK = ${userId} AND estado = 'activo'
-      LIMIT 1
+      ORDER BY idCarrito DESC
     `;
 
     let idCarrito;
 
     // Si no hay carrito, crearlo
-    if (carrito.length === 0) {
+    if (carritos.length === 0) {
       const nuevo = await sql`
         INSERT INTO carrito (idUsuarioFK, estado, fechaCreacion, total)
         VALUES (${userId}, 'activo', NOW()::date, 0)
@@ -139,7 +136,7 @@ export const addProductToCart = async (req, res) => {
       `;
       idCarrito = nuevo[0].idcarrito;
     } else {
-      idCarrito = carrito[0].idcarrito;
+      idCarrito = carritos[0].idcarrito;
     }
 
     // Control de stock: Ver cuántos ya tengo en el carrito y cuánto quiero agregar
@@ -207,9 +204,13 @@ export const updateProductQuantity = async (req, res) => {
 
 // Eliminar un producto
 export const removeProductFromCart = async (req, res) => {
+  const userId = req.user.userId;
   const { idCarrito, idProducto } = req.body;
 
   try {
+    // Asegurar que estamos trabajando sobre el carrito correcto
+    await reactivateCartInternal(userId);
+
     await sql`
       DELETE FROM productocarrito
       WHERE idCarritoFK = ${idCarrito} AND idProductoFK = ${idProducto}

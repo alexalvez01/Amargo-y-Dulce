@@ -1,4 +1,5 @@
 import { sql } from "../config/db.js";
+import { reactivateCartInternal } from "./CartController.js";
 
 export const getPurchaseHistory = async (req, res) => {
   const userId = req.user.userId;
@@ -65,10 +66,14 @@ export const getLatestOrderDetail = async (req, res) => {
   const userId = req.user.userId;
 
   try {
+    // Asegurar que cualquier carrito 'confirmado' abandonado sea reactivado y unificado
+    await reactivateCartInternal(userId);
+
     const carrito = await sql`
       SELECT idCarrito 
       FROM carrito 
       WHERE idUsuarioFK = ${userId} AND estado = 'activo'
+      ORDER BY idCarrito DESC
       LIMIT 1
     `;
 
@@ -208,10 +213,14 @@ export const saveOrderDetailData = async (req, res) => {
     // ============================================
     // CONVERTIR CARRITO ACTIVO A FACTURA
     // ============================================
+    // Aseguramos consolidación de último momento
+    await reactivateCartInternal(userId);
+
     const carritoInfo = await sql`
       SELECT idCarrito 
       FROM carrito 
       WHERE idUsuarioFK = ${userId} AND estado = 'activo'
+      ORDER BY idCarrito DESC
       LIMIT 1
     `;
 
