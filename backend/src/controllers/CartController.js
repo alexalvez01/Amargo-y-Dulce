@@ -1,16 +1,72 @@
 import { sql } from "../config/db.js";
 
+// Helper interno para reactivar un carrito (borrar factura impaga y pasar a 'activo')
+const reactivateCartInternal = async (userId) => {
+  try {
+    // Buscar si hay una factura para este usuario que NO tenga pago aún (la última)
+    const facturaPendiente = await sql`
+      SELECT f.idFactura 
+      FROM factura f
+      LEFT JOIN pago p ON f.idFactura = p.idFacturaFK
+      WHERE f.idUsuarioFK = ${userId} AND p.idPago IS NULL
+      ORDER BY f.idFactura DESC LIMIT 1
+    `;
+
+    if (facturaPendiente.length > 0) {
+      const idFactura = facturaPendiente[0].idfactura;
+      // Borrar la factura y sus líneas para liberar el stock temporalmente
+      await sql`DELETE FROM lineafactura WHERE idFacturaFK = ${idFactura}`;
+      await sql`DELETE FROM factura WHERE idFactura = ${idFactura}`;
+      console.log(`[Reactivación Automática] Factura ${idFactura} eliminada para usuario ${userId}.`);
+    }
+
+    // Volver a poner el carrito en 'activo'
+    await sql`
+      UPDATE carrito 
+      SET estado = 'activo' 
+      WHERE idUsuarioFK = ${userId} AND estado = 'confirmado'
+    `;
+    return true;
+  } catch (error) {
+    console.error("Error en reactivateCartInternal:", error);
+    return false;
+  }
+};
+
 // Obtener carrito activo
 export const getActiveCart = async (req, res) => {
   const userId = req.user.userId;
 
   try {
-    const carrito = await sql`
+    // Intentar buscar el carrito activo convencional
+    let carrito = await sql`
       SELECT *
       FROM carrito
       WHERE idUsuarioFK = ${userId} AND estado = 'activo'
       LIMIT 1
     `;
+
+    // Si NO hay activo, buscamos si hay uno 'confirmado' (pendiente de pago)
+    // Esto permite la persistencia si el usuario cerró la pestaña de MP y volvió al sitio.
+    if (carrito.length === 0) {
+      const confirmado = await sql`
+        SELECT idCarrito FROM carrito 
+        WHERE idUsuarioFK = ${userId} AND estado = 'confirmado' 
+        LIMIT 1
+      `;
+      
+      if (confirmado.length > 0) {
+        console.log(`[Persistencia] Usuario ${userId} tiene un carrito confirmado. Reactivando...`);
+        await reactivateCartInternal(userId);
+        
+        // Re-buscamos ahora que debería estar activo
+        carrito = await sql`
+          SELECT * FROM carrito 
+          WHERE idUsuarioFK = ${userId} AND estado = 'activo' 
+          LIMIT 1
+        `;
+      }
+    }
 
     if (carrito.length === 0) {
       return res.json({ message: "El usuario no tiene carrito activo.", productos: [] });
@@ -191,34 +247,11 @@ export const reactivateCart = async (req, res) => {
   const userId = req.user.userId;
 
   try {
-    // Buscar si hay una factura para este usuario que NO tenga pago aún
-    const facturaPendiente = await sql`
-      SELECT f.idFactura 
-      FROM factura f
-      LEFT JOIN pago p ON f.idFactura = p.idFacturaFK
-      WHERE f.idUsuarioFK = ${userId} AND p.idPago IS NULL
-      ORDER BY f.idFactura DESC LIMIT 1
-    `;
-
-    if (facturaPendiente.length > 0) {
-      const idFactura = facturaPendiente[0].idfactura;
-      // Borrar la factura y sus líneas para liberar el stock temporalmente
-      await sql`DELETE FROM lineafactura WHERE idFacturaFK = ${idFactura}`;
-      await sql`DELETE FROM factura WHERE idFactura = ${idFactura}`;
-      console.log(`[Reactivación] Factura ${idFactura} eliminada.`);
-    }
-
-    // Volver a poner el carrito en 'activo'
-    const result = await sql`
-      UPDATE carrito 
-      SET estado = 'activo' 
-      WHERE idUsuarioFK = ${userId} AND estado = 'confirmado'
-      RETURNING idCarrito
-    `;
-
+    const success = await reactivateCartInternal(userId);
+    
     res.json({ 
-      message: "Carrito reactivado correctamente.",
-      found: result.length > 0 
+      message: success ? "Carrito reactivado correctamente." : "No se pudo reactivar el carrito.",
+      found: success
     });
   } catch (error) {
     console.error("Error reactivando carrito:", error);
