@@ -37,7 +37,8 @@ export const createMpPreference = async ({
       success: `${frontendUrl}/payment/success`,
       failure: `${frontendUrl}/payment/failure`,
       pending: `${frontendUrl}/payment/pending`
-    }
+    },
+    auto_return: "all"
   };
 
   const response = await preference.create({ body: preferenceBody });
