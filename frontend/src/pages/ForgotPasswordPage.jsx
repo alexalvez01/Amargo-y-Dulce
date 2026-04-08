@@ -9,14 +9,14 @@ const ForgotPasswordPage = () => {
       </div>
 
       {/* Columna Derecha: Ilustración importada */}
-        <div className="hidden lg:flex w-1/2 relative h-full justify-end">
+      <div className="hidden lg:flex w-1/2 relative h-full justify-end">
 
-            <img 
-            src="/images/LoginPhoto.webp" 
-            alt="Ilustración compra" 
-            className="h-full w-auto object-contain z-10 mix-blend-multiply"
-            />
-        </div>
+        <img
+          src="/images/LoginPhoto.webp"
+          alt="Ilustración compra"
+          className="h-full w-auto object-contain z-10 mix-blend-multiply"
+        />
+      </div>
     </div>
   );
 };

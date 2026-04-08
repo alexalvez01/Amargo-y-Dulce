@@ -12,9 +12,9 @@ const ResetPasswordPage = () => {
       {/* Columna Derecha: Ilustración importada */}
       <div className="hidden lg:flex w-1/2 relative h-full justify-end">
         <img 
-          src="/images/loginPhoto.webp" 
+          src="/images/LoginPhoto.webp" 
           alt="Nueva contraseña Amargo y Dulce" 
-          className="max-w-[80%] object-contain"
+          className="h-full w-auto object-contain z-10 mix-blend-multiply"
         />
       </div>
     </div>
