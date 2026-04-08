@@ -27,6 +27,10 @@ export default function ProductInfo({
   const finalPrice = discount > 0 ? product.precio * (1 - discount / 100) : product.precio;
   const isInactive = product.estado === 'inactivo';
 
+  // Lógica de stock unificada con las ProductCards
+  const isLowStock = stockValue > 0 && stockValue <= 10;
+  const isOutOfStock = stockValue <= 0 || isInactive;
+
   const [isFlying, setIsFlying] = useState(false);
   const [flyPos, setFlyPos] = useState({ top: 0, left: 0 });
 
@@ -118,6 +122,13 @@ export default function ProductInfo({
                 {discount}% OFF
               </div>
             )}
+
+            {isLowStock && !isInactive && (
+              <span className="absolute bottom-4 right-4 bg-blue-600 text-white text-xs uppercase font-black px-3 py-1.5 rounded-lg z-30 shadow-md">
+                ¡Pocas unidades!
+              </span>
+            )}
+
             <img
               src={product.imagen || "/images/producto-clasico.webp"}
               alt={product.nombre}
@@ -125,16 +136,17 @@ export default function ProductInfo({
             />
 
             {isInactive && (
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
                 <span className="bg-gray-800 text-white text-lg font-bold px-6 py-2 rounded uppercase shadow-lg">
                   No disponible
                 </span>
               </div>
             )}
 
+            {/* Botón de Favoritos (Arriba a la derecha) */}
             <button
               onClick={onToggleFavorite}
-              className="absolute top-4 right-4 bg-white p-2.5 rounded-full shadow-md hover:shadow-lg transition-all duration-300 z-20"
+              className="absolute top-4 right-4 bg-white p-2.5 rounded-full shadow-md hover:shadow-lg transition-all duration-300 z-30"
             >
               <Heart
                 size={24}
@@ -184,6 +196,7 @@ export default function ProductInfo({
             )}
           </div>
 
+          {/* Lógica de estado de stock en texto */}
           {isAdmin ? (
             <p className="text-brand-brownDark font-semibold mb-6 flex items-center gap-2 font-brand">
               <span className={`w-2 h-2 rounded-full ${stockValue > 0 ? "bg-green-600" : "bg-red-600"}`}></span>
@@ -191,27 +204,19 @@ export default function ProductInfo({
             </p>
           ) : (
             <>
-              {stockValue > 10 && (
+              {isOutOfStock ? (
+                <p className="text-red-600 font-semibold mb-6 flex items-center gap-2 font-brand">
+                  <span className="w-2 h-2 rounded-full bg-red-600"></span>
+                  Agotado
+                </p>
+              ) : (
                 <p className="text-green-600 font-semibold mb-6 flex items-center gap-2 font-brand">
                   <span className="w-2 h-2 rounded-full bg-green-600"></span>
                   En stock
                 </p>
               )}
-              {stockValue > 0 && stockValue <= 10 && (
-                <p className="text-blue-600 font-semibold mb-6 flex items-center gap-2 font-brand">
-                  <span className="w-2 h-2 rounded-full bg-blue-600"></span>
-                  Ultimas unidades
-                </p>
-              )}
-              {stockValue <= 0 && (
-                <p className="text-red-600 font-semibold mb-6 flex items-center gap-2 font-brand">
-                  <span className="w-2 h-2 rounded-full bg-red-600"></span>
-                  Sin stock
-                </p>
-              )}
             </>
           )}
-
 
           <div className="mb-6">
             <span className="text-sm font-bold text-brand-brown block mb-2 font-brand">Cantidad:</span>

@@ -105,8 +105,8 @@ export default function CartPage() {
     );
     
     const discount = activePromo ? activePromo.valor : 0;
-    const basePrice = Number(item.preciounitario || item.precio);
-    const finalPrice = discount > 0 ? basePrice * (1 - discount / 100) : basePrice;
+    const basePrice = Number(item.precio);
+    const finalPrice = Number(item.preciounitario || item.precio);
 
     return total + (finalPrice * item.cantidad);
   }, 0);
@@ -154,8 +154,8 @@ return (
                 );
                 
                 const discount = activePromo ? activePromo.valor : 0;
-                const basePrice = Number(item.preciounitario || item.precio);
-                const finalPrice = discount > 0 ? basePrice * (1 - discount / 100) : basePrice;
+                const basePrice = Number(item.precio);
+                const finalPrice = Number(item.preciounitario || item.precio);
 
                 return (
                   <CartItem 

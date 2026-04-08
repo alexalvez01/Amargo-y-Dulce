@@ -16,7 +16,6 @@ export const reactivateCartInternal = async (userId) => {
       // Borrar las facturas y sus líneas para liberar el stock
       await sql`DELETE FROM lineafactura WHERE idFacturaFK = ANY(${ids})`;
       await sql`DELETE FROM factura WHERE idFactura = ANY(${ids})`;
-      console.log(`[Reactivación] ${ids.length} factura(s) eliminada(s) para usuario ${userId}.`);
     }
 
     // Consolidar TODOS los carritos 'confirmado' a 'activo'
@@ -67,7 +66,9 @@ export const getActiveCart = async (req, res) => {
           SELECT ${idCarrito}, idProductoFK, cantidad, precioUnitario 
           FROM productocarrito WHERE idCarritoFK = ${oldId}
           ON CONFLICT ON CONSTRAINT productocarrito_pkey 
-          DO UPDATE SET cantidad = productocarrito.cantidad + EXCLUDED.cantidad
+          DO UPDATE SET 
+            cantidad = productocarrito.cantidad + EXCLUDED.cantidad,
+            precioUnitario = EXCLUDED.precioUnitario
         `;
         await sql`DELETE FROM productocarrito WHERE idCarritoFK = ${oldId}`;
         await sql`DELETE FROM carrito WHERE idCarrito = ${oldId}`;
@@ -124,7 +125,24 @@ export const addProductToCart = async (req, res) => {
       return res.status(400).json({ error: "El producto no se encuentra disponible actualmente." });
     }
 
-    const precioUnitario = prod[0].precio;
+    // --- NUEVO: Lógica de Promociones ---
+    const promo = await sql`
+      SELECT pr.valor
+      FROM promocion pr
+      JOIN promocionproducto pp ON pr.idPromocion = pp.idPromocionFK
+      WHERE pp.idProductoFK = ${idProducto}
+        AND pr.estado = 'activo'
+        AND CURRENT_DATE BETWEEN pr.fechainicio AND pr.fechafin
+      LIMIT 1
+    `;
+
+    let precioUnitario = Number(prod[0].precio);
+    if (promo.length > 0) {
+      const descuento = Number(promo[0].valor);
+      precioUnitario = precioUnitario * (1 - descuento / 100);
+    }
+    // ------------------------------------
+
     const stockDisponible = prod[0].stock;
 
     // Buscar si ya hay un carrito activo (después de reactivar)
@@ -162,12 +180,14 @@ export const addProductToCart = async (req, res) => {
     }
 
 
-    // Insertar o actualizar
+    // Insertar o actualizar (actualizamos también el precioUnitario por si cambió la promo)
     await sql`
       INSERT INTO productocarrito (idCarritoFK, idProductoFK, cantidad, precioUnitario)
       VALUES (${idCarrito}, ${idProducto}, ${cantidad}, ${precioUnitario})
       ON CONFLICT ON CONSTRAINT productocarrito_pkey 
-      DO UPDATE SET cantidad = productocarrito.cantidad + EXCLUDED.cantidad
+      DO UPDATE SET 
+        cantidad = productocarrito.cantidad + EXCLUDED.cantidad,
+        precioUnitario = EXCLUDED.precioUnitario
     `;
 
     res.json({ message: "Producto agregado al carrito", idCarrito });
@@ -201,10 +221,29 @@ export const updateProductQuantity = async (req, res) => {
       });
     }
 
-    // 1. Actualizamos la cantidad
+    // --- NUEVO: Recalcular precio por si cambió la promo ---
+    const promo = await sql`
+      SELECT pr.valor
+      FROM promocion pr
+      JOIN promocionproducto pp ON pr.idPromocion = pp.idPromocionFK
+      WHERE pp.idProductoFK = ${idProducto}
+        AND pr.estado = 'activo'
+        AND CURRENT_DATE BETWEEN pr.fechainicio AND pr.fechafin
+      LIMIT 1
+    `;
+    const prodPrice = await sql`SELECT precio FROM producto WHERE idProducto = ${idProducto}`;
+    
+    let precioUnitario = Number(prodPrice[0].precio);
+    if (promo.length > 0) {
+      precioUnitario = precioUnitario * (1 - Number(promo[0].valor) / 100);
+    }
+    // -------------------------------------------------------
+
+    // 1. Actualizamos la cantidad y el precio
     await sql`
       UPDATE productocarrito
-      SET cantidad = ${cantidad}
+      SET cantidad = ${cantidad},
+          precioUnitario = ${precioUnitario}
       WHERE idCarritoFK = ${idCarrito} AND idProductoFK = ${idProducto}
     `;
 

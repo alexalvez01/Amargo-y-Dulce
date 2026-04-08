@@ -14,6 +14,7 @@ const formatCurrency = (value) => `$ ${Number(value || 0).toLocaleString("es-AR"
 
 const initialForm = {
   direccion: "",
+  numero: "",
   pais: "Argentina",
   provincia: "",
   nombreCiudad: "",
@@ -65,7 +66,8 @@ export default function OrderDetail() {
         if (res.data.direccion) {
           const dir = res.data.direccion;
           setFormData({
-            direccion: `${dir.calle || ""} ${dir.numero || ""}`.trim(),
+            direccion: dir.calle || "",
+            numero: dir.numero || "",
             pais: dir.pais || "Argentina",
             provincia: dir.provincia || "",
             nombreCiudad: dir.nombreciudad || "",
@@ -100,7 +102,7 @@ export default function OrderDetail() {
   const handleSubmit = async (event) => {
     if (event?.preventDefault) event.preventDefault();
 
-    if (!formData.direccion || !formData.provincia || !formData.nombreCiudad || !formData.codigoPostal) {
+    if (!formData.direccion || !formData.numero || !formData.provincia || !formData.nombreCiudad || !formData.codigoPostal) {
       toast.error("Completa todos los campos de envio");
       return;
     }
@@ -109,6 +111,7 @@ export default function OrderDetail() {
       setSaving(true);
       const res = await saveOrderDetailDataRequest({
         calle: formData.direccion.trim(),
+        numero: formData.numero,
         provincia: formData.provincia.trim(),
         nombreCiudad: formData.nombreCiudad.trim(),
         codigoPostal: formData.codigoPostal.trim(),
@@ -177,16 +180,31 @@ export default function OrderDetail() {
               <h2 className="text-3xl font-semibold text-brand-brownDark mb-4">Dirección de envío</h2>
 
               <div className="space-y-3">
-                <div>
-                  <label className="block text-[10px] font-bold tracking-wide text-[#626262] mb-1">DIRECCIÓN *</label>
-                  <input
-                    name="direccion"
-                    value={formData.direccion}
-                    onChange={onInputChange}
-                    placeholder="Ej: Artigas 222"
-                    className="w-full border border-[#adb2b8] rounded px-3 py-2 text-sm"
-                    required
-                  />
+                <div className="grid grid-cols-[1fr_120px] gap-3">
+                  <div>
+                    <label className="block text-[10px] font-bold tracking-wide text-[#626262] mb-1">DIRECCIÓN *</label>
+                    <input
+                      name="direccion"
+                      value={formData.direccion}
+                      onChange={onInputChange}
+                      placeholder="Ej: Calle Artigas"
+                      className="w-full border border-[#adb2b8] rounded px-3 py-2 text-sm"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold tracking-wide text-[#626262] mb-1">NÚMERO *</label>
+                    <input
+                      name="numero"
+                      value={formData.numero}
+                      onChange={onInputChange}
+                      placeholder="Ej: 233"
+                      type="number"
+                      onWheel={(e) => e.target.blur()} 
+                      className="w-full border border-[#adb2b8] rounded px-3 py-2 text-sm"
+                      required
+                    />
+                  </div>
                 </div>
 
                 <div>
@@ -281,7 +299,14 @@ export default function OrderDetail() {
                     <p className="text-xs italic text-[#5f5f5f]">Tamaño: {item.tamano || "-"}</p>
                     <p className="text-xs italic text-[#5f5f5f]">Cantidad: {item.cantidad}</p>
                   </div>
-                  <p className="font-semibold text-sm text-[#242424]">{formatCurrency(item.subtotalproducto)}</p>
+                    <p className="font-semibold text-sm text-[#242424]">
+                      {item.preciounitario < item.preciooriginal && (
+                        <span className="text-gray-400 line-through text-[10px] mr-2">
+                          {formatCurrency(item.preciooriginal)}
+                        </span>
+                      )}
+                      {formatCurrency(item.subtotalproducto)}
+                    </p>
                 </article>
               ))}
             </div>
