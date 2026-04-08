@@ -148,13 +148,8 @@ export const saveOrderDetailData = async (req, res) => {
     pais = "Argentina"
   } = req.body;
 
-  const calleRaw = String(calle || "").trim().replace(/\s+/g, " ");
-  const numeroFromCalle = calleRaw.match(/(\d+)\s*$/)?.[1];
-  const numeroDetectado = Number(numero ?? numeroFromCalle);
-  // Avoid accumulating house numbers in "calle" on every save/load cycle.
-  const calleLimpia = numeroFromCalle
-    ? calleRaw.replace(/\s*\d+(?:\s+\d+)*\s*$/, "").trim()
-    : calleRaw;
+  const calleLimpia = String(calle || "").trim();
+  const numeroDetectado = Number(numero);
 
   if (!calleLimpia || !numeroDetectado || !nombreCiudad || !provincia || !codigoPostal) {
     return res.status(400).json({ error: "Faltan datos obligatorios de direccion." });
