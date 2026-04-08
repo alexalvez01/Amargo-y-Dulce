@@ -1,5 +1,6 @@
 import { Minus, Plus } from "lucide-react";
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 
 
 export default function CartItem({ item, discount, finalPrice, onUpdateQuantity, onRemove }) {
@@ -29,7 +30,7 @@ return (
     <div className={`flex gap-4 md:gap-6 p-6 border-b border-gray-200 last:border-0 bg-white first:rounded-t-2xl last:rounded-b-2xl transition-all ${isOutOfStock ? "grayscale opacity-60" : ""}`}>
       
       {/* IMAGEN CON CARTELITO DE PROMOCIÓN O AGOTADO */}
-      <div className="relative shrink-0">
+      <Link to={`/product/${productId}`} className="relative shrink-0 block hover:opacity-90 transition-opacity">
         {isOutOfStock ? (
           <span className="absolute top-2 left-2 bg-gray-800 text-white text-xs font-bold px-2 py-1 rounded z-10 shadow-sm">
             Sin stock
@@ -44,9 +45,9 @@ return (
         <img 
           src={imagen} 
           alt={item.nombre} 
-          className="w-24 h-24 md:w-32 md:h-32 rounded-xl object-cover shadow-sm"
+          className="w-24 h-24 md:w-32 md:h-32 rounded-xl object-cover shadow-sm cursor-pointer"
         />
-      </div>
+      </Link>
 
       {/* INFORMACIÓN */}
       <div className="flex flex-col flex-1 justify-between">
@@ -54,9 +55,11 @@ return (
         {/* Título y Precio */}
         <div>
           <div className="flex justify-between items-start gap-2">
-            <h3 className="text-xl md:text-2xl font-bold text-[#6B4C3A] font-brand leading-tight">
-              {item.nombre}
-            </h3>
+            <Link to={`/product/${productId}`} className="hover:underline decoration-[#6B4C3A] underline-offset-2">
+              <h3 className="text-xl md:text-2xl font-bold text-[#6B4C3A] font-brand leading-tight">
+                {item.nombre}
+              </h3>
+            </Link>
             
             {/* LÓGICA DEL PRECIO */}
             {isOutOfStock ? (
