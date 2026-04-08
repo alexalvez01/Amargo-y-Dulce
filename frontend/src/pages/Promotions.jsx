@@ -24,7 +24,7 @@ export default function Promotions() {
   const activePromotions = promotions ? promotions.filter(promo => promo.estado === 'activo') : [];
 
   return (
-    <div className="bg-[#EBE7E0] flex flex-col min-h-screen font-brand">
+    <div className="bg-[#f7f2ec] flex flex-col min-h-screen font-brand">
       <Navbar />
 
       <main className="grow max-w-6xl min-h-screen mx-auto w-full px-4 pt-24 pb-24">
