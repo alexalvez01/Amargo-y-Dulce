@@ -44,10 +44,12 @@ export default function ProductCard({ product, disableHover = false }) {
 
           {isInactive ? (
             <span className="text-xs text-gray-500 shrink-0 text-right font-semibold">Agotado</span>
+          ) : product.stock > 10 ? (
+            <span className="text-xs text-green-600 shrink-0 text-right font-semibold">En stock</span>
           ) : product.stock > 0 ? (
-            <span className="text-xs text-green-600 shrink-0 text-right">En stock</span>
+            <span className="text-xs text-blue-500 shrink-0 text-right font-semibold max-w-[70px]">Últimas unidades</span>
           ) : (
-            <span className="text-xs text-red-600 shrink-0 text-right">Agotado</span>
+            <span className="text-xs text-red-600 shrink-0 text-right font-semibold">Agotado</span>
           )}
 
         </div>
@@ -55,19 +57,19 @@ export default function ProductCard({ product, disableHover = false }) {
         <div className="flex justify-between items-center">
 
           {discount > 0 ? (
-              <div className="flex items-center gap-2">
-                <span className="text-gray-400 line-through text-sm font-medium">
-                  $ {Number(product.precio).toLocaleString('es-AR')}
-                </span>
-                <span className="text-sm font-bold text-green-600">
-                  $ {Number(finalPrice).toLocaleString('es-AR')}
-                </span>
-              </div>
-              ) : (
-                <span className="text-sm font-medium">
-                  $ {Number(product.precio).toLocaleString('es-AR')}
-                </span>
-              )}
+            <div className="flex items-center gap-2">
+              <span className="text-gray-400 line-through text-sm font-medium">
+                $ {Number(product.precio).toLocaleString('es-AR')}
+              </span>
+              <span className="text-sm font-bold text-green-600">
+                $ {Number(finalPrice).toLocaleString('es-AR')}
+              </span>
+            </div>
+          ) : (
+            <span className="text-sm font-medium">
+              $ {Number(product.precio).toLocaleString('es-AR')}
+            </span>
+          )}
 
           <span className="text-xs text-gray-500">
             Tamaño: {product.tamaño}
