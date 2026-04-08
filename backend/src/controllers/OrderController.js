@@ -223,9 +223,9 @@ export const saveOrderDetailData = async (req, res) => {
       idDireccion = nuevaDireccion[0].iddireccion;
     }
 
-    // ============================================
+
     // CONVERTIR CARRITO ACTIVO A FACTURA
-    // ============================================
+
     // Aseguramos consolidación de último momento
     await reactivateCartInternal(userId);
 
@@ -243,7 +243,10 @@ export const saveOrderDetailData = async (req, res) => {
     const idCarrito = carritoInfo[0].idcarrito;
 
     const productos = await sql`
-      SELECT idProductoFK, cantidad, precioUnitario 
+      SELECT 
+        idProductoFK AS idproductofk, 
+        cantidad, 
+        precioUnitario AS preciounitario 
       FROM productocarrito 
       WHERE idCarritoFK = ${idCarrito}
     `;
