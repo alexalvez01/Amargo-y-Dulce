@@ -281,7 +281,14 @@ export default function OrderDetail() {
                     <p className="text-xs italic text-[#5f5f5f]">Tamaño: {item.tamano || "-"}</p>
                     <p className="text-xs italic text-[#5f5f5f]">Cantidad: {item.cantidad}</p>
                   </div>
-                  <p className="font-semibold text-sm text-[#242424]">{formatCurrency(item.subtotalproducto)}</p>
+                    <p className="font-semibold text-sm text-[#242424]">
+                      {item.preciounitario < item.preciooriginal && (
+                        <span className="text-gray-400 line-through text-[10px] mr-2">
+                          {formatCurrency(item.preciooriginal)}
+                        </span>
+                      )}
+                      {formatCurrency(item.subtotalproducto)}
+                    </p>
                 </article>
               ))}
             </div>

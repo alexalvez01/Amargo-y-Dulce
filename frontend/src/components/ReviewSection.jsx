@@ -134,8 +134,6 @@ export default function ReviewSection({ productId, onRatingCalculated, refreshTr
 
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-2 pr-8">
                 <div className="flex items-center gap-2 font-bold text-sm md:text-base">
-                  <span>{review.nombre}</span>
-                  <span className="text-gray-500 font-normal">·</span>
                   <span className="text-gray-600 font-normal">{formatDate(review.fecha)}</span>
                 </div>
 
@@ -173,7 +171,7 @@ export default function ReviewSection({ productId, onRatingCalculated, refreshTr
             </h3>
 
             <p className="text-gray-500 text-sm mb-8 px-4">
-              Esta acción no se puede deshacer. El comentario de <span className="font-semibold">{reviewToDelete?.nombre}</span> será borrado permanentemente.
+              Esta acción no se puede deshacer. El comentario será borrado permanentemente.
             </p>
 
             <div className="flex justify-center gap-4">

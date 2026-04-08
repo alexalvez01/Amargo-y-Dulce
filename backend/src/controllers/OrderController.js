@@ -19,6 +19,7 @@ export const getPurchaseHistory = async (req, res) => {
         ) AS direccion,
         p.idProducto AS idproducto,
         p.nombre AS nombre,
+        p.precio AS preciooriginal,
         lf.cantidad,
         lf.precioUnitario AS precio,
         p.imagen,
@@ -46,6 +47,7 @@ export const getPurchaseHistory = async (req, res) => {
       pedidosMap[row.idpedido].productos.push({
         idproducto: row.idproducto,
         nombre: row.nombre,
+        preciooriginal: row.preciooriginal,
         cantidad: row.cantidad,
         precio: row.precio,
         imagen: row.imagen,
@@ -89,6 +91,7 @@ export const getLatestOrderDetail = async (req, res) => {
         p.nombre,
         p.imagen,
         p."tamaño" AS tamano,
+        p.precio as preciooriginal,
         pc.cantidad,
         pc.precioUnitario as preciounitario,
         (pc.cantidad * pc.precioUnitario) AS subtotalproducto,
@@ -174,8 +177,13 @@ export const saveOrderDetailData = async (req, res) => {
     } else {
       const nuevaCiudad = await sql`
         INSERT INTO ciudad (idCiudad, nombreCiudad, provincia, codigoPostal, pais)
-        SELECT COALESCE(MAX(idCiudad), 0) + 1, ${nombreCiudad}, ${provincia}, ${codigoPostal}, ${pais}
-        FROM ciudad
+        VALUES (
+          (SELECT COALESCE(MAX(idCiudad), 0) + 1 FROM ciudad), 
+          ${nombreCiudad}, 
+          ${provincia}, 
+          ${codigoPostal}, 
+          ${pais}
+        )
         RETURNING idCiudad
       `;
       idCiudad = nuevaCiudad[0].idciudad;
@@ -203,8 +211,13 @@ export const saveOrderDetailData = async (req, res) => {
     } else {
       const nuevaDireccion = await sql`
         INSERT INTO direccion (idDireccion, idUsuarioFK, idCiudadFK, calle, numero)
-        SELECT COALESCE(MAX(idDireccion), 0) + 1, ${userId}, ${idCiudad}, ${calleLimpia}, ${numeroDetectado}
-        FROM direccion
+        VALUES (
+          (SELECT COALESCE(MAX(idDireccion), 0) + 1 FROM direccion), 
+          ${userId}, 
+          ${idCiudad}, 
+          ${calleLimpia}, 
+          ${numeroDetectado}
+        )
         RETURNING idDireccion
       `;
       idDireccion = nuevaDireccion[0].iddireccion;

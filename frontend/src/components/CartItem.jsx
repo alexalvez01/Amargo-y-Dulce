@@ -7,7 +7,7 @@ export default function CartItem({ item, discount, finalPrice, onUpdateQuantity,
   const imagen = item.imagen || "/images/producto-clasico.webp";
   const productId = item.idproductofk || item.idProductoFK; 
 
-  const basePrice = Number(item.preciounitario || item.precio);
+  const basePrice = Number(item.precio);
   const isOutOfStock = item.stock <= 0;
 
   const handleDecrease = () => {

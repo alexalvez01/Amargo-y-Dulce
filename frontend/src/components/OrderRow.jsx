@@ -60,6 +60,11 @@ export default function OrderRow({ order }) {
                                 {prod.nombre}
                             </h3>
                             <p className="text-lg text-gray-800 mb-1">
+                                {prod.precio < prod.preciooriginal && (
+                                    <span className="text-sm text-gray-400 line-through mr-2">
+                                        $ {Number(prod.preciooriginal).toLocaleString('es-AR')}
+                                    </span>
+                                )}
                                 $ {Number(prod.precio).toLocaleString('es-AR')} 
                                 <span className="text-sm text-gray-500 ml-2">x {prod.cantidad} unidades</span>
                             </p>
