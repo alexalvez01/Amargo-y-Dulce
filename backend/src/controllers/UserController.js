@@ -2,8 +2,7 @@ import { sql } from "../config/db.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { OAuth2Client } from "google-auth-library";
-import { transporter } from "../utils/mailer.js"; 
-
+import { transporter } from "../utils/mailer.js";
 // Registrar nuevo usuario
 
 export const register = async (req, res) => {
@@ -192,8 +191,7 @@ export const forgotPassword = async (req, res) => {
     const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
     const recoveryLink = `${frontendUrl}/reset-password/${token}`;
 
-    await transporter.sendMail({
-      from: '"Amargo y Dulce" <facubpais@gmail.com>',
+    const mailOptions = {
       to: user[0].mail,
       subject: "Recupera tu contraseña de Amargo y Dulce",
       html: `
@@ -208,8 +206,35 @@ export const forgotPassword = async (req, res) => {
             Si no pediste cambiar tu contraseña, podés ignorar este correo tranquilamente.
           </p>
         </div>
-      `,
-    });
+      `
+    };
+
+    if (process.env.RENDER) {
+      // Estamos en Render (Producción): Los puertos SMTP están bloqueados, delegamos a Vercel
+      console.log("Detectado Render: Delegando envío a Vercel Proxy...");
+      const proxyUrl = `${frontendUrl}/api/send-mail`;
+      
+      const proxyResponse = await fetch(proxyUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${process.env.VERCEL_API_SECRET}`
+        },
+        body: JSON.stringify(mailOptions)
+      });
+
+      if (!proxyResponse.ok) {
+        const errorText = await proxyResponse.text();
+        console.error("Error del Proxy de Vercel:", errorText);
+        throw new Error("El intermediario de Vercel falló al enviar el correo.");
+      }
+    } else {
+      // Estamos localmente: Render bloqueado no aplica, mandamos directo por Nodemailer
+      await transporter.sendMail({
+        from: '"Amargo y Dulce" <facubpais@gmail.com>',
+        ...mailOptions
+      });
+    }
 
     return res.json({ message: "Te enviamos un correo con las instrucciones" });
 
