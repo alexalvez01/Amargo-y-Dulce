@@ -125,7 +125,7 @@ export const addProductToCart = async (req, res) => {
       return res.status(400).json({ error: "El producto no se encuentra disponible actualmente." });
     }
 
-    // --- NUEVO: Lógica de Promociones ---
+    //  Lógica de Promociones 
     const promo = await sql`
       SELECT pr.valor
       FROM promocion pr
@@ -221,7 +221,7 @@ export const updateProductQuantity = async (req, res) => {
       });
     }
 
-    // --- NUEVO: Recalcular precio por si cambió la promo ---
+    // Recalcular precio por si cambió la promo ---
     const promo = await sql`
       SELECT pr.valor
       FROM promocion pr

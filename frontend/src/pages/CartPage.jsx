@@ -154,7 +154,6 @@ return (
                 );
                 
                 const discount = activePromo ? activePromo.valor : 0;
-                const basePrice = Number(item.precio);
                 const finalPrice = Number(item.preciounitario || item.precio);
 
                 return (
