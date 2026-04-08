@@ -8,6 +8,7 @@ const ResetpasswordForm = () => {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   
   const { token } = useParams();
   const navigate = useNavigate();
@@ -21,8 +22,9 @@ const ResetpasswordForm = () => {
       return setError("Las contraseñas no coinciden");
     }
 
-    if (newPassword.length < 6) {
-      return setError("La contraseña debe tener al menos 6 caracteres");
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+    if (!passwordRegex.test(newPassword)) {
+      return setError("La contraseña no cumple con los requisitos mínimos de seguridad.");
     }
 
     try {
@@ -75,10 +77,15 @@ const ResetpasswordForm = () => {
             type="password"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
+            onFocus={() => setIsPasswordFocused(true)}
+            onBlur={() => setIsPasswordFocused(false)}
             className="w-full bg-[#F8F5F0] border border-transparent rounded-md px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#6B4C3A]"
             required
             disabled={loading}
           />
+          <p className={`text-[10px] text-gray-400 font-brand mt-1 ml-1 leading-tight transition-all duration-300 overflow-hidden ${isPasswordFocused ? 'max-h-10 opacity-100' : 'max-h-0 opacity-0'}`}>
+            Mínimo 8 caracteres, 1 mayúscula, 1 minúscula y 1 número.
+          </p>
         </div>
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-2">

@@ -15,6 +15,7 @@ const RegisterForm = () => {
   
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
  
 
@@ -43,6 +44,13 @@ const RegisterForm = () => {
     if (formData.password !== formData.confirmPassword) {
       setError("Las contraseñas no coinciden.");
       setLoading(false); 
+      return;
+    }
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+    if (!passwordRegex.test(formData.password)) {
+      setError("La contraseña no cumple con los requisitos mínimos de seguridad.");
+      setLoading(false);
       return;
     }
 
@@ -120,7 +128,14 @@ const RegisterForm = () => {
         <div>
           <label className={labelStyles}>Contraseña *</label>
           <input type="password" name="password" placeholder="••••••••" required autoComplete="new-password"
-            value={formData.password} onChange={handleChange} className={inputStyles} />
+            value={formData.password} 
+            onChange={handleChange} 
+            onFocus={() => setIsPasswordFocused(true)}
+            onBlur={() => setIsPasswordFocused(false)}
+            className={inputStyles} />
+          <p className={`text-[10px] text-gray-500 font-brand mt-1 ml-1 leading-tight transition-all duration-300 overflow-hidden ${isPasswordFocused ? 'max-h-10 opacity-100' : 'max-h-0 opacity-0'}`}>
+            Mínimo 8 caracteres, 1 mayúscula, 1 minúscula y 1 número.
+          </p>
         </div>
 
         {/* CONFIRMAR */}
