@@ -8,7 +8,7 @@ const initialForm = {
   descripcion: "",
   sabor: "", 
   stock: "",
-  tamano: "",
+  tamano: "6",
   precio: "",
 };
 
