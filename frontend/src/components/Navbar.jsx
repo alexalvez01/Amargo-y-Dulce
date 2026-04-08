@@ -234,7 +234,7 @@ export default function Navbar() {
               <div className={user && user.rol === "admin" ? "" : "lg:hidden"}>
                 {user && user.rol === "admin" ? (
                   <NavLink
-                    to="/administrator"
+                    to="/admin-panel"
                     className={`${userMenuLinkStyles} lg:hidden`}
                   >
                     <Settings2 size={18} />
