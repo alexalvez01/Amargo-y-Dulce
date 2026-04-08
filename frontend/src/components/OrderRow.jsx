@@ -3,8 +3,12 @@ import { Link } from "react-router-dom";
 
 export default function OrderRow({ order }) {
     const formatDate = (dateString) => {
+        // Para evitar desfases de UTC con strings YYYY-MM-DD, creamos la fecha manualmente
+        if (!dateString) return "";
+        const [year, month, day] = dateString.split('-').map(Number);
+        const date = new Date(year, month - 1, day);
         const options = { day: 'numeric', month: 'long', year: 'numeric' };
-        return new Date(dateString).toLocaleDateString('es-ES', options);
+        return date.toLocaleDateString('es-ES', options);
     };
 
     const getStatusBadge = (estado) => {
@@ -31,6 +35,8 @@ export default function OrderRow({ order }) {
                 </span>
 
                 <div className="flex items-center gap-4 text-xs text-gray-500">
+                    <span className="font-bold text-[#6B4C3A]">Total: ${Number(order.total).toLocaleString('es-AR')}</span>
+                    <span className="hidden md:inline">|</span>
                     <span>Pedido #{order.idpedido}</span>
                     <span className="hidden md:inline">|</span>
                     <span className="flex items-center gap-1"><MapPin size={12}/> {order.direccion}</span>
@@ -53,11 +59,15 @@ export default function OrderRow({ order }) {
                             <h3 className="text-lg md:text-xl text-[#6B4C3A] mb-2 font-medium">
                                 {prod.nombre}
                             </h3>
-                            <p className="text-lg text-gray-800 mb-2">
-                                $ {Number(prod.precio).toLocaleString('es-AR')}
+                            <p className="text-lg text-gray-800 mb-1">
+                                $ {Number(prod.precio).toLocaleString('es-AR')} 
+                                <span className="text-sm text-gray-500 ml-2">x {prod.cantidad} unidades</span>
                             </p>
                             <p className="text-xs text-gray-500 italic">
                                 Tamaño: {prod.tamano || 'M'}
+                            </p>
+                            <p className="text-sm font-medium text-brand-brown mt-1">
+                                Subtotal: $ {Number(prod.precio * prod.cantidad).toLocaleString('es-AR')}
                             </p>
                             <Link
                                 to={`/product/${prod.idproducto}`}

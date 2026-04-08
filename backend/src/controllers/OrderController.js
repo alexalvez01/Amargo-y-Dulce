@@ -8,7 +8,7 @@ export const getPurchaseHistory = async (req, res) => {
     const rows = await sql`
       SELECT
         f.idFactura AS idpedido,
-        f.fechaCreacion AS fecha,
+        f.fechaCreacion::text AS fecha,
         f.total,
         COALESCE(
           (SELECT d.calle || ' ' || d.numero 
@@ -102,7 +102,7 @@ export const getLatestOrderDetail = async (req, res) => {
     const total = productos.reduce((acc, current) => acc + Number(current.subtotalproducto), 0);
     const facturaMock = {
       idFactura: null, 
-      fechaCreacion: new Date().toISOString(),
+      fechaCreacion: new Date().toLocaleString("es-AR", {timeZone: "America/Argentina/Buenos_Aires"}),
       total
     };
 
@@ -243,7 +243,7 @@ export const saveOrderDetailData = async (req, res) => {
 
     const nuevaFactura = await sql`
       INSERT INTO factura (idUsuarioFK, fechaCreacion, total)
-      VALUES (${userId}, NOW(), ${total})
+      VALUES (${userId}, CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AT TIME ZONE 'America/Argentina/Buenos_Aires', ${total})
       RETURNING idFactura
     `;
     const finalIdFactura = nuevaFactura[0].idfactura;
