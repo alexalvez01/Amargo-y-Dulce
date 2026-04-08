@@ -84,7 +84,7 @@ export default function CartPage() {
   };
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#e5e5e5] flex flex-col font-brand">
+      <div className="min-h-screen bg-[#f7f2ec] flex flex-col font-brand">
         <Navbar />
         <div className="flex-1 flex justify-center items-center">
           <p className="text-2xl text-brand-brown">Cargando tu carrito...</p>

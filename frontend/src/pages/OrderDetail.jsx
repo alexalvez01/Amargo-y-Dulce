@@ -207,7 +207,7 @@ export default function OrderDetail() {
                     name="provincia"
                     value={formData.provincia}
                     onChange={onInputChange}
-                    placeholder="Pueblo / Ciudad *"
+                    placeholder="Ej: Entre Ríos"
                     className="w-full border border-[#adb2b8] rounded px-3 py-2 text-sm"
                     required
                   />
