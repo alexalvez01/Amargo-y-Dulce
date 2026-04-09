@@ -52,8 +52,11 @@ export default function ReviewSection({ productId, onRatingCalculated, refreshTr
   }, [productId, onRatingCalculated, refreshTrigger]);
 
   const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const [year, month, day] = dateString.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
     const options = { day: 'numeric', month: 'short', year: 'numeric' };
-    return new Date(dateString).toLocaleDateString('es-AR', options);
+    return date.toLocaleDateString('es-AR', options);
   };
 
   // --- LÓGICA DE BORRADO ---

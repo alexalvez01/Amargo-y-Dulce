@@ -132,7 +132,7 @@ export const addProductToCart = async (req, res) => {
       JOIN promocionproducto pp ON pr.idPromocion = pp.idPromocionFK
       WHERE pp.idProductoFK = ${idProducto}
         AND pr.estado = 'activo'
-        AND CURRENT_DATE BETWEEN pr.fechainicio AND pr.fechafin
+        AND CURRENT_DATE AT TIME ZONE 'America/Argentina/Buenos_Aires' BETWEEN pr.fechainicio AND pr.fechafin
       LIMIT 1
     `;
 
@@ -228,7 +228,7 @@ export const updateProductQuantity = async (req, res) => {
       JOIN promocionproducto pp ON pr.idPromocion = pp.idPromocionFK
       WHERE pp.idProductoFK = ${idProducto}
         AND pr.estado = 'activo'
-        AND CURRENT_DATE BETWEEN pr.fechainicio AND pr.fechafin
+        AND CURRENT_DATE AT TIME ZONE 'America/Argentina/Buenos_Aires' BETWEEN pr.fechainicio AND pr.fechafin
       LIMIT 1
     `;
     const prodPrice = await sql`SELECT precio FROM producto WHERE idProducto = ${idProducto}`;

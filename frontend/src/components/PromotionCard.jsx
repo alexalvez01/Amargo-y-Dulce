@@ -6,7 +6,9 @@ export default function PromotionCard({ promo }) {
   
 
   function formatDate(dateStr) {
-    const date = new Date(dateStr);
+    if (!dateStr) return "";
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
     const options = { day: '2-digit', month: 'short', year: 'numeric' };
     return date.toLocaleDateString('es-ES', options);
   }

@@ -8,7 +8,7 @@ export const getPurchaseHistory = async (req, res) => {
     const rows = await sql`
       SELECT
         f.idFactura AS idpedido,
-        f.fechaCreacion::text AS fecha,
+        TO_CHAR(f.fechaCreacion, 'YYYY-MM-DD') AS fecha,
         f.total,
         COALESCE(
           (SELECT d.calle || ' ' || d.numero 
@@ -148,10 +148,10 @@ export const saveOrderDetailData = async (req, res) => {
     pais = "Argentina"
   } = req.body;
 
-  const calleLimpia = String(calle || "").trim();
+
   const numeroDetectado = Number(numero);
 
-  if (!calleLimpia || !numeroDetectado || !nombreCiudad || !provincia || !codigoPostal) {
+  if (!calle || !numeroDetectado || !nombreCiudad || !provincia || !codigoPostal) {
     return res.status(400).json({ error: "Faltan datos obligatorios de direccion." });
   }
 
@@ -199,7 +199,7 @@ export const saveOrderDetailData = async (req, res) => {
         UPDATE direccion
         SET
           idCiudadFK = ${idCiudad},
-          calle = ${calleLimpia},
+          calle = ${calle},
           numero = ${numeroDetectado}
         WHERE idDireccion = ${idDireccion}
       `;
@@ -254,7 +254,7 @@ export const saveOrderDetailData = async (req, res) => {
 
     const nuevaFactura = await sql`
       INSERT INTO factura (idUsuarioFK, fechaCreacion, total)
-      VALUES (${userId}, CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AT TIME ZONE 'America/Argentina/Buenos_Aires', ${total})
+      VALUES (${userId}, (NOW() AT TIME ZONE 'America/Argentina/Buenos_Aires')::date, ${total})
       RETURNING idFactura
     `;
     const finalIdFactura = nuevaFactura[0].idfactura;

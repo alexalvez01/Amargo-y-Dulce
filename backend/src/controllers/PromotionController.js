@@ -36,8 +36,8 @@ export const getAllPromotions = async (req, res) => {
           pr.nombre,
           pr.descripcion,
           pr.valor,
-          pr.fechainicio,
-          pr.fechafin,
+          TO_CHAR(pr.fechainicio, 'YYYY-MM-DD') AS fechainicio,
+          TO_CHAR(pr.fechafin, 'YYYY-MM-DD') AS fechafin,
           pr.estado,
           p.idproducto,
           p.nombre AS nombreproducto,
@@ -58,8 +58,8 @@ export const getAllPromotions = async (req, res) => {
           pr.nombre,
           pr.descripcion,
           pr.valor,
-          pr.fechainicio,
-          pr.fechafin,
+          TO_CHAR(pr.fechainicio, 'YYYY-MM-DD') AS fechainicio,
+          TO_CHAR(pr.fechafin, 'YYYY-MM-DD') AS fechafin,
           pr.estado,
           p.idproducto,
           p.nombre AS nombreproducto,
@@ -70,7 +70,7 @@ export const getAllPromotions = async (req, res) => {
         JOIN producto p 
           ON p.idproducto = pp.idproductofk
         WHERE pr.estado = 'activo' 
-          AND CURRENT_DATE BETWEEN pr.fechainicio AND pr.fechafin
+          AND CURRENT_DATE AT TIME ZONE 'America/Argentina/Buenos_Aires' BETWEEN pr.fechainicio AND pr.fechafin
         ORDER BY pr.fechainicio ASC;
       `;
     }
@@ -118,7 +118,14 @@ export const getPromotionById = async (req, res) => {
 
   try {
     const promotion = await sql`
-      SELECT *
+      SELECT 
+          idpromocion,
+          nombre,
+          descripcion,
+          valor,
+          TO_CHAR(fechainicio, 'YYYY-MM-DD') AS fechainicio,
+          TO_CHAR(fechafin, 'YYYY-MM-DD') AS fechafin,
+          estado
       FROM promocion
       WHERE idpromocion = ${id};
     `;

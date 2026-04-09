@@ -36,7 +36,7 @@ export const getReviewsByProduct = async (req, res) => {
         const reviews = await sql`
             SELECT
                 r.idUsuarioFK,
-                r.fecha,
+                TO_CHAR(r.fecha, 'YYYY-MM-DD') AS fecha,
                 r.calificacion,
                 r.comentario,
                 u.nombre
@@ -83,7 +83,7 @@ export const createReview = async (req, res) => {
             VALUES (
                 ${userId},
                 ${productId},
-                NOW()::date,
+                (NOW() AT TIME ZONE 'America/Argentina/Buenos_Aires')::date,
                 ${calificacion},
                 ${comentario}
             );
