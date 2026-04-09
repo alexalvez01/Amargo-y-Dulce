@@ -210,14 +210,23 @@ export const createPromotion = async (req, res) => {
             to: user.mail,
             subject: `¡Nueva Promoción: ${nombre}! - Amargo y Dulce`,
             html: `
-              <div style="font-family: Arial, sans-serif; text-align: center; color: #333;">
-                <h2 style="color: #6B4C3A;">¡Hola ${user.nombre}!</h2>
-                <p>Tenemos una nueva promoción especial para vos:</p>
-                <h3 style="color: #6B4C3A;">${nombre}</h3>
-                <p>${descripcion}</p>
-                <a href="${frontendUrl}/" style="padding: 12px 24px; background-color: #6B4C3A; color: white; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold; margin-top: 15px;">
-                  Ir a la tienda
-                </a>
+              <div style="font-family: Arial, sans-serif; text-align: center; color: #333; background-color: #f7f2ec; padding: 40px 20px;">
+                <div style="max-width: 400px; margin: 0 auto; background-color: white; border-radius: 12px; padding: 32px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); position: relative; border: 1px solid #e5e7eb;">
+                  
+                  <div style="position: absolute; top: 12px; left: 12px; background-color: #ef4444; color: white; font-size: 14px; font-weight: bold; padding: 4px 8px; border-radius: 4px;">
+                    ${valor}%
+                  </div>
+
+                  <h2 style="color: #6B4C3A; margin-top: 10px;">¡Hola ${user.nombre}!</h2>
+                  <p style="color: #555;">Tenemos una nueva promoción especial para vos:</p>
+                  
+                  <h3 style="color: #6B4C3A; font-size: 22px; margin: 20px 0 10px 0;">${nombre}</h3>
+                  <p style="color: #444; font-size: 15px; margin-bottom: 24px;">${descripcion}</p>
+                  
+                  <a href="${frontendUrl}/shop?promocion=${idPromocion}" style="padding: 12px 24px; background-color: #6B4C3A; color: white; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold; transition: background-color 0.3s;">
+                    Ver productos
+                  </a>
+                </div>
               </div>
             `
           };

@@ -28,11 +28,19 @@ export default function Shop() {
   }, []);
 
   useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const promoQuery = searchParams.get("promocion");
+
     if (location.state?.promoActiva) {
       setSelectedPromotion(location.state.promoActiva);
       navigate(location.pathname, { replace: true, state: {} });
+    } else if (promoQuery) {
+      setSelectedPromotion(promoQuery);
+      searchParams.delete("promocion");
+      const newSearch = searchParams.toString();
+      navigate(`${location.pathname}${newSearch ? '?' + newSearch : ''}`, { replace: true });
     }
-  }, [location.state, location.pathname, navigate]);
+  }, [location.state, location.pathname, location.search, navigate]);
 
   const filteredProducts = useMemo(() => {
     let filtered = [...products];
