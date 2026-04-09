@@ -210,7 +210,7 @@ export const saveOrderDetailData = async (req, res) => {
           (SELECT COALESCE(MAX(idDireccion), 0) + 1 FROM direccion), 
           ${userId}, 
           ${idCiudad}, 
-          ${calleLimpia}, 
+          ${calle}, 
           ${numeroDetectado}
         )
         RETURNING idDireccion
@@ -275,7 +275,7 @@ export const saveOrderDetailData = async (req, res) => {
       idFactura: finalIdFactura,
       direccion: {
         idDireccion,
-        calle: calleLimpia,
+        calle,
         numero: numeroDetectado,
         idCiudad,
         nombreCiudad,
