@@ -1,5 +1,6 @@
 import { sql } from "../config/db.js";
 import jwt from "jsonwebtoken";
+import { transporter } from "../utils/mailer.js";
 
 /* --------------------------------------------------
    GET /api/promotions
@@ -197,6 +198,51 @@ export const createPromotion = async (req, res) => {
         VALUES (${idPromocion}, ${idProd});
       `;
     }
+
+    // Enviar correos a todos los usuarios avisando de la promo de forma asíncrona
+    (async () => {
+      try {
+        const usuarios = await sql`SELECT nombre, mail FROM usuario WHERE rol = 'cliente'`;
+        const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+
+        for (const user of usuarios) {
+          const mailOptions = {
+            to: user.mail,
+            subject: `¡Nueva Promoción: ${nombre}! - Amargo y Dulce`,
+            html: `
+              <div style="font-family: Arial, sans-serif; text-align: center; color: #333;">
+                <h2 style="color: #6B4C3A;">¡Hola ${user.nombre}!</h2>
+                <p>Tenemos una nueva promoción especial para vos:</p>
+                <h3 style="color: #6B4C3A;">${nombre}</h3>
+                <p>${descripcion}</p>
+                <a href="${frontendUrl}/" style="padding: 12px 24px; background-color: #6B4C3A; color: white; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold; margin-top: 15px;">
+                  Ir a la tienda
+                </a>
+              </div>
+            `
+          };
+
+          if (process.env.RENDER) {
+            const proxyUrl = `${frontendUrl}/api/send-mail`;
+            await fetch(proxyUrl, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${process.env.VERCEL_API_SECRET}`
+              },
+              body: JSON.stringify(mailOptions)
+            });
+          } else {
+            await transporter.sendMail({
+              from: '"Amargo y Dulce" <facubpais@gmail.com>',
+              ...mailOptions
+            });
+          }
+        }
+      } catch (err) {
+        console.error("Error al enviar correos de preventa:", err);
+      }
+    })();
 
     return res.status(201).json({ message: "Promoción creada correctamente" });
   } catch (error) {
