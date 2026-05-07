@@ -104,8 +104,7 @@ export default function CartPage() {
       promo.productos.some(p => String(p.idproducto) === String(productId))
     );
     
-    const discount = activePromo ? activePromo.valor : 0;
-    const basePrice = Number(item.precio);
+
     const finalPrice = Number(item.preciounitario || item.precio);
 
     return total + (finalPrice * item.cantidad);

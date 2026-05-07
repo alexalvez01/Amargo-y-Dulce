@@ -121,10 +121,10 @@ const FavoritesList = () => {
             const itemPrice = item.precio || item.price;
             const itemImage = item.imagen || "/images/producto-clasico.png";
             const itemSize = item.tamaño || item.tamano || item.size || 'Único';
-            const isInactive = item.estado === 'inactivo';
+            const isInactive = item.estado === 'inactivo' || item.stock <= 0;
 
             return (
-              <div key={itemId} className={`group flex items-center p-5 sm:p-6 border-b border-gray-100 last:border-b-0 hover:bg-[#faf7f5] transition-colors duration-200 ${isInactive ? 'opacity-60 grayscale bg-gray-50' : ''} ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/30'}`}>
+              <div key={itemId} className={`group flex items-center p-5 sm:p-6 border-b border-gray-100 last:border-b-0 hover:bg-[#faf7f5] transition-colors duration-200 ${isInactive ? 'bg-gray-50' : ''} ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/30'}`}>
                 
                 <input 
                   type="checkbox" 
@@ -137,11 +137,13 @@ const FavoritesList = () => {
                   <img 
                     src={itemImage} 
                     alt={itemName} 
-                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" 
+                    className={`w-full h-full object-cover transform transition-transform duration-500 ${isInactive ? 'grayscale opacity-60' : 'group-hover:scale-110'}`} 
                   />
                   {isInactive && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-                      <span className="bg-white text-gray-800 text-[10px] uppercase font-bold px-2 py-1 rounded shadow-sm">Agotado</span>
+                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-10 w-max">
+                      <span className={`block text-[10px] uppercase font-bold px-2.5 py-1 rounded shadow-md text-white tracking-widest ${item.estado === 'inactivo' ? 'bg-slate-700/90 border border-slate-600' : 'bg-rose-600/90 border border-rose-500'}`}>
+                        {item.estado === 'inactivo' ? 'No disponible' : 'Agotado'}
+                      </span>
                     </div>
                   )}
                 </Link>
@@ -150,7 +152,7 @@ const FavoritesList = () => {
                   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start">
                     <div>
                       <Link to={`/product/${itemId}`} className="w-fit block">
-                        <h3 className="text-[#4a3024] text-lg sm:text-xl font-bold font-brand hover:text-[#d38b5d] transition-colors cursor-pointer line-clamp-2">
+                        <h3 className={`text-lg sm:text-xl font-bold font-brand transition-colors cursor-pointer line-clamp-2 ${isInactive ? 'text-gray-500 hover:text-gray-700' : 'text-[#4a3024] hover:text-[#d38b5d]'}`}>
                           {itemName}
                         </h3>
                       </Link>
@@ -161,7 +163,7 @@ const FavoritesList = () => {
                       </p>
                     </div>
 
-                    <p className="text-[#4a3024] font-bold text-xl sm:text-2xl mt-2 sm:mt-0 font-brand">
+                    <p className={`font-bold text-xl sm:text-2xl mt-2 sm:mt-0 font-brand ${isInactive ? 'text-gray-400' : 'text-[#4a3024]'}`}>
                       $ {Number(itemPrice).toLocaleString('es-AR')}
                     </p>
                   </div>
